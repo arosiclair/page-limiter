@@ -2,66 +2,92 @@ import React, { useEffect, useState } from 'react';
 import { createRoot } from 'react-dom/client';
 
 const Options = () => {
-    const [color, setColor] = useState<string>('');
     const [status, setStatus] = useState<string>('');
-    const [like, setLike] = useState<boolean>(false);
+    const [urlGroups, setUrlGroups] = useState<UrlGroup[]>([]);
 
+    const [newGroupName, setNewGroupName] = useState<string>('');
+    const [newGroupTimelimit, setNewGroupLimitTimelimit] = useState<string>('');
+    const [newGroupUrls, setNewGroupUrls] = useState<string>('');
+
+    // Load settings from storage on mount
     useEffect(() => {
-        // Restores select box and checkbox state using the preferences
-        // stored in chrome.storage.
-        chrome.storage.sync.get(
-            {
-                favoriteColor: 'red',
-                likesColor: true,
-            },
-            (items) => {
-                setColor(items.favoriteColor);
-                setLike(items.likesColor);
-            }
-        );
+        chrome.storage.sync.get({ urlGroups: [] }, (items) => {
+            setUrlGroups(items.urlGroups);
+        });
     }, []);
+
+    const addGroup = () => {
+        const newGroups = [...urlGroups];
+        newGroups.push({
+            id: String(Math.random() * 1_000_000),
+            name: newGroupName,
+            timelimitSeconds: Number(newGroupTimelimit),
+            urls: newGroupUrls.split('\n'),
+        });
+        setUrlGroups(newGroups);
+    };
 
     const saveOptions = () => {
         // Saves options to chrome.storage.sync.
-        chrome.storage.sync.set(
-            {
-                favoriteColor: color,
-                likesColor: like,
-            },
-            () => {
-                // Update status to let user know options were saved.
-                setStatus('Options saved.');
-                const id = setTimeout(() => {
-                    setStatus('');
-                }, 1000);
-                return () => clearTimeout(id);
-            }
-        );
+        chrome.storage.sync.set({ urlGroups }, () => {
+            // Update status to let user know options were saved.
+            setStatus('Options saved.');
+            const id = setTimeout(() => {
+                setStatus('');
+            }, 1000);
+            return () => clearTimeout(id);
+        });
     };
 
     return (
         <>
+            <h1>Settings</h1>
+            <h2>Add Group</h2>
             <div>
-                Favorite color:{' '}
-                <select
-                    value={color}
-                    onChange={(event) => setColor(event.target.value)}
-                >
-                    <option value="red">red</option>
-                    <option value="green">green</option>
-                    <option value="blue">blue</option>
-                    <option value="yellow">yellow</option>
-                </select>
-            </div>
-            <div>
-                <label>
+                <div>
                     <input
-                        type="checkbox"
-                        checked={like}
-                        onChange={(event) => setLike(event.target.checked)}
+                        type="text"
+                        placeholder="Name"
+                        value={newGroupName}
+                        onChange={(event) =>
+                            setNewGroupName(event.currentTarget.value)
+                        }
                     />
-                    I like colors.
-                </label>
+                </div>
+                <div>
+                    <input
+                        type="number"
+                        placeholder="Timelimit (minutes)"
+                        value={newGroupTimelimit}
+                        onChange={(event) =>
+                            setNewGroupLimitTimelimit(event.currentTarget.value)
+                        }
+                    />
+                </div>
+
+                <div>
+                    <textarea
+                        name="new-urls"
+                        placeholder="URL patterns"
+                        id=""
+                        value={newGroupUrls}
+                        onChange={(event) =>
+                            setNewGroupUrls(event.currentTarget.value)
+                        }
+                    ></textarea>
+                </div>
+                <button onClick={addGroup}>Add</button>
+            </div>
+            <h2>Groups</h2>
+            <div>
+                {urlGroups.map((urlGroup) => (
+                    <div key={urlGroup.id}>
+                        <div>ID: {urlGroup.id}</div>
+                        <div>Name: {urlGroup.name}</div>
+                        <div>Timelimit: {urlGroup.timelimitSeconds}</div>
+                        <div>Urls: {JSON.stringify(urlGroup.urls)}</div>
+                    </div>
+                ))}
             </div>
             <div>{status}</div>
             <button onClick={saveOptions}>Save</button>
