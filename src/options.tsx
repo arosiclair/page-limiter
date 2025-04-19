@@ -19,7 +19,7 @@ const Options = () => {
     const addGroup = () => {
         const newGroups = [...urlGroups];
         newGroups.push({
-            id: String(Math.random() * 1_000_000),
+            id: crypto.randomUUID(),
             name: newGroupName,
             timelimitSeconds: Number(newGroupTimelimit),
             urls: newGroupUrls.split('\n'),
