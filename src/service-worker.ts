@@ -21,12 +21,16 @@ async function onPageVisited(message: PageVisitedMessage) {
         return;
     }
 
-    const todaysHistory = matchingGroup?.history[getCurrentDate()] ?? [];
+    let todaysHistory = matchingGroup.history[getCurrentDate()];
+    if (!todaysHistory) {
+        todaysHistory = matchingGroup.history[getCurrentDate()] = [];
+    }
     todaysHistory.push({
-        start: new Date(),
+        start: new Date().toISOString(),
     });
+
     await setURLGroups(urlGroups);
-    console.log('history entry started', todaysHistory);
+    console.log('history entry started', { matchingGroup });
 }
 
 async function onPageLeft(message: PageLeftMessage) {
@@ -48,9 +52,9 @@ async function onPageLeft(message: PageLeftMessage) {
         return;
     }
 
-    todaysHistory[todaysHistory.length - 1].end = new Date();
+    todaysHistory[todaysHistory.length - 1].end = new Date().toISOString();
     await setURLGroups(urlGroups);
-    console.log('history entry finished', todaysHistory);
+    console.log('history entry finished', { matchingGroup });
 }
 
 function getURLGroups() {

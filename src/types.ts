@@ -9,8 +9,8 @@ type UrlGroup = {
 };
 
 type HistoryEntry = {
-    start: Date;
-    end?: Date;
+    start: string;
+    end?: string;
 };
 
 type ExtensionMessage = {
