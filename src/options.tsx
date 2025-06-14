@@ -40,6 +40,17 @@ const Options = () => {
         });
     };
 
+    const clearGroups = () => {
+        chrome.storage.sync.set({ urlGroups: [] }, () => {
+            // Update status to let user know options were saved.
+            setStatus('Options cleared.');
+            const id = setTimeout(() => {
+                setStatus('');
+            }, 1000);
+            return () => clearTimeout(id);
+        });
+    };
+
     return (
         <>
             <h1>Settings</h1>
@@ -92,6 +103,7 @@ const Options = () => {
             </div>
             <div>{status}</div>
             <button onClick={saveOptions}>Save</button>
+            <button onClick={clearGroups}>Clear</button>
         </>
     );
 };
