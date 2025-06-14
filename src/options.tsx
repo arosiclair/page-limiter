@@ -23,6 +23,7 @@ const Options = () => {
             name: newGroupName,
             timelimitSeconds: Number(newGroupTimelimit),
             urls: newGroupUrls.split('\n'),
+            history: {},
         });
         setUrlGroups(newGroups);
     };
