@@ -12,6 +12,7 @@ chrome.runtime.onMessage.addListener((message: ExtensionMessage) => {
 });
 
 async function onPageVisited(message: PageVisitedMessage) {
+    console.log('Page visited', { message });
     const currentURL = message.url;
     const urlGroups = await getURLGroups();
 
@@ -25,6 +26,17 @@ async function onPageVisited(message: PageVisitedMessage) {
     if (!todaysHistory) {
         todaysHistory = matchingGroup.history[getCurrentDate()] = [];
     }
+
+    const lastHistoryEntry = todaysHistory.length
+        ? todaysHistory[todaysHistory.length - 1]
+        : ({} as HistoryEntry);
+    if (lastHistoryEntry.start && !lastHistoryEntry.end) {
+        console.log('Continuing with unfinished HistoryEntry', {
+            todaysHistory,
+        });
+        return;
+    }
+
     todaysHistory.push({
         start: new Date().toISOString(),
     });
