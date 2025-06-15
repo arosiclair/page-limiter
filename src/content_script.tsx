@@ -12,9 +12,22 @@ chrome.runtime.sendMessage({
     event: 'page-visited',
     url: window.location.href,
 });
-window.onbeforeunload = (event) => {
+window.addEventListener('beforeunload', () => {
     chrome.runtime.sendMessage({
         event: 'page-left',
         url: window.location.href,
     });
-};
+});
+
+window.addEventListener('focus', () => {
+    chrome.runtime.sendMessage({
+        event: 'page-visited',
+        url: window.location.href,
+    });
+});
+window.addEventListener('blur', () => {
+    chrome.runtime.sendMessage({
+        event: 'page-left',
+        url: window.location.href,
+    });
+});
