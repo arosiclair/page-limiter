@@ -57,10 +57,7 @@ async function onPageLeft(message: PageLeftMessage) {
 
     const todaysHistory = matchingGroup.history[getCurrentDate()];
     if (!todaysHistory) {
-        console.error('Page matched but no history for today', {
-            currentURL,
-            matchingGroup,
-        });
+        console.error('Page matched but no history for today', { currentURL, matchingGroup });
         return;
     }
 

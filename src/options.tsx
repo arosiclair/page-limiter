@@ -61,9 +61,7 @@ const Options = () => {
                         type="text"
                         placeholder="Name"
                         value={newGroupName}
-                        onChange={(event) =>
-                            setNewGroupName(event.currentTarget.value)
-                        }
+                        onChange={(event) => setNewGroupName(event.currentTarget.value)}
                     />
                 </div>
                 <div>
@@ -71,9 +69,7 @@ const Options = () => {
                         type="number"
                         placeholder="Timelimit (minutes)"
                         value={newGroupTimelimit}
-                        onChange={(event) =>
-                            setNewGroupLimitTimelimit(event.currentTarget.value)
-                        }
+                        onChange={(event) => setNewGroupLimitTimelimit(event.currentTarget.value)}
                     />
                 </div>
 
@@ -83,9 +79,7 @@ const Options = () => {
                         placeholder="URL patterns"
                         id=""
                         value={newGroupUrls}
-                        onChange={(event) =>
-                            setNewGroupUrls(event.currentTarget.value)
-                        }
+                        onChange={(event) => setNewGroupUrls(event.currentTarget.value)}
                     ></textarea>
                 </div>
                 <button onClick={addGroup}>Add</button>
