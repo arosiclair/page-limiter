@@ -1,8 +1,10 @@
-chrome.runtime.onMessage.addListener((message: ExtensionMessage) => {
+import { differenceInSeconds } from 'date-fns';
+
+chrome.runtime.onMessage.addListener((message: ExtensionMessage, sender, sendResponse) => {
     switch (message.event) {
         case 'page-visited':
-            onPageVisited(message as PageVisitedMessage);
-            break;
+            onPageVisited(message as PageVisitedMessage).then(sendResponse);
+            return true;
         case 'page-left':
             onPageLeft(message as PageLeftMessage);
             break;
@@ -11,15 +13,21 @@ chrome.runtime.onMessage.addListener((message: ExtensionMessage) => {
     }
 });
 
-async function onPageVisited(message: PageVisitedMessage) {
+export type PageVisitedEventResult = {
+    didMatch: boolean;
+    secondsLeft: number;
+};
+
+async function onPageVisited(message: PageVisitedMessage): Promise<PageVisitedEventResult> {
     console.log('Page visited', { message });
     const currentURL = message.url;
     const urlGroups = await getURLGroups();
 
     const matchingGroup = findMatchingGroup(urlGroups, currentURL);
-    if (!matchingGroup) {
+    const didMatch = !!matchingGroup;
+    if (!didMatch) {
         console.log("Current page doesn't match", { currentURL });
-        return;
+        return { didMatch, secondsLeft: 0 };
     }
 
     let todaysHistory = matchingGroup.history[getCurrentDate()];
@@ -31,10 +39,14 @@ async function onPageVisited(message: PageVisitedMessage) {
         ? todaysHistory[todaysHistory.length - 1]
         : ({} as HistoryEntry);
     if (lastHistoryEntry.start && !lastHistoryEntry.end) {
-        console.log('Continuing with unfinished HistoryEntry', {
-            todaysHistory,
-        });
-        return;
+        console.log('Ending unfinished HistoryEntry', { todaysHistory });
+        lastHistoryEntry.end = new Date().toISOString();
+    }
+
+    const secondsUsed = getTotalSeconds(todaysHistory);
+    const secondsLeft = Math.max(matchingGroup.timelimitSeconds - secondsUsed, 0);
+    if (secondsLeft === 0) {
+        return { didMatch, secondsLeft };
     }
 
     todaysHistory.push({
@@ -43,6 +55,8 @@ async function onPageVisited(message: PageVisitedMessage) {
 
     await setURLGroups(urlGroups);
     console.log('history entry started', { matchingGroup });
+
+    return { didMatch, secondsLeft };
 }
 
 async function onPageLeft(message: PageLeftMessage) {
@@ -99,4 +113,19 @@ function getCurrentDate(): string {
     const offset = now.getTimezoneOffset();
     const today = new Date(now.getTime() - offset * 60 * 1000);
     return today.toISOString().split('T')[0];
+}
+
+function getTotalSeconds(history: HistoryEntry[]) {
+    let totalSeconds = 0;
+    for (const historyEntry of history) {
+        if (!historyEntry.end) {
+            continue;
+        }
+
+        totalSeconds += differenceInSeconds(historyEntry.end, historyEntry.start, {
+            roundingMethod: 'ceil',
+        });
+    }
+
+    return totalSeconds;
 }
