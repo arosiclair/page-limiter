@@ -1,3 +1,4 @@
+import { millisecondsInSecond } from 'date-fns/constants';
 import { PageVisitedEventResult } from './service-worker';
 
 chrome.runtime.onMessage.addListener(function (msg, sender, sendResponse) {
@@ -32,10 +33,23 @@ function sendPageVisitedMessage() {
             event: 'page-visited',
             url: window.location.href,
         },
-        (response: PageVisitedEventResult) => {
-            console.log('onPageVisited', { response });
+        ({ didMatch, secondsLeft }: PageVisitedEventResult) => {
+            if (!didMatch) {
+                return;
+            }
+
+            if (secondsLeft === 0) {
+                blockPage();
+                return;
+            }
+
+            setTimeout(blockPage, secondsLeft * millisecondsInSecond);
         }
     );
+}
+
+function blockPage() {
+    window.location.replace('https://0.0.0.0/');
 }
 
 // Pretend like this is a module so that typescript stops complaining about naming collisions
