@@ -11,21 +11,13 @@ chrome.runtime.onMessage.addListener(function (msg, sender, sendResponse) {
     }
 });
 
+let timeout: NodeJS.Timeout;
+
 sendPageVisitedMessage();
-window.addEventListener('beforeunload', () => {
-    chrome.runtime.sendMessage({
-        event: 'page-left',
-        url: window.location.href,
-    });
-});
+window.addEventListener('beforeunload', sendPageLeftMessage);
 
 window.addEventListener('focus', sendPageVisitedMessage);
-window.addEventListener('blur', () => {
-    chrome.runtime.sendMessage({
-        event: 'page-left',
-        url: window.location.href,
-    });
-});
+window.addEventListener('blur', sendPageLeftMessage);
 
 function sendPageVisitedMessage() {
     chrome.runtime.sendMessage(
@@ -43,9 +35,17 @@ function sendPageVisitedMessage() {
                 return;
             }
 
-            setTimeout(blockPage, secondsLeft * millisecondsInSecond);
+            timeout = setTimeout(blockPage, secondsLeft * millisecondsInSecond);
         }
     );
+}
+
+function sendPageLeftMessage() {
+    chrome.runtime.sendMessage({
+        event: 'page-left',
+        url: window.location.href,
+    });
+    clearTimeout(timeout);
 }
 
 function blockPage() {
