@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { createRoot } from 'react-dom/client';
+import UrlGroup from './components/Settings/Group';
 
 const Options = () => {
     const [status, setStatus] = useState<string>('');
@@ -53,7 +54,7 @@ const Options = () => {
 
     return (
         <>
-            <h1>Settings</h1>
+            <h1>Page Limiter</h1>
             <h2>Add Group</h2>
             <div>
                 <div>
@@ -87,12 +88,7 @@ const Options = () => {
             <h2>Groups</h2>
             <div>
                 {urlGroups.map((urlGroup) => (
-                    <div key={urlGroup.id}>
-                        <div>ID: {urlGroup.id}</div>
-                        <div>Name: {urlGroup.name}</div>
-                        <div>Timelimit: {urlGroup.timelimitSeconds}</div>
-                        <div>Urls: {JSON.stringify(urlGroup.urls)}</div>
-                    </div>
+                    <UrlGroup key={urlGroup.id} urlGroup={urlGroup} />
                 ))}
             </div>
             <div>{status}</div>
