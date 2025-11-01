@@ -1,14 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import { createRoot } from 'react-dom/client';
 import UrlGroup from './components/Settings/Group';
+import NewGroup from './components/Settings/NewGroup';
 
 const Options = () => {
     const [status, setStatus] = useState<string>('');
     const [urlGroups, setUrlGroups] = useState<UrlGroup[]>([]);
-
-    const [newGroupName, setNewGroupName] = useState<string>('');
-    const [newGroupTimelimit, setNewGroupLimitTimelimit] = useState<string>('');
-    const [newGroupUrls, setNewGroupUrls] = useState<string>('');
 
     // Load settings from storage on mount
     useEffect(() => {
@@ -17,13 +14,13 @@ const Options = () => {
         });
     }, []);
 
-    const addGroup = () => {
+    const addGroup = (name: string, timelimitSeconds: string, urls: string) => {
         const newGroups = [...urlGroups];
         newGroups.push({
             id: crypto.randomUUID(),
-            name: newGroupName,
-            timelimitSeconds: Number(newGroupTimelimit),
-            urls: newGroupUrls.split('\n'),
+            name,
+            timelimitSeconds: Number(timelimitSeconds),
+            urls: urls.split('\n'),
             history: {},
         });
         setUrlGroups(newGroups);
@@ -53,48 +50,28 @@ const Options = () => {
     };
 
     return (
-        <>
-            <h1>Page Limiter</h1>
-            <h2>Add Group</h2>
-            <div>
-                <div>
-                    <input
-                        type="text"
-                        placeholder="Name"
-                        value={newGroupName}
-                        onChange={(event) => setNewGroupName(event.currentTarget.value)}
-                    />
-                </div>
-                <div>
-                    <input
-                        type="number"
-                        placeholder="Timelimit (minutes)"
-                        value={newGroupTimelimit}
-                        onChange={(event) => setNewGroupLimitTimelimit(event.currentTarget.value)}
-                    />
-                </div>
+        <main className="px-3 py-2">
+            <h2>Page Limiter - Settings</h2>
+            <hr />
 
-                <div>
-                    <textarea
-                        name="new-urls"
-                        placeholder="URL patterns"
-                        id=""
-                        value={newGroupUrls}
-                        onChange={(event) => setNewGroupUrls(event.currentTarget.value)}
-                    ></textarea>
-                </div>
-                <button onClick={addGroup}>Add</button>
-            </div>
-            <h2>Groups</h2>
+            <h3>Add Group</h3>
+            <NewGroup onNewGroupAdded={addGroup} />
+            <hr />
+
+            <h3>Groups</h3>
             <div>
                 {urlGroups.map((urlGroup) => (
                     <UrlGroup key={urlGroup.id} urlGroup={urlGroup} />
                 ))}
             </div>
             <div>{status}</div>
-            <button onClick={saveOptions}>Save</button>
-            <button onClick={clearGroups}>Clear</button>
-        </>
+            <button className="btn btn-primary" onClick={saveOptions}>
+                Save
+            </button>
+            <button className="btn btn-danger" onClick={clearGroups}>
+                Clear
+            </button>
+        </main>
     );
 };
 

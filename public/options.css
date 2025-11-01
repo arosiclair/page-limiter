@@ -6,3 +6,7 @@ body {
     width: 100vw;
     font-family: system-ui;
 }
+
+main {
+    width: min(100%, 768px);
+}
