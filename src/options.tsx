@@ -40,10 +40,16 @@ const Options = () => {
         const newUrlGroups = [...urlGroups];
         newUrlGroups[index] = updatedUrlGroup;
         setUrlGroups(newUrlGroups);
-        saveOptions();
+        saveOptions(newUrlGroups);
     };
 
-    const saveOptions = debounce(() => {
+    const deleteGroup = (id: string) => {
+        const newUrlGroups = urlGroups.filter((group) => group.id !== id);
+        setUrlGroups(newUrlGroups);
+        saveOptions(newUrlGroups);
+    };
+
+    const saveOptions = debounce((urlGroups: UrlGroup[]) => {
         // Saves options to chrome.storage.sync.
         chrome.storage.sync.set({ urlGroups }, () => {
             // Update status to let user know options were saved.
@@ -72,7 +78,7 @@ const Options = () => {
             <hr />
 
             <div>{status}</div>
-            <button className="btn btn-primary me-1" onClick={saveOptions}>
+            <button className="btn btn-primary me-1" onClick={() => saveOptions(urlGroups)}>
                 Save
             </button>
             <button className="btn btn-danger" onClick={clearGroups}>
@@ -83,7 +89,12 @@ const Options = () => {
             <h3>Groups</h3>
             <div>
                 {urlGroups.map((urlGroup) => (
-                    <UrlGroup key={urlGroup.id} urlGroup={urlGroup} onGroupChanged={updateGroup} />
+                    <UrlGroup
+                        key={urlGroup.id}
+                        urlGroup={urlGroup}
+                        onGroupChanged={updateGroup}
+                        onGroupDeleted={deleteGroup}
+                    />
                 ))}
             </div>
             <div className="text-end">

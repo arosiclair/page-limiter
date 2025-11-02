@@ -4,9 +4,10 @@ import { getTimeLeft, getTimeUsed } from '../../url-groups';
 type UrlGroupProps = {
     urlGroup: UrlGroup;
     onGroupChanged: (updatedUrlGroup: UrlGroup) => void;
+    onGroupDeleted: (id: string) => void;
 };
 
-export default function UrlGroup({ urlGroup, onGroupChanged }: UrlGroupProps) {
+export default function UrlGroup({ urlGroup, onGroupChanged, onGroupDeleted }: UrlGroupProps) {
     return (
         <div className="mb-4">
             <div className="d-flex">
@@ -74,7 +75,9 @@ export default function UrlGroup({ urlGroup, onGroupChanged }: UrlGroupProps) {
                     Time used: {getTimeUsed(urlGroup)} seconds • Time left: {getTimeLeft(urlGroup)}{' '}
                     seconds
                 </span>
-                <button className="btn btn-danger">Delete</button>
+                <button className="btn btn-danger" onClick={() => onGroupDeleted(urlGroup.id)}>
+                    Delete
+                </button>
             </div>
 
             <pre>
