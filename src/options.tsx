@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { createRoot } from 'react-dom/client';
 import UrlGroup from './components/Settings/Group';
-import NewGroup from './components/Settings/NewGroup';
+import { debounce } from './utils';
 
 const Options = () => {
     const [status, setStatus] = useState<string>('');
@@ -40,9 +40,10 @@ const Options = () => {
         const newUrlGroups = [...urlGroups];
         newUrlGroups[index] = updatedUrlGroup;
         setUrlGroups(newUrlGroups);
+        saveOptions();
     };
 
-    const saveOptions = () => {
+    const saveOptions = debounce(() => {
         // Saves options to chrome.storage.sync.
         chrome.storage.sync.set({ urlGroups }, () => {
             // Update status to let user know options were saved.
@@ -52,7 +53,7 @@ const Options = () => {
             }, 1000);
             return () => clearTimeout(id);
         });
-    };
+    }, 1000);
 
     const clearGroups = () => {
         chrome.storage.sync.set({ urlGroups: [] }, () => {
