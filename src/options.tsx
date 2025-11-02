@@ -78,6 +78,27 @@ const Options = () => {
         });
     };
 
+    const exportData = () => {
+        const timestamp = new Date().toISOString();
+        const filename = `page-limiter-export-${timestamp}.json`;
+        const data = { urlGroups };
+
+        // Create a Blob from the JSON string
+        const blob = new Blob([JSON.stringify(data)], { type: 'application/json' });
+
+        // Create a temporary URL for the Blob
+        const url = URL.createObjectURL(blob);
+
+        // Create a temporary anchor element and trigger download
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = filename;
+        link.click();
+
+        // Clean up the URL object
+        URL.revokeObjectURL(url);
+    };
+
     return (
         <main className="px-3 py-2">
             <h2>Page Limiter - Settings</h2>
@@ -87,9 +108,13 @@ const Options = () => {
             <button className="btn btn-primary me-1" onClick={() => saveGroups(urlGroups)}>
                 Save
             </button>
-            <button className="btn btn-danger" onClick={clearGroups}>
+            <button className="btn btn-danger me-1" onClick={clearGroups}>
                 Clear
             </button>
+            <button className="btn btn-secondary me-1" onClick={exportData}>
+                Export
+            </button>
+            <button className="btn btn-secondary">Import</button>
             <hr />
 
             <h3>Groups</h3>
