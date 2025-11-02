@@ -40,18 +40,24 @@ const Options = () => {
         const newUrlGroups = [...urlGroups];
         newUrlGroups[index] = updatedUrlGroup;
         setUrlGroups(newUrlGroups);
-        saveOptions(newUrlGroups);
+        saveGroups(newUrlGroups);
     };
 
     const deleteGroup = (id: string) => {
         const newUrlGroups = urlGroups.filter((group) => group.id !== id);
         setUrlGroups(newUrlGroups);
-        saveOptions(newUrlGroups);
+        saveGroups(newUrlGroups);
     };
 
-    const saveOptions = debounce((urlGroups: UrlGroup[]) => {
+    const saveGroups = debounce((urlGroups: UrlGroup[]) => {
+        // Filter out any empty url patterns
+        const cleanedUrlGroups = urlGroups.map((urlGroup) => ({
+            ...urlGroup,
+            urls: urlGroup.urls.filter(Boolean),
+        }));
+
         // Saves options to chrome.storage.sync.
-        chrome.storage.sync.set({ urlGroups }, () => {
+        chrome.storage.sync.set({ urlGroups: cleanedUrlGroups }, () => {
             // Update status to let user know options were saved.
             setStatus('Options saved.');
             const id = setTimeout(() => {
@@ -78,7 +84,7 @@ const Options = () => {
             <hr />
 
             <div>{status}</div>
-            <button className="btn btn-primary me-1" onClick={() => saveOptions(urlGroups)}>
+            <button className="btn btn-primary me-1" onClick={() => saveGroups(urlGroups)}>
                 Save
             </button>
             <button className="btn btn-danger" onClick={clearGroups}>
@@ -97,9 +103,9 @@ const Options = () => {
                     />
                 ))}
             </div>
-            <div className="text-end">
+            <div className="text-center">
                 <button className="btn btn-primary" onClick={addGroup}>
-                    Add
+                    Add group
                 </button>
             </div>
         </main>
