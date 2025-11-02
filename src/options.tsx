@@ -2,11 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { createRoot } from 'react-dom/client';
 import UrlGroup from './components/Settings/Group';
 import { debounce } from './utils';
-
-type ExportData = {
-    urlGroups: UrlGroup[];
-    allowedUrls: string[];
-};
+import storageLookupData from './storage-lookup-data';
 
 const Options = () => {
     const [status, setStatus] = useState<string>('');
@@ -15,12 +11,7 @@ const Options = () => {
 
     // Load settings from storage on mount
     useEffect(() => {
-        const lookupData: ExportData = {
-            urlGroups: [],
-            allowedUrls: [],
-        };
-
-        chrome.storage.sync.get(lookupData, (items) => {
+        chrome.storage.sync.get(storageLookupData, (items) => {
             const data = items as Partial<ExportData>;
 
             if (data.urlGroups?.length) {

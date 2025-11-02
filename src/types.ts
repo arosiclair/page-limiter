@@ -26,3 +26,8 @@ type PageLeftMessage = ExtensionMessage & {
     event: 'page-left';
     url: string;
 };
+
+type ExportData = {
+    urlGroups: UrlGroup[];
+    allowedUrls: string[];
+};

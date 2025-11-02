@@ -1,3 +1,4 @@
+import storageLookupData from './storage-lookup-data';
 import { getCurrentDate, getTotalSeconds } from './url-groups';
 
 chrome.runtime.onMessage.addListener((message: ExtensionMessage, sender, sendResponse) => {
@@ -21,7 +22,12 @@ export type PageVisitedEventResult = {
 async function onPageVisited(message: PageVisitedMessage): Promise<PageVisitedEventResult> {
     console.log('Page visited', { message });
     const currentURL = message.url;
-    const urlGroups = await getURLGroups();
+    const { urlGroups } = await getSettings();
+
+    if (!urlGroups) {
+        console.log('No urlGroups set', { currentURL });
+        return { didMatch: false, secondsLeft: 0 };
+    }
 
     const matchingGroup = findMatchingGroup(urlGroups, currentURL);
     const didMatch = !!matchingGroup;
@@ -61,7 +67,12 @@ async function onPageVisited(message: PageVisitedMessage): Promise<PageVisitedEv
 
 async function onPageLeft(message: PageLeftMessage) {
     const currentURL = message.url;
-    const urlGroups = await getURLGroups();
+    const { urlGroups } = await getSettings();
+
+    if (!urlGroups) {
+        console.log('No urlGroups set', { currentURL });
+        return;
+    }
 
     const matchingGroup = findMatchingGroup(urlGroups, currentURL);
     if (!matchingGroup) {
@@ -80,10 +91,10 @@ async function onPageLeft(message: PageLeftMessage) {
     console.log('history entry finished', { matchingGroup });
 }
 
-function getURLGroups() {
-    return new Promise<UrlGroup[]>((resolve) => {
-        chrome.storage.sync.get({ urlGroups: [] }, (items) => {
-            resolve(items.urlGroups);
+function getSettings() {
+    return new Promise<Partial<ExportData>>((resolve) => {
+        chrome.storage.sync.get(storageLookupData, (items) => {
+            resolve(items as ExportData);
         });
     });
 }
