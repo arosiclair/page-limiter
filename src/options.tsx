@@ -3,6 +3,10 @@ import { createRoot } from 'react-dom/client';
 import UrlGroup from './components/Settings/Group';
 import { debounce } from './utils';
 
+type ExportData = {
+    urlGroups: UrlGroup[];
+};
+
 const Options = () => {
     const [status, setStatus] = useState<string>('');
     const [urlGroups, setUrlGroups] = useState<UrlGroup[]>([]);
@@ -99,6 +103,41 @@ const Options = () => {
         URL.revokeObjectURL(url);
     };
 
+    // Usage with async/await:
+    const importData = async () => {
+        try {
+            const data = await new Promise<ExportData>((resolve, reject) => {
+                const input = document.createElement('input');
+                input.type = 'file';
+                input.accept = 'application/json,.json';
+
+                input.onchange = async (event) => {
+                    const target = event.target as HTMLInputElement;
+                    const file = target.files?.[0];
+                    if (!file) {
+                        reject(new Error('No file selected'));
+                        return;
+                    }
+
+                    try {
+                        const text = await file.text();
+                        const data = JSON.parse(text);
+                        resolve(data);
+                    } catch (error) {
+                        reject(error);
+                    }
+                };
+
+                input.click();
+            });
+
+            setUrlGroups(data.urlGroups);
+            saveGroups(data.urlGroups);
+        } catch (error) {
+            console.error('Import failed:', error);
+        }
+    };
+
     return (
         <main className="px-3 py-2">
             <h2>Page Limiter - Settings</h2>
@@ -114,7 +153,9 @@ const Options = () => {
             <button className="btn btn-secondary me-1" onClick={exportData}>
                 Export
             </button>
-            <button className="btn btn-secondary">Import</button>
+            <button className="btn btn-secondary" onClick={importData}>
+                Import
+            </button>
             <hr />
 
             <h3>Groups</h3>
