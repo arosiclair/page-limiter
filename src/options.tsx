@@ -32,8 +32,9 @@ const Options = () => {
 
     const updateGroup = (updatedUrlGroup: UrlGroup) => {
         const index = urlGroups.findIndex((urlGroup) => urlGroup.id === updatedUrlGroup.id);
-        if (!index) {
+        if (index === -1) {
             console.warn("Couldn't update urlGroup", { id: updatedUrlGroup.id });
+            return;
         }
 
         const newUrlGroups = [...urlGroups];
