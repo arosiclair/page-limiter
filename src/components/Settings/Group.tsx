@@ -7,8 +7,9 @@ type UrlGroupProps = {
 
 export default function UrlGroup({ urlGroup, onGroupChanged }: UrlGroupProps) {
     return (
-        <div>
-            <div className="mb-2">
+        <div className="mb-4">
+            <div className="d-flex">
+                <div className="flex-grow-1 me-2">
                 <label htmlFor="new-group-name-input" className="form-label">
                     Group name
                 </label>
@@ -43,6 +44,7 @@ export default function UrlGroup({ urlGroup, onGroupChanged }: UrlGroupProps) {
                         })
                     }
                 />
+                </div>
             </div>
 
             <div className="mb-2">
