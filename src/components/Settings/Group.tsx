@@ -1,4 +1,5 @@
 import React from 'react';
+import { getTimeLeft, getTimeUsed } from '../../url-groups';
 
 type UrlGroupProps = {
     urlGroup: UrlGroup;
@@ -10,40 +11,40 @@ export default function UrlGroup({ urlGroup, onGroupChanged }: UrlGroupProps) {
         <div className="mb-4">
             <div className="d-flex">
                 <div className="flex-grow-1 me-2">
-                <label htmlFor="new-group-name-input" className="form-label">
-                    Group name
-                </label>
-                <input
-                    id="new-group-name-input"
-                    className="form-control"
-                    type="text"
-                    placeholder="Name"
-                    value={urlGroup.name}
-                    onChange={(event) =>
-                        onGroupChanged({
-                            ...urlGroup,
-                            name: event.currentTarget.value,
-                        })
-                    }
-                />
-            </div>
-            <div className="mb-2">
-                <label htmlFor="new-group-timelimit-input" className="form-label">
-                    Timelimit (seconds)
-                </label>
-                <input
-                    id="new-group-timelimit-input"
-                    className="form-control"
-                    type="number"
-                    placeholder="Timelimit (minutes)"
-                    value={urlGroup.timelimitSeconds}
-                    onChange={(event) =>
-                        onGroupChanged({
-                            ...urlGroup,
-                            timelimitSeconds: Number(event.currentTarget.value),
-                        })
-                    }
-                />
+                    <label htmlFor="new-group-name-input" className="form-label">
+                        Group name
+                    </label>
+                    <input
+                        id="new-group-name-input"
+                        className="form-control"
+                        type="text"
+                        placeholder="Name"
+                        value={urlGroup.name}
+                        onChange={(event) =>
+                            onGroupChanged({
+                                ...urlGroup,
+                                name: event.currentTarget.value,
+                            })
+                        }
+                    />
+                </div>
+                <div className="mb-2">
+                    <label htmlFor="new-group-timelimit-input" className="form-label">
+                        Timelimit (seconds)
+                    </label>
+                    <input
+                        id="new-group-timelimit-input"
+                        className="form-control"
+                        type="number"
+                        placeholder="Timelimit (minutes)"
+                        value={urlGroup.timelimitSeconds}
+                        onChange={(event) =>
+                            onGroupChanged({
+                                ...urlGroup,
+                                timelimitSeconds: Number(event.currentTarget.value),
+                            })
+                        }
+                    />
                 </div>
             </div>
 
@@ -66,6 +67,14 @@ export default function UrlGroup({ urlGroup, onGroupChanged }: UrlGroupProps) {
                         })
                     }
                 ></textarea>
+            </div>
+
+            <div className="d-flex align-items-center">
+                <span className="flex-grow-1">
+                    Time used: {getTimeUsed(urlGroup)} seconds • Time left: {getTimeLeft(urlGroup)}{' '}
+                    seconds
+                </span>
+                <button className="btn btn-danger">Delete</button>
             </div>
 
             <pre>

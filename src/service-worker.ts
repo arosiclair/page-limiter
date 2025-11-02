@@ -1,4 +1,4 @@
-import { differenceInSeconds } from 'date-fns';
+import { getCurrentDate, getTotalSeconds } from './url-groups';
 
 chrome.runtime.onMessage.addListener((message: ExtensionMessage, sender, sendResponse) => {
     switch (message.event) {
@@ -106,26 +106,4 @@ function findMatchingGroup(urlGroups: UrlGroup[], currentURL: string) {
             return urlGroup;
         }
     }
-}
-
-function getCurrentDate(): string {
-    const now = new Date();
-    const offset = now.getTimezoneOffset();
-    const today = new Date(now.getTime() - offset * 60 * 1000);
-    return today.toISOString().split('T')[0];
-}
-
-function getTotalSeconds(history: HistoryEntry[]) {
-    let totalSeconds = 0;
-    for (const historyEntry of history) {
-        if (!historyEntry.end) {
-            continue;
-        }
-
-        totalSeconds += differenceInSeconds(historyEntry.end, historyEntry.start, {
-            roundingMethod: 'ceil',
-        });
-    }
-
-    return totalSeconds;
 }
