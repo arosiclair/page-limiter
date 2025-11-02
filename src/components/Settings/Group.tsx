@@ -65,10 +65,11 @@ export default function UrlGroup({ urlGroup, onGroupChanged }: UrlGroupProps) {
             </div>
 
             <pre>
-                ID: {urlGroup.id}
-                Name: {urlGroup.name}
-                Timelimit: {urlGroup.timelimitSeconds}
-                Urls: {JSON.stringify(urlGroup.urls)}
+                <div>DEBUG</div>
+                <div>ID: {urlGroup.id}</div>
+                <div>Name: {urlGroup.name}</div>
+                <div>Timelimit: {urlGroup.timelimitSeconds}</div>
+                <div>Urls: {JSON.stringify(urlGroup.urls)}</div>
             </pre>
         </div>
     );
