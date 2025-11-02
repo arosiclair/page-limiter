@@ -10,17 +10,21 @@ const Options = () => {
     // Load settings from storage on mount
     useEffect(() => {
         chrome.storage.sync.get({ urlGroups: [] }, (items) => {
-            setUrlGroups(items.urlGroups);
+            if (items.urlGroups?.length) {
+                setUrlGroups(items.urlGroups);
+            } else {
+                addGroup();
+            }
         });
     }, []);
 
-    const addGroup = (name: string, timelimitSeconds: string, urls: string) => {
+    const addGroup = () => {
         const newGroups = [...urlGroups];
         newGroups.push({
             id: crypto.randomUUID(),
-            name,
-            timelimitSeconds: Number(timelimitSeconds),
-            urls: urls.split('\n'),
+            name: '',
+            timelimitSeconds: 0,
+            urls: [],
             history: {},
         });
         setUrlGroups(newGroups);
@@ -65,8 +69,13 @@ const Options = () => {
             <h2>Page Limiter - Settings</h2>
             <hr />
 
-            <h3>Add Group</h3>
-            <NewGroup onNewGroupAdded={addGroup} />
+            <div>{status}</div>
+            <button className="btn btn-primary" onClick={saveOptions}>
+                Save
+            </button>
+            <button className="btn btn-danger" onClick={clearGroups}>
+                Clear
+            </button>
             <hr />
 
             <h3>Groups</h3>
@@ -75,13 +84,11 @@ const Options = () => {
                     <UrlGroup key={urlGroup.id} urlGroup={urlGroup} onGroupChanged={updateGroup} />
                 ))}
             </div>
-            <div>{status}</div>
-            <button className="btn btn-primary" onClick={saveOptions}>
-                Save
-            </button>
-            <button className="btn btn-danger" onClick={clearGroups}>
-                Clear
-            </button>
+            <div className="text-end">
+                <button className="btn btn-primary" onClick={addGroup}>
+                    Add
+                </button>
+            </div>
         </main>
     );
 };
