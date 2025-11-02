@@ -72,7 +72,7 @@ const Options = () => {
             <hr />
 
             <div>{status}</div>
-            <button className="btn btn-primary" onClick={saveOptions}>
+            <button className="btn btn-primary me-1" onClick={saveOptions}>
                 Save
             </button>
             <button className="btn btn-danger" onClick={clearGroups}>
