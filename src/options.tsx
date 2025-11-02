@@ -5,22 +5,47 @@ import { debounce } from './utils';
 
 type ExportData = {
     urlGroups: UrlGroup[];
+    allowedUrls: string[];
 };
 
 const Options = () => {
     const [status, setStatus] = useState<string>('');
     const [urlGroups, setUrlGroups] = useState<UrlGroup[]>([]);
+    const [allowedUrls, setAllowedUrls] = useState<string[]>([]);
 
     // Load settings from storage on mount
     useEffect(() => {
-        chrome.storage.sync.get({ urlGroups: [] }, (items) => {
-            if (items.urlGroups?.length) {
+        const lookupData: ExportData = {
+            urlGroups: [],
+            allowedUrls: [],
+        };
+
+        chrome.storage.sync.get(lookupData, (items) => {
+            const data = items as Partial<ExportData>;
+
+            if (data.urlGroups?.length) {
                 setUrlGroups(items.urlGroups);
             } else {
                 addGroup();
             }
+
+            if (data.allowedUrls) {
+                setAllowedUrls(data.allowedUrls);
+            }
         });
     }, []);
+
+    const saveSettings = debounce((data: ExportData) => {
+        // Saves options to chrome.storage.sync.
+        chrome.storage.sync.set(cleanData(data), () => {
+            // Update status to let user know options were saved.
+            setStatus('Options saved.');
+            const id = setTimeout(() => {
+                setStatus('');
+            }, 1000);
+            return () => clearTimeout(id);
+        });
+    }, 1000);
 
     const addGroup = () => {
         const newGroups = [...urlGroups];
@@ -31,7 +56,7 @@ const Options = () => {
             urls: [],
             history: {},
         });
-        setUrlGroups(newGroups);
+        saveGroups(newGroups);
     };
 
     const updateGroup = (updatedUrlGroup: UrlGroup) => {
@@ -43,33 +68,31 @@ const Options = () => {
 
         const newUrlGroups = [...urlGroups];
         newUrlGroups[index] = updatedUrlGroup;
-        setUrlGroups(newUrlGroups);
         saveGroups(newUrlGroups);
     };
 
     const deleteGroup = (id: string) => {
         const newUrlGroups = urlGroups.filter((group) => group.id !== id);
-        setUrlGroups(newUrlGroups);
         saveGroups(newUrlGroups);
     };
 
-    const saveGroups = debounce((urlGroups: UrlGroup[]) => {
-        // Filter out any empty url patterns
-        const cleanedUrlGroups = urlGroups.map((urlGroup) => ({
-            ...urlGroup,
-            urls: urlGroup.urls.filter(Boolean),
-        }));
+    const saveGroups = (newUrlGroups: UrlGroup[]) => {
+        setUrlGroups(newUrlGroups);
+        saveSettings({ urlGroups: newUrlGroups, allowedUrls });
+    };
 
-        // Saves options to chrome.storage.sync.
-        chrome.storage.sync.set({ urlGroups: cleanedUrlGroups }, () => {
-            // Update status to let user know options were saved.
-            setStatus('Options saved.');
-            const id = setTimeout(() => {
-                setStatus('');
-            }, 1000);
-            return () => clearTimeout(id);
-        });
-    }, 1000);
+    const cleanData = (data: ExportData): ExportData => {
+        return {
+            // Filter out empty URLs
+            urlGroups: data.urlGroups.map((urlGroup) => ({
+                ...urlGroup,
+                urls: urlGroup.urls.filter(Boolean),
+            })),
+
+            // Filter out empty URLs
+            allowedUrls: data.allowedUrls.filter(Boolean),
+        };
+    };
 
     const clearGroups = () => {
         chrome.storage.sync.set({ urlGroups: [] }, () => {
@@ -103,7 +126,6 @@ const Options = () => {
         URL.revokeObjectURL(url);
     };
 
-    // Usage with async/await:
     const importData = async () => {
         try {
             const data = await new Promise<ExportData>((resolve, reject) => {
@@ -132,10 +154,19 @@ const Options = () => {
             });
 
             setUrlGroups(data.urlGroups);
-            saveGroups(data.urlGroups);
+            setAllowedUrls(data.allowedUrls);
+            saveSettings(data);
         } catch (error) {
             console.error('Import failed:', error);
         }
+    };
+
+    const updateAllowedUrls: React.ChangeEventHandler<HTMLTextAreaElement> = (event) => {
+        const newAllowedUrls = event.currentTarget.value
+            .split('\n')
+            .map((pattern) => pattern.trim());
+        setAllowedUrls(newAllowedUrls);
+        saveSettings({ urlGroups, allowedUrls: newAllowedUrls });
     };
 
     return (
@@ -144,7 +175,10 @@ const Options = () => {
             <hr />
 
             <div>{status}</div>
-            <button className="btn btn-primary me-1" onClick={() => saveGroups(urlGroups)}>
+            <button
+                className="btn btn-primary me-1"
+                onClick={() => saveSettings({ urlGroups, allowedUrls })}
+            >
                 Save
             </button>
             <button className="btn btn-danger me-1" onClick={clearGroups}>
@@ -157,6 +191,15 @@ const Options = () => {
                 Import
             </button>
             <hr />
+
+            <h3>Allow List</h3>
+            <textarea
+                id="new-group-name-input"
+                className="form-control"
+                placeholder="allowed.page-to-limit.com"
+                value={allowedUrls.join('\n')}
+                onChange={updateAllowedUrls}
+            />
 
             <h3>Groups</h3>
             <div>
