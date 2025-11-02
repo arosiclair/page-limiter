@@ -60,7 +60,9 @@ export default function UrlGroup({ urlGroup, onGroupChanged }: UrlGroupProps) {
                     onChange={(event) =>
                         onGroupChanged({
                             ...urlGroup,
-                            urls: event.currentTarget.value.split('\n'),
+                            urls: event.currentTarget.value
+                                .split('\n')
+                                .map((pattern) => pattern.trim()),
                         })
                     }
                 ></textarea>
