@@ -28,7 +28,7 @@ export default function UrlGroup({ urlGroup, onGroupChanged }: UrlGroupProps) {
             </div>
             <div className="mb-2">
                 <label htmlFor="new-group-timelimit-input" className="form-label">
-                    Timelimit
+                    Timelimit (seconds)
                 </label>
                 <input
                     id="new-group-timelimit-input"
@@ -53,7 +53,7 @@ export default function UrlGroup({ urlGroup, onGroupChanged }: UrlGroupProps) {
                     id="new-group-url-input"
                     className="form-control"
                     name="new-urls"
-                    placeholder="URL patterns"
+                    placeholder="page-to-limit.com"
                     value={urlGroup.urls.join('\n')}
                     onChange={(event) =>
                         onGroupChanged({

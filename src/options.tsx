@@ -22,8 +22,8 @@ const Options = () => {
         const newGroups = [...urlGroups];
         newGroups.push({
             id: crypto.randomUUID(),
-            name: '',
-            timelimitSeconds: 0,
+            name: `Group ${newGroups.length + 1}`,
+            timelimitSeconds: 600,
             urls: [],
             history: {},
         });
