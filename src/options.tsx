@@ -26,6 +26,17 @@ const Options = () => {
         setUrlGroups(newGroups);
     };
 
+    const updateGroup = (updatedUrlGroup: UrlGroup) => {
+        const index = urlGroups.findIndex((urlGroup) => urlGroup.id === updatedUrlGroup.id);
+        if (!index) {
+            console.warn("Couldn't update urlGroup", { id: updatedUrlGroup.id });
+        }
+
+        const newUrlGroups = [...urlGroups];
+        newUrlGroups[index] = updatedUrlGroup;
+        setUrlGroups(newUrlGroups);
+    };
+
     const saveOptions = () => {
         // Saves options to chrome.storage.sync.
         chrome.storage.sync.set({ urlGroups }, () => {
@@ -61,7 +72,7 @@ const Options = () => {
             <h3>Groups</h3>
             <div>
                 {urlGroups.map((urlGroup) => (
-                    <UrlGroup key={urlGroup.id} urlGroup={urlGroup} />
+                    <UrlGroup key={urlGroup.id} urlGroup={urlGroup} onGroupChanged={updateGroup} />
                 ))}
             </div>
             <div>{status}</div>
