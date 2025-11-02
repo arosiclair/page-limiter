@@ -22,7 +22,13 @@ export type PageVisitedEventResult = {
 async function onPageVisited(message: PageVisitedMessage): Promise<PageVisitedEventResult> {
     console.log('Page visited', { message });
     const currentURL = message.url;
-    const { urlGroups } = await getSettings();
+    const { urlGroups, allowedUrls } = await getSettings();
+
+    const allowedUrl = findMatchingAllowedUrl(allowedUrls ?? [], currentURL);
+    if (allowedUrl) {
+        console.log('Current page is allowed', { allowedUrl, currentURL });
+        return { didMatch: false, secondsLeft: 0 };
+    }
 
     if (!urlGroups) {
         console.log('No urlGroups set', { currentURL });
@@ -107,14 +113,18 @@ function setURLGroups(urlGroups: UrlGroup[]) {
     });
 }
 
-function findMatchingGroup(urlGroups: UrlGroup[], currentURL: string) {
+function findMatchingGroup(urlGroups: UrlGroup[], currentUrl: string) {
     for (const urlGroup of urlGroups) {
         for (const url of urlGroup.urls) {
-            if (!RegExp(url).test(currentURL)) {
+            if (!RegExp(url).test(currentUrl)) {
                 continue;
             }
 
             return urlGroup;
         }
     }
+}
+
+function findMatchingAllowedUrl(allowedUrls: string[], currentUrl: string) {
+    return allowedUrls.find((allowedUrl) => RegExp(allowedUrl).test(currentUrl));
 }
