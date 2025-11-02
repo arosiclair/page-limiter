@@ -92,8 +92,8 @@ const Options = () => {
                     <UrlGroup
                         key={urlGroup.id}
                         urlGroup={urlGroup}
-                        onGroupChanged={updateGroup}
-                        onGroupDeleted={deleteGroup}
+                        onChange={updateGroup}
+                        onDelete={deleteGroup}
                     />
                 ))}
             </div>
