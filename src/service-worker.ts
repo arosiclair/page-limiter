@@ -92,7 +92,13 @@ async function onPageLeft(message: PageLeftMessage) {
         return;
     }
 
-    todaysHistory[todaysHistory.length - 1].end = new Date().toISOString();
+    const lastHistoryEntry = todaysHistory[todaysHistory.length - 1];
+    if (lastHistoryEntry.end) {
+        console.log('Last history entry is already finished', { matchingGroup });
+        return;
+    }
+
+    lastHistoryEntry.end = new Date().toISOString();
     await setURLGroups(urlGroups);
     console.log('history entry finished', { matchingGroup });
 }
