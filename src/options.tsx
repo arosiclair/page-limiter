@@ -217,7 +217,7 @@ const Options = () => {
             <h3>Allow List</h3>
             <textarea
                 id="new-group-name-input"
-                className="form-control"
+                className="form-control mb-4"
                 placeholder="page-to-limit.com/subpage-to-allow"
                 value={allowedUrls.join('\n')}
                 onChange={updateAllowedUrls}
