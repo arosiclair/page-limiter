@@ -62,6 +62,37 @@ const Options = () => {
         saveGroups(newUrlGroups);
     };
 
+    const updateGroupIndex = (id: string, newIndex: number) => {
+        // Clamp the new index
+        newIndex = Math.max(0, Math.min(newIndex, urlGroups.length - 1));
+
+        const oldIndex = urlGroups.findIndex((urlGroup) => urlGroup.id === id);
+        if (oldIndex === -1) {
+            console.warn("Couldn't update urlGroup index", { id });
+            return;
+        }
+
+        if (oldIndex === newIndex) {
+            return;
+        }
+
+        const isIncreasing = newIndex > oldIndex;
+
+        const newUrlGroups = [
+            ...urlGroups.slice(0, newIndex).filter((urlGroup) => urlGroup.id !== id),
+        ];
+        if (isIncreasing) {
+            newUrlGroups.push(urlGroups[newIndex], urlGroups[oldIndex]);
+        } else {
+            newUrlGroups.push(urlGroups[oldIndex], urlGroups[newIndex]);
+        }
+        newUrlGroups.push(
+            ...urlGroups.slice(newIndex + 1).filter((urlGroup) => urlGroup.id !== id)
+        );
+
+        saveGroups(newUrlGroups);
+    };
+
     const deleteGroup = (id: string) => {
         const newUrlGroups = urlGroups.filter((group) => group.id !== id);
         saveGroups(newUrlGroups);
@@ -194,11 +225,13 @@ const Options = () => {
 
             <h3>Groups</h3>
             <div>
-                {urlGroups.map((urlGroup) => (
+                {urlGroups.map((urlGroup, index) => (
                     <UrlGroup
                         key={urlGroup.id}
+                        index={index}
                         urlGroup={urlGroup}
                         onChange={updateGroup}
+                        onIndexChange={updateGroupIndex}
                         onDelete={deleteGroup}
                     />
                 ))}

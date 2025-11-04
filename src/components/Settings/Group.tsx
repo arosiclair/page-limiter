@@ -2,15 +2,38 @@ import React from 'react';
 import { getTimeLeft, getTimeUsed } from '../../url-groups';
 
 type UrlGroupProps = {
+    index: number;
     urlGroup: UrlGroup;
     onChange: (updatedUrlGroup: UrlGroup) => void;
+    onIndexChange: (id: string, newIndex: number) => void;
     onDelete: (id: string) => void;
 };
 
-export default function UrlGroup({ urlGroup, onChange, onDelete }: UrlGroupProps) {
+export default function UrlGroup({
+    index,
+    urlGroup,
+    onChange,
+    onIndexChange,
+    onDelete,
+}: UrlGroupProps) {
     return (
         <div className="mb-4">
             <div className="d-flex">
+                <div className="me-2" style={{ width: 75 }}>
+                    <label htmlFor="new-group-order-input" className="form-label">
+                        Order
+                    </label>
+                    <input
+                        id="new-group-order-input"
+                        className="form-control"
+                        type="number"
+                        placeholder="Name"
+                        value={index + 1}
+                        onChange={(event) =>
+                            onIndexChange(urlGroup.id, Number(event.currentTarget.value) - 1)
+                        }
+                    />
+                </div>
                 <div className="flex-grow-1 me-2">
                     <label htmlFor="new-group-name-input" className="form-label">
                         Group name
