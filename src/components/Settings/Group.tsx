@@ -20,11 +20,11 @@ export default function UrlGroup({
         <div className="mb-4">
             <div className="d-flex">
                 <div className="me-2" style={{ width: 75 }}>
-                    <label htmlFor="new-group-order-input" className="form-label">
+                    <label htmlFor={`${urlGroup.id}-group-order-input`} className="form-label">
                         Order
                     </label>
                     <input
-                        id="new-group-order-input"
+                        id={`${urlGroup.id}-group-order-input`}
                         className="form-control"
                         type="number"
                         placeholder="Name"
@@ -35,11 +35,11 @@ export default function UrlGroup({
                     />
                 </div>
                 <div className="flex-grow-1 me-2">
-                    <label htmlFor="new-group-name-input" className="form-label">
+                    <label htmlFor={`${urlGroup.id}-group-name-input`} className="form-label">
                         Group name
                     </label>
                     <input
-                        id="new-group-name-input"
+                        id={`${urlGroup.id}-group-name-input`}
                         className="form-control"
                         type="text"
                         placeholder="Name"
@@ -53,11 +53,11 @@ export default function UrlGroup({
                     />
                 </div>
                 <div className="mb-2">
-                    <label htmlFor="new-group-timelimit-input" className="form-label">
+                    <label htmlFor={`${urlGroup.id}-group-timelimit-input`} className="form-label">
                         Timelimit (seconds)
                     </label>
                     <input
-                        id="new-group-timelimit-input"
+                        id={`${urlGroup.id}-group-timelimit-input`}
                         className="form-control"
                         type="number"
                         placeholder="Timelimit (minutes)"
@@ -73,11 +73,11 @@ export default function UrlGroup({
             </div>
 
             <div className="mb-2">
-                <label htmlFor="new-group-url-input" className="form-label">
+                <label htmlFor={`${urlGroup.id}-group-patterns-input`} className="form-label">
                     URL patterns
                 </label>
                 <textarea
-                    id="new-group-url-input"
+                    id={`${urlGroup.id}-group-patterns-input`}
                     className="form-control"
                     name="new-urls"
                     placeholder="page-to-limit.com"
