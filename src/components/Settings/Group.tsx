@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { getTimeLeft, getTimeUsed } from '../../url-groups';
 
 type UrlGroupProps = {
@@ -16,8 +16,20 @@ export default function UrlGroup({
     onIndexChange,
     onDelete,
 }: UrlGroupProps) {
+    const [newIndex, setNewIndex] = useState<string | undefined>(undefined);
+    const value = newIndex !== undefined ? newIndex : index + 1;
+
+    const updateOrder = () => {
+        if (newIndex === undefined) {
+            return;
+        }
+
+        onIndexChange(urlGroup.id, Number(newIndex) - 1);
+        setNewIndex(undefined);
+    };
+
     return (
-        <div className="mb-4">
+        <div className="mb-5">
             <div className="d-flex">
                 <div className="me-2" style={{ width: 75 }}>
                     <label htmlFor={`${urlGroup.id}-group-order-input`} className="form-label">
@@ -27,11 +39,10 @@ export default function UrlGroup({
                         id={`${urlGroup.id}-group-order-input`}
                         className="form-control"
                         type="number"
-                        placeholder="Name"
-                        value={index + 1}
-                        onChange={(event) =>
-                            onIndexChange(urlGroup.id, Number(event.currentTarget.value) - 1)
-                        }
+                        value={value}
+                        onChange={(event) => setNewIndex(event.currentTarget.value)}
+                        onBlur={() => updateOrder()}
+                        onKeyUp={(event) => event.key === 'Enter' && updateOrder()}
                     />
                 </div>
                 <div className="flex-grow-1 me-2">
@@ -103,13 +114,13 @@ export default function UrlGroup({
                 </button>
             </div>
 
-            <pre>
+            {/* <pre>
                 <div>DEBUG</div>
                 <div>ID: {urlGroup.id}</div>
                 <div>Name: {urlGroup.name}</div>
                 <div>Timelimit: {urlGroup.timelimitSeconds}</div>
                 <div>Urls: {JSON.stringify(urlGroup.urls)}</div>
-            </pre>
+            </pre> */}
         </div>
     );
 }
