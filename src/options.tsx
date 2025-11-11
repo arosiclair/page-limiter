@@ -3,9 +3,11 @@ import { createRoot } from 'react-dom/client';
 import UrlGroup from './components/Settings/Group';
 import { debounce } from './utils';
 import storageLookupData from './storage-lookup-data';
+import SaveIndicator from './components/Settings/SaveIndicator';
 
 const Options = () => {
     const [status, setStatus] = useState<string>('');
+    const [isSaving, setIsSaving] = useState(false);
     const [urlGroups, setUrlGroups] = useState<UrlGroup[]>([]);
     const [allowedUrls, setAllowedUrls] = useState<string[]>([]);
 
@@ -30,9 +32,9 @@ const Options = () => {
         // Saves options to chrome.storage.sync.
         chrome.storage.sync.set(cleanData(data), () => {
             // Update status to let user know options were saved.
-            setStatus('Options saved.');
+            setIsSaving(true);
             const id = setTimeout(() => {
-                setStatus('');
+                setIsSaving(false);
             }, 1000);
             return () => clearTimeout(id);
         });
@@ -193,7 +195,11 @@ const Options = () => {
 
     return (
         <main className="px-3 py-2">
-            <h2>Page Limiter - Settings</h2>
+            <div className="d-flex justify-content-between align-items-center">
+                <h2 style={{ marginBottom: 0 }}>Page Limiter - Settings</h2>
+                <SaveIndicator isLoading={isSaving} />
+            </div>
+
             <hr />
 
             <div>{status}</div>
