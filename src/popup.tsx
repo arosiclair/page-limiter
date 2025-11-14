@@ -1,48 +1,46 @@
 import React, { useEffect, useState } from 'react';
 import { createRoot } from 'react-dom/client';
+import { getSettings } from './settings';
+import { findMatchingAllowedURL, findMatchingGroup, getTimeLeft } from './url-groups';
 
 const Popup = () => {
-    const [count, setCount] = useState(0);
-    const [currentURL, setCurrentURL] = useState<string>();
-
-    useEffect(() => {
-        chrome.action.setBadgeText({ text: count.toString() });
-    }, [count]);
+    const [currentURL, setCurrentURL] = useState<string>('');
+    const [matchingAllowedUrlPattern, setMatchingAllowedUrlPattern] = useState<string>('');
+    const [matchingGroupName, setMatchingGroupName] = useState<string>('');
+    const [secondsLeft, setSecondsLeft] = useState<number>(0);
 
     useEffect(() => {
         chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {
-            setCurrentURL(tabs[0].url);
+            setCurrentURL(tabs[0].url ?? '');
         });
     }, []);
 
-    const changeBackground = () => {
-        chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {
-            const tab = tabs[0];
-            if (tab.id) {
-                chrome.tabs.sendMessage(
-                    tab.id,
-                    {
-                        color: '#555555',
-                    },
-                    (msg) => {
-                        console.log('result message:', msg);
-                    }
-                );
+    useEffect(() => {
+        (async () => {
+            const { allowedUrls, urlGroups } = await getSettings();
+
+            const allowedURL = findMatchingAllowedURL(allowedUrls, currentURL);
+            if (allowedURL) {
+                setMatchingAllowedUrlPattern(allowedURL);
             }
-        });
-    };
+
+            const matchingGroup = findMatchingGroup(urlGroups, currentURL);
+            if (matchingGroup) {
+                setMatchingGroupName(matchingGroup.name);
+                setSecondsLeft(getTimeLeft(matchingGroup));
+            }
+        })();
+    }, [currentURL]);
 
     return (
-        <>
-            <ul style={{ minWidth: '700px' }}>
+        <pre>
+            <ul style={{ minWidth: '500px' }}>
                 <li>Current URL: {currentURL}</li>
-                <li>Current Time: {new Date().toLocaleTimeString()}</li>
+                <li>Matching allowed: {matchingAllowedUrlPattern}</li>
+                <li>Matching group name: {matchingGroupName}</li>
+                <li>Time left: {secondsLeft} seconds</li>
             </ul>
-            <button onClick={() => setCount(count + 1)} style={{ marginRight: '5px' }}>
-                count up
-            </button>
-            <button onClick={changeBackground}>change background</button>
-        </>
+        </pre>
     );
 };
 

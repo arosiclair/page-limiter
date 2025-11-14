@@ -34,3 +34,27 @@ export function getCurrentDate(): string {
     const today = new Date(now.getTime() - offset * 60 * 1000);
     return today.toISOString().split('T')[0];
 }
+
+export function findMatchingGroup(urlGroups: UrlGroup[] | undefined, currentUrl: string) {
+    if (!urlGroups || !currentUrl) {
+        return undefined;
+    }
+
+    for (const urlGroup of urlGroups) {
+        for (const url of urlGroup.urls) {
+            if (!RegExp(url).test(currentUrl)) {
+                continue;
+            }
+
+            return urlGroup;
+        }
+    }
+}
+
+export function findMatchingAllowedURL(allowedUrls: string[] | undefined, currentUrl: string) {
+    if (!allowedUrls || !currentUrl) {
+        return undefined;
+    }
+
+    return allowedUrls.find((allowedUrl) => RegExp(allowedUrl).test(currentUrl));
+}

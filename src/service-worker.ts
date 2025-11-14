@@ -1,5 +1,10 @@
-import storageLookupData from './storage-lookup-data';
-import { getCurrentDate, getTotalSeconds } from './url-groups';
+import { getSettings, setURLGroups } from './settings';
+import {
+    findMatchingAllowedURL,
+    findMatchingGroup,
+    getCurrentDate,
+    getTotalSeconds,
+} from './url-groups';
 
 chrome.runtime.onMessage.addListener((message: ExtensionMessage, sender, sendResponse) => {
     switch (message.event) {
@@ -24,7 +29,7 @@ async function onPageVisited(message: PageVisitedMessage): Promise<PageVisitedEv
     const currentURL = message.url;
     const { urlGroups, allowedUrls } = await getSettings();
 
-    const allowedUrl = findMatchingAllowedUrl(allowedUrls ?? [], currentURL);
+    const allowedUrl = findMatchingAllowedURL(allowedUrls ?? [], currentURL);
     if (allowedUrl) {
         console.log('Current page is allowed', { allowedUrl, currentURL });
         return { didMatch: false, secondsLeft: 0 };
@@ -101,36 +106,4 @@ async function onPageLeft(message: PageLeftMessage) {
     lastHistoryEntry.end = new Date().toISOString();
     await setURLGroups(urlGroups);
     console.log('history entry finished', { matchingGroup });
-}
-
-function getSettings() {
-    return new Promise<Partial<ExportData>>((resolve) => {
-        chrome.storage.sync.get(storageLookupData, (items) => {
-            resolve(items as ExportData);
-        });
-    });
-}
-
-function setURLGroups(urlGroups: UrlGroup[]) {
-    return new Promise<void>((resolve) => {
-        chrome.storage.sync.set({ urlGroups }, () => {
-            resolve();
-        });
-    });
-}
-
-function findMatchingGroup(urlGroups: UrlGroup[], currentUrl: string) {
-    for (const urlGroup of urlGroups) {
-        for (const url of urlGroup.urls) {
-            if (!RegExp(url).test(currentUrl)) {
-                continue;
-            }
-
-            return urlGroup;
-        }
-    }
-}
-
-function findMatchingAllowedUrl(allowedUrls: string[], currentUrl: string) {
-    return allowedUrls.find((allowedUrl) => RegExp(allowedUrl).test(currentUrl));
 }
