@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { createRoot } from 'react-dom/client';
 import { getSettings } from './settings';
-import { findMatchingAllowedPattern, findMatchingGroup, getTimeLeft } from './url-groups';
+import { findMatchingPattern, findMatchingGroup, getTimeLeft } from './url-groups';
 
 const Popup = () => {
     const [currentURL, setCurrentURL] = useState<string>('');
@@ -19,7 +19,7 @@ const Popup = () => {
         (async () => {
             const { allowedPatterns, groups } = await getSettings();
 
-            const allowedPattern = findMatchingAllowedPattern(allowedPatterns, currentURL);
+            const allowedPattern = findMatchingPattern(allowedPatterns, currentURL);
             if (allowedPattern) {
                 setMatchingAllowedPattern(allowedPattern);
             }

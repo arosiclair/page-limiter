@@ -51,13 +51,10 @@ export function findMatchingGroup(groups: Group[] | undefined, currentUrl: strin
     }
 }
 
-export function findMatchingAllowedPattern(
-    allowedPatterns: string[] | undefined,
-    currentUrl: string
-) {
-    if (!allowedPatterns || !currentUrl) {
+export function findMatchingPattern(patterns: string[] | undefined, testString: string) {
+    if (!patterns || !testString) {
         return undefined;
     }
 
-    return allowedPatterns.find((pattern) => RegExp(pattern).test(currentUrl));
+    return patterns.find((pattern) => RegExp(pattern).test(testString));
 }
