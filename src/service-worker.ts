@@ -1,6 +1,6 @@
 import { getSettings, setURLGroups } from './settings';
 import {
-    findMatchingAllowedURL,
+    findMatchingAllowedPattern,
     findMatchingGroup,
     getCurrentDate,
     getTotalSeconds,
@@ -27,11 +27,11 @@ export type PageVisitedEventResult = {
 async function onPageVisited(message: PageVisitedMessage): Promise<PageVisitedEventResult> {
     console.log('Page visited', { message });
     const currentURL = message.url;
-    const { urlGroups, allowedUrls } = await getSettings();
+    const { urlGroups, allowedPatterns } = await getSettings();
 
-    const allowedUrl = findMatchingAllowedURL(allowedUrls ?? [], currentURL);
-    if (allowedUrl) {
-        console.log('Current page is allowed', { allowedUrl, currentURL });
+    const allowedPattern = findMatchingAllowedPattern(allowedPatterns ?? [], currentURL);
+    if (allowedPattern) {
+        console.log('Current page is allowed', { allowedPattern, currentURL });
         return { didMatch: false, secondsLeft: 0 };
     }
 

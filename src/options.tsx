@@ -9,7 +9,7 @@ const Options = () => {
     const [status, setStatus] = useState<string>('');
     const [isSaving, setIsSaving] = useState(false);
     const [urlGroups, setUrlGroups] = useState<UrlGroup[]>([]);
-    const [allowedUrls, setAllowedUrls] = useState<string[]>([]);
+    const [allowedPatterns, setAllowedPatterns] = useState<string[]>([]);
 
     // Load settings from storage on mount
     useEffect(() => {
@@ -22,8 +22,8 @@ const Options = () => {
                 addGroup();
             }
 
-            if (data.allowedUrls) {
-                setAllowedUrls(data.allowedUrls);
+            if (data.allowedPatterns) {
+                setAllowedPatterns(data.allowedPatterns);
             }
         });
     }, []);
@@ -102,7 +102,7 @@ const Options = () => {
 
     const saveGroups = (newUrlGroups: UrlGroup[]) => {
         setUrlGroups(newUrlGroups);
-        saveSettings({ urlGroups: newUrlGroups, allowedUrls });
+        saveSettings({ urlGroups: newUrlGroups, allowedPatterns });
     };
 
     const cleanData = (data: ExportData): ExportData => {
@@ -114,7 +114,7 @@ const Options = () => {
             })),
 
             // Filter out empty URLs
-            allowedUrls: data.allowedUrls.filter(Boolean),
+            allowedPatterns: data.allowedPatterns.filter(Boolean),
         };
     };
 
@@ -178,19 +178,19 @@ const Options = () => {
             });
 
             setUrlGroups(data.urlGroups);
-            setAllowedUrls(data.allowedUrls);
+            setAllowedPatterns(data.allowedPatterns);
             saveSettings(data);
         } catch (error) {
             console.error('Import failed:', error);
         }
     };
 
-    const updateAllowedUrls: React.ChangeEventHandler<HTMLTextAreaElement> = (event) => {
-        const newAllowedUrls = event.currentTarget.value
+    const updateAllowedPatterns: React.ChangeEventHandler<HTMLTextAreaElement> = (event) => {
+        const newAllowedPatterns = event.currentTarget.value
             .split('\n')
             .map((pattern) => pattern.trim());
-        setAllowedUrls(newAllowedUrls);
-        saveSettings({ urlGroups, allowedUrls: newAllowedUrls });
+        setAllowedPatterns(newAllowedPatterns);
+        saveSettings({ urlGroups, allowedPatterns: newAllowedPatterns });
     };
 
     return (
@@ -205,7 +205,7 @@ const Options = () => {
             <div>{status}</div>
             <button
                 className="btn btn-primary me-1"
-                onClick={() => saveSettings({ urlGroups, allowedUrls })}
+                onClick={() => saveSettings({ urlGroups, allowedPatterns })}
             >
                 Save
             </button>
@@ -225,8 +225,8 @@ const Options = () => {
                 id="new-group-name-input"
                 className="form-control mb-4"
                 placeholder="page-to-limit.com/subpage-to-allow"
-                value={allowedUrls.join('\n')}
-                onChange={updateAllowedUrls}
+                value={allowedPatterns.join('\n')}
+                onChange={updateAllowedPatterns}
             />
 
             <h3>Groups</h3>

@@ -29,5 +29,5 @@ type PageLeftMessage = ExtensionMessage & {
 
 type ExportData = {
     urlGroups: UrlGroup[];
-    allowedUrls: string[];
+    allowedPatterns: string[];
 };
