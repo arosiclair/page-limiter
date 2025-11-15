@@ -227,7 +227,7 @@ const Options = () => {
                 onChange={updateAllowedPatterns}
             />
 
-            <h3>Groups</h3>
+            <h3>Limited Groups</h3>
             <div>
                 {groups.map((group, index) => (
                     <GroupControl
