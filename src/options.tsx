@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { createRoot } from 'react-dom/client';
-import UrlGroup from './components/Settings/Group';
+import GroupControl from './components/Settings/GroupControl';
 import { debounce } from './utils';
 import storageLookupData from './storage-lookup-data';
 import SaveIndicator from './components/Settings/SaveIndicator';
@@ -230,7 +230,7 @@ const Options = () => {
             <h3>Groups</h3>
             <div>
                 {groups.map((group, index) => (
-                    <UrlGroup
+                    <GroupControl
                         key={group.id}
                         index={index}
                         group={group}

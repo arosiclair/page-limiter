@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { getTimeLeft, getTimeUsed } from '../../url-groups';
 
-type UrlGroupProps = {
+type GroupControlProps = {
     index: number;
     group: Group;
     onChange: (updatedGroup: Group) => void;
@@ -9,13 +9,13 @@ type UrlGroupProps = {
     onDelete: (id: string) => void;
 };
 
-export default function UrlGroup({
+export default function GroupControl({
     index,
     group,
     onChange,
     onIndexChange,
     onDelete,
-}: UrlGroupProps) {
+}: GroupControlProps) {
     const [newIndex, setNewIndex] = useState<string | undefined>(undefined);
     const value = newIndex !== undefined ? newIndex : index + 1;
 
