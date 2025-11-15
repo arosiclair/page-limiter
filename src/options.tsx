@@ -8,7 +8,7 @@ import SaveIndicator from './components/Settings/SaveIndicator';
 const Options = () => {
     const [status, setStatus] = useState<string>('');
     const [isSaving, setIsSaving] = useState(false);
-    const [urlGroups, setUrlGroups] = useState<UrlGroup[]>([]);
+    const [groups, setGroups] = useState<Group[]>([]);
     const [allowedPatterns, setAllowedPatterns] = useState<string[]>([]);
 
     // Load settings from storage on mount
@@ -16,8 +16,8 @@ const Options = () => {
         chrome.storage.sync.get(storageLookupData, (items) => {
             const data = items as Partial<ExportData>;
 
-            if (data.urlGroups?.length) {
-                setUrlGroups(items.urlGroups);
+            if (data.groups?.length) {
+                setGroups(data.groups);
             } else {
                 addGroup();
             }
@@ -41,7 +41,7 @@ const Options = () => {
     }, 1000);
 
     const addGroup = () => {
-        const newGroups = [...urlGroups];
+        const newGroups = [...groups];
         newGroups.push({
             id: crypto.randomUUID(),
             name: `Group ${newGroups.length + 1}`,
@@ -52,23 +52,23 @@ const Options = () => {
         saveGroups(newGroups);
     };
 
-    const updateGroup = (updatedUrlGroup: UrlGroup) => {
-        const index = urlGroups.findIndex((urlGroup) => urlGroup.id === updatedUrlGroup.id);
+    const updateGroup = (updatedGroup: Group) => {
+        const index = groups.findIndex((group) => group.id === updatedGroup.id);
         if (index === -1) {
-            console.warn("Couldn't update urlGroup", { id: updatedUrlGroup.id });
+            console.warn("Couldn't update urlGroup", { id: updatedGroup.id });
             return;
         }
 
-        const newUrlGroups = [...urlGroups];
-        newUrlGroups[index] = updatedUrlGroup;
-        saveGroups(newUrlGroups);
+        const newGroups = [...groups];
+        newGroups[index] = updatedGroup;
+        saveGroups(newGroups);
     };
 
     const updateGroupIndex = (id: string, newIndex: number) => {
         // Clamp the new index
-        newIndex = Math.max(0, Math.min(newIndex, urlGroups.length - 1));
+        newIndex = Math.max(0, Math.min(newIndex, groups.length - 1));
 
-        const oldIndex = urlGroups.findIndex((urlGroup) => urlGroup.id === id);
+        const oldIndex = groups.findIndex((urlGroup) => urlGroup.id === id);
         if (oldIndex === -1) {
             console.warn("Couldn't update urlGroup index", { id });
             return;
@@ -81,34 +81,32 @@ const Options = () => {
         const isIncreasing = newIndex > oldIndex;
 
         const newUrlGroups = [
-            ...urlGroups.slice(0, newIndex).filter((urlGroup) => urlGroup.id !== id),
+            ...groups.slice(0, newIndex).filter((urlGroup) => urlGroup.id !== id),
         ];
         if (isIncreasing) {
-            newUrlGroups.push(urlGroups[newIndex], urlGroups[oldIndex]);
+            newUrlGroups.push(groups[newIndex], groups[oldIndex]);
         } else {
-            newUrlGroups.push(urlGroups[oldIndex], urlGroups[newIndex]);
+            newUrlGroups.push(groups[oldIndex], groups[newIndex]);
         }
-        newUrlGroups.push(
-            ...urlGroups.slice(newIndex + 1).filter((urlGroup) => urlGroup.id !== id)
-        );
+        newUrlGroups.push(...groups.slice(newIndex + 1).filter((urlGroup) => urlGroup.id !== id));
 
         saveGroups(newUrlGroups);
     };
 
     const deleteGroup = (id: string) => {
-        const newUrlGroups = urlGroups.filter((group) => group.id !== id);
+        const newUrlGroups = groups.filter((group) => group.id !== id);
         saveGroups(newUrlGroups);
     };
 
-    const saveGroups = (newUrlGroups: UrlGroup[]) => {
-        setUrlGroups(newUrlGroups);
-        saveSettings({ urlGroups: newUrlGroups, allowedPatterns });
+    const saveGroups = (newGroups: Group[]) => {
+        setGroups(newGroups);
+        saveSettings({ groups: newGroups, allowedPatterns });
     };
 
     const cleanData = (data: ExportData): ExportData => {
         return {
             // Filter out empty URLs
-            urlGroups: data.urlGroups.map((urlGroup) => ({
+            groups: data.groups.map((urlGroup) => ({
                 ...urlGroup,
                 patterns: urlGroup.patterns.filter(Boolean),
             })),
@@ -132,7 +130,7 @@ const Options = () => {
     const exportData = () => {
         const timestamp = new Date().toISOString();
         const filename = `page-limiter-export-${timestamp}.json`;
-        const data = { urlGroups };
+        const data = { urlGroups: groups };
 
         // Create a Blob from the JSON string
         const blob = new Blob([JSON.stringify(data)], { type: 'application/json' });
@@ -177,7 +175,7 @@ const Options = () => {
                 input.click();
             });
 
-            setUrlGroups(data.urlGroups);
+            setGroups(data.groups);
             setAllowedPatterns(data.allowedPatterns);
             saveSettings(data);
         } catch (error) {
@@ -190,7 +188,7 @@ const Options = () => {
             .split('\n')
             .map((pattern) => pattern.trim());
         setAllowedPatterns(newAllowedPatterns);
-        saveSettings({ urlGroups, allowedPatterns: newAllowedPatterns });
+        saveSettings({ groups, allowedPatterns: newAllowedPatterns });
     };
 
     return (
@@ -205,7 +203,7 @@ const Options = () => {
             <div>{status}</div>
             <button
                 className="btn btn-primary me-1"
-                onClick={() => saveSettings({ urlGroups, allowedPatterns })}
+                onClick={() => saveSettings({ groups, allowedPatterns })}
             >
                 Save
             </button>
@@ -231,11 +229,11 @@ const Options = () => {
 
             <h3>Groups</h3>
             <div>
-                {urlGroups.map((urlGroup, index) => (
+                {groups.map((group, index) => (
                     <UrlGroup
-                        key={urlGroup.id}
+                        key={group.id}
                         index={index}
-                        urlGroup={urlGroup}
+                        group={group}
                         onChange={updateGroup}
                         onIndexChange={updateGroupIndex}
                         onDelete={deleteGroup}

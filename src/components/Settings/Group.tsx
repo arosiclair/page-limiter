@@ -3,15 +3,15 @@ import { getTimeLeft, getTimeUsed } from '../../url-groups';
 
 type UrlGroupProps = {
     index: number;
-    urlGroup: UrlGroup;
-    onChange: (updatedUrlGroup: UrlGroup) => void;
+    group: Group;
+    onChange: (updatedGroup: Group) => void;
     onIndexChange: (id: string, newIndex: number) => void;
     onDelete: (id: string) => void;
 };
 
 export default function UrlGroup({
     index,
-    urlGroup,
+    group,
     onChange,
     onIndexChange,
     onDelete,
@@ -24,7 +24,7 @@ export default function UrlGroup({
             return;
         }
 
-        onIndexChange(urlGroup.id, Number(newIndex) - 1);
+        onIndexChange(group.id, Number(newIndex) - 1);
         setNewIndex(undefined);
     };
 
@@ -32,11 +32,11 @@ export default function UrlGroup({
         <div className="mb-5">
             <div className="d-flex">
                 <div className="me-2" style={{ width: 75 }}>
-                    <label htmlFor={`${urlGroup.id}-group-order-input`} className="form-label">
+                    <label htmlFor={`${group.id}-group-order-input`} className="form-label">
                         Order
                     </label>
                     <input
-                        id={`${urlGroup.id}-group-order-input`}
+                        id={`${group.id}-group-order-input`}
                         className="form-control"
                         type="number"
                         value={value}
@@ -46,36 +46,36 @@ export default function UrlGroup({
                     />
                 </div>
                 <div className="flex-grow-1 me-2">
-                    <label htmlFor={`${urlGroup.id}-group-name-input`} className="form-label">
+                    <label htmlFor={`${group.id}-group-name-input`} className="form-label">
                         Group name
                     </label>
                     <input
-                        id={`${urlGroup.id}-group-name-input`}
+                        id={`${group.id}-group-name-input`}
                         className="form-control"
                         type="text"
                         placeholder="Name"
-                        value={urlGroup.name}
+                        value={group.name}
                         onChange={(event) =>
                             onChange({
-                                ...urlGroup,
+                                ...group,
                                 name: event.currentTarget.value,
                             })
                         }
                     />
                 </div>
                 <div className="mb-2">
-                    <label htmlFor={`${urlGroup.id}-group-timelimit-input`} className="form-label">
+                    <label htmlFor={`${group.id}-group-timelimit-input`} className="form-label">
                         Timelimit (seconds)
                     </label>
                     <input
-                        id={`${urlGroup.id}-group-timelimit-input`}
+                        id={`${group.id}-group-timelimit-input`}
                         className="form-control"
                         type="number"
                         placeholder="Timelimit (minutes)"
-                        value={urlGroup.timelimitSeconds}
+                        value={group.timelimitSeconds}
                         onChange={(event) =>
                             onChange({
-                                ...urlGroup,
+                                ...group,
                                 timelimitSeconds: Number(event.currentTarget.value),
                             })
                         }
@@ -84,18 +84,18 @@ export default function UrlGroup({
             </div>
 
             <div className="mb-2">
-                <label htmlFor={`${urlGroup.id}-group-patterns-input`} className="form-label">
+                <label htmlFor={`${group.id}-group-patterns-input`} className="form-label">
                     URL patterns
                 </label>
                 <textarea
-                    id={`${urlGroup.id}-group-patterns-input`}
+                    id={`${group.id}-group-patterns-input`}
                     className="form-control"
                     name="new-urls"
                     placeholder="page-to-limit.com"
-                    value={urlGroup.patterns.join('\n')}
+                    value={group.patterns.join('\n')}
                     onChange={(event) =>
                         onChange({
-                            ...urlGroup,
+                            ...group,
                             patterns: event.currentTarget.value
                                 .split('\n')
                                 .map((pattern) => pattern.trim()),
@@ -106,10 +106,10 @@ export default function UrlGroup({
 
             <div className="d-flex align-items-center">
                 <span className="flex-grow-1">
-                    Time used: {getTimeUsed(urlGroup)} seconds • Time left: {getTimeLeft(urlGroup)}{' '}
+                    Time used: {getTimeUsed(group)} seconds • Time left: {getTimeLeft(group)}{' '}
                     seconds
                 </span>
-                <button className="btn btn-danger" onClick={() => onDelete(urlGroup.id)}>
+                <button className="btn btn-danger" onClick={() => onDelete(group.id)}>
                     Delete
                 </button>
             </div>

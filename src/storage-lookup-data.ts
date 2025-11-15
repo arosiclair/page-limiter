@@ -1,5 +1,5 @@
 const storageLookupData: ExportData = {
-    urlGroups: [],
+    groups: [],
     allowedPatterns: [],
 };
 

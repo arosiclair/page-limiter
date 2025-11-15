@@ -27,7 +27,7 @@ export type PageVisitedEventResult = {
 async function onPageVisited(message: PageVisitedMessage): Promise<PageVisitedEventResult> {
     console.log('Page visited', { message });
     const currentURL = message.url;
-    const { urlGroups, allowedPatterns } = await getSettings();
+    const { groups, allowedPatterns } = await getSettings();
 
     const allowedPattern = findMatchingAllowedPattern(allowedPatterns ?? [], currentURL);
     if (allowedPattern) {
@@ -35,12 +35,12 @@ async function onPageVisited(message: PageVisitedMessage): Promise<PageVisitedEv
         return { didMatch: false, secondsLeft: 0 };
     }
 
-    if (!urlGroups) {
+    if (!groups) {
         console.log('No urlGroups set', { currentURL });
         return { didMatch: false, secondsLeft: 0 };
     }
 
-    const matchingGroup = findMatchingGroup(urlGroups, currentURL);
+    const matchingGroup = findMatchingGroup(groups, currentURL);
     const didMatch = !!matchingGroup;
     if (!didMatch) {
         console.log("Current page doesn't match", { currentURL });
@@ -70,7 +70,7 @@ async function onPageVisited(message: PageVisitedMessage): Promise<PageVisitedEv
         start: new Date().toISOString(),
     });
 
-    await setURLGroups(urlGroups);
+    await setURLGroups(groups);
     console.log('history entry started', { matchingGroup });
 
     return { didMatch, secondsLeft };
@@ -78,14 +78,14 @@ async function onPageVisited(message: PageVisitedMessage): Promise<PageVisitedEv
 
 async function onPageLeft(message: PageLeftMessage) {
     const currentURL = message.url;
-    const { urlGroups } = await getSettings();
+    const { groups } = await getSettings();
 
-    if (!urlGroups) {
+    if (!groups) {
         console.log('No urlGroups set', { currentURL });
         return;
     }
 
-    const matchingGroup = findMatchingGroup(urlGroups, currentURL);
+    const matchingGroup = findMatchingGroup(groups, currentURL);
     if (!matchingGroup) {
         console.log("Current page doesn't match", { currentURL });
         return;
@@ -104,6 +104,6 @@ async function onPageLeft(message: PageLeftMessage) {
     }
 
     lastHistoryEntry.end = new Date().toISOString();
-    await setURLGroups(urlGroups);
+    await setURLGroups(groups);
     console.log('history entry finished', { matchingGroup });
 }

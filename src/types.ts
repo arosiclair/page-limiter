@@ -1,4 +1,4 @@
-type UrlGroup = {
+type Group = {
     id: string;
     name: string;
     timelimitSeconds: number;
@@ -28,6 +28,6 @@ type PageLeftMessage = ExtensionMessage & {
 };
 
 type ExportData = {
-    urlGroups: UrlGroup[];
+    groups: Group[];
     allowedPatterns: string[];
 };

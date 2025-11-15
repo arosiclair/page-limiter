@@ -1,16 +1,16 @@
 import { differenceInSeconds } from 'date-fns';
 
-export function getTimeLeft(urlGroup: UrlGroup) {
-    let todaysHistory = urlGroup.history[getCurrentDate()];
+export function getTimeLeft(group: Group) {
+    let todaysHistory = group.history[getCurrentDate()];
     if (!todaysHistory) {
-        return urlGroup.timelimitSeconds;
+        return group.timelimitSeconds;
     }
 
-    return Math.max(urlGroup.timelimitSeconds - getTotalSeconds(todaysHistory), 0);
+    return Math.max(group.timelimitSeconds - getTotalSeconds(todaysHistory), 0);
 }
 
-export function getTimeUsed(urlGroup: UrlGroup) {
-    return getTotalSeconds(urlGroup.history[getCurrentDate()] ?? []);
+export function getTimeUsed(group: Group) {
+    return getTotalSeconds(group.history[getCurrentDate()] ?? []);
 }
 
 export function getTotalSeconds(history: HistoryEntry[]) {
@@ -35,18 +35,18 @@ export function getCurrentDate(): string {
     return today.toISOString().split('T')[0];
 }
 
-export function findMatchingGroup(urlGroups: UrlGroup[] | undefined, currentUrl: string) {
-    if (!urlGroups || !currentUrl) {
+export function findMatchingGroup(groups: Group[] | undefined, currentUrl: string) {
+    if (!groups || !currentUrl) {
         return undefined;
     }
 
-    for (const urlGroup of urlGroups) {
-        for (const pattern of urlGroup.patterns) {
+    for (const group of groups) {
+        for (const pattern of group.patterns) {
             if (!RegExp(pattern).test(currentUrl)) {
                 continue;
             }
 
-            return urlGroup;
+            return group;
         }
     }
 }

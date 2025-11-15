@@ -8,9 +8,9 @@ export function getSettings() {
     });
 }
 
-export function setURLGroups(urlGroups: UrlGroup[]) {
+export function setURLGroups(groups: Group[]) {
     return new Promise<void>((resolve) => {
-        chrome.storage.sync.set({ urlGroups }, () => {
+        chrome.storage.sync.set({ groups }, () => {
             resolve();
         });
     });

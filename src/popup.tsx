@@ -17,14 +17,14 @@ const Popup = () => {
 
     useEffect(() => {
         (async () => {
-            const { allowedPatterns, urlGroups } = await getSettings();
+            const { allowedPatterns, groups } = await getSettings();
 
             const allowedPattern = findMatchingAllowedPattern(allowedPatterns, currentURL);
             if (allowedPattern) {
                 setMatchingAllowedPattern(allowedPattern);
             }
 
-            const matchingGroup = findMatchingGroup(urlGroups, currentURL);
+            const matchingGroup = findMatchingGroup(groups, currentURL);
             if (matchingGroup) {
                 setMatchingGroupName(matchingGroup.name);
                 setSecondsLeft(getTimeLeft(matchingGroup));
