@@ -41,8 +41,8 @@ export function findMatchingGroup(urlGroups: UrlGroup[] | undefined, currentUrl:
     }
 
     for (const urlGroup of urlGroups) {
-        for (const url of urlGroup.urls) {
-            if (!RegExp(url).test(currentUrl)) {
+        for (const pattern of urlGroup.patterns) {
+            if (!RegExp(pattern).test(currentUrl)) {
                 continue;
             }
 

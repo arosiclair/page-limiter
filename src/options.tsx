@@ -46,7 +46,7 @@ const Options = () => {
             id: crypto.randomUUID(),
             name: `Group ${newGroups.length + 1}`,
             timelimitSeconds: 600,
-            urls: [],
+            patterns: [],
             history: {},
         });
         saveGroups(newGroups);
@@ -110,7 +110,7 @@ const Options = () => {
             // Filter out empty URLs
             urlGroups: data.urlGroups.map((urlGroup) => ({
                 ...urlGroup,
-                urls: urlGroup.urls.filter(Boolean),
+                patterns: urlGroup.patterns.filter(Boolean),
             })),
 
             // Filter out empty URLs

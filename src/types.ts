@@ -2,7 +2,7 @@ type UrlGroup = {
     id: string;
     name: string;
     timelimitSeconds: number;
-    urls: string[];
+    patterns: string[];
     history: {
         [date: string]: HistoryEntry[] | undefined;
     };

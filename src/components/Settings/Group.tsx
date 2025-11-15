@@ -92,11 +92,11 @@ export default function UrlGroup({
                     className="form-control"
                     name="new-urls"
                     placeholder="page-to-limit.com"
-                    value={urlGroup.urls.join('\n')}
+                    value={urlGroup.patterns.join('\n')}
                     onChange={(event) =>
                         onChange({
                             ...urlGroup,
-                            urls: event.currentTarget.value
+                            patterns: event.currentTarget.value
                                 .split('\n')
                                 .map((pattern) => pattern.trim()),
                         })
