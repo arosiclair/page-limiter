@@ -1,6 +1,10 @@
 import { differenceInSeconds } from 'date-fns';
 
-export function getTimeLeft(group: Group) {
+export function getTimeLeft(group: Group | undefined) {
+    if (!group) {
+        return 0;
+    }
+
     let todaysHistory = group.history[getCurrentDate()];
     if (!todaysHistory) {
         return group.timelimitSeconds;
