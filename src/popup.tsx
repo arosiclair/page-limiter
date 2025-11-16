@@ -7,7 +7,7 @@ const Popup = () => {
     const [currentURL, setCurrentURL] = useState<string>('');
     const [matchingAllowedPattern, setMatchingAllowedPattern] = useState<string>('');
     const [matchingGroupName, setMatchingGroupName] = useState<string>('');
-    const [secondsLeft, setSecondsLeft] = useState<number>(0);
+    const [matchingGroupTimeLeft, setMatchingGroupTimeLeft] = useState<number>(0);
 
     useEffect(() => {
         chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {
@@ -18,29 +18,45 @@ const Popup = () => {
     useEffect(() => {
         (async () => {
             const { allowedPatterns, groups } = await getSettings();
-
             const allowedPattern = findMatchingPattern(allowedPatterns, currentURL);
-            if (allowedPattern) {
-                setMatchingAllowedPattern(allowedPattern);
-            }
-
             const matchingGroup = findMatchingGroup(groups, currentURL);
-            if (matchingGroup) {
-                setMatchingGroupName(matchingGroup.name);
-                setSecondsLeft(getTimeLeft(matchingGroup));
-            }
+            setMatchingAllowedPattern(allowedPattern ?? '');
+            setMatchingGroupName(matchingGroup?.name ?? '');
+            setMatchingGroupTimeLeft(getTimeLeft(matchingGroup));
         })();
     }, [currentURL]);
 
+    let status = '';
+    let statusClass = 'ms-2 badge ';
+    let timeLeft;
+    let match;
+    if (matchingAllowedPattern) {
+        status = 'ALLOWED';
+        statusClass += 'text-bg-success';
+        match = matchingAllowedPattern;
+        timeLeft = <InfinityIcon />;
+    } else if (matchingGroupName) {
+        status = 'LIMITED';
+        statusClass += 'text-bg-warning';
+        match = matchingGroupName;
+        timeLeft = `${matchingGroupTimeLeft} seconds`;
+    } else {
+        status = 'NONE';
+        statusClass += 'text-bg-secondary';
+        match = 'No matches';
+        timeLeft = <InfinityIcon />;
+    }
+
     return (
-        <pre>
-            <ul style={{ minWidth: '500px' }}>
-                <li>Current URL: {currentURL}</li>
-                <li>Matching allowed: {matchingAllowedPattern}</li>
-                <li>Matching group name: {matchingGroupName}</li>
-                <li>Time left: {secondsLeft} seconds</li>
-            </ul>
-        </pre>
+        <main className="m-3" style={{ minWidth: '500px' }}>
+            <h2>Page Limiter</h2>
+            <h3>
+                Status:
+                <span className={statusClass}>{status}</span>
+            </h3>
+            <h4>{match}</h4>
+            <div className="d-flex align-items-center">Time left: {timeLeft}</div>
+        </main>
     );
 };
 
@@ -51,3 +67,18 @@ root.render(
         <Popup />
     </React.StrictMode>
 );
+
+function InfinityIcon() {
+    return (
+        <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="24"
+            height="24"
+            fill="currentColor"
+            className="bi bi-infinity ms-2"
+            viewBox="0 0 16 16"
+        >
+            <path d="M5.68 5.792 7.345 7.75 5.681 9.708a2.75 2.75 0 1 1 0-3.916ZM8 6.978 6.416 5.113l-.014-.015a3.75 3.75 0 1 0 0 5.304l.014-.015L8 8.522l1.584 1.865.014.015a3.75 3.75 0 1 0 0-5.304l-.014.015zm.656.772 1.663-1.958a2.75 2.75 0 1 1 0 3.916z" />
+        </svg>
+    );
+}
