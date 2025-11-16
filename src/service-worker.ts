@@ -1,6 +1,6 @@
 import { getSettings, setURLGroups } from './settings';
 import {
-    findMatchingAllowedPattern,
+    findMatchingPattern,
     findMatchingGroup,
     getCurrentDate,
     getTotalSeconds,
@@ -29,7 +29,7 @@ async function onPageVisited(message: PageVisitedMessage): Promise<PageVisitedEv
     const currentURL = message.url;
     const { groups, allowedPatterns } = await getSettings();
 
-    const allowedPattern = findMatchingAllowedPattern(allowedPatterns ?? [], currentURL);
+    const allowedPattern = findMatchingPattern(allowedPatterns ?? [], currentURL);
     if (allowedPattern) {
         console.log('Current page is allowed', { allowedPattern, currentURL });
         return { didMatch: false, secondsLeft: 0 };
