@@ -72,7 +72,7 @@ const Popup = () => {
                         Status:
                         <span className={`${statusClass} ms-2 fw-bold`}>{status}</span>
                     </h3>
-                    <h4>{match}</h4>
+                    <h5>{match}</h5>
                 </div>
                 <div className={`${statusClass} py-2 px-3`}>
                     <h5>Time left</h5>
