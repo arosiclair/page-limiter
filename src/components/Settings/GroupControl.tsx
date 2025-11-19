@@ -73,7 +73,6 @@ export default function GroupControl({
                         id={`${group.id}-group-timelimit-input`}
                         className="form-control"
                         type="number"
-                        placeholder="Timelimit (minutes)"
                         value={newTimelimit}
                         onChange={(event) => {
                             setNewTimelimit(String(event.currentTarget.value));
