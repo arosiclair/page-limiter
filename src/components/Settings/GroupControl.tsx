@@ -17,6 +17,8 @@ export default function GroupControl({
     onDelete,
 }: GroupControlProps) {
     const [newIndex, setNewIndex] = useState<string | undefined>(undefined);
+    const [newTimelimit, setNewTimelimit] = useState(String(group.timelimitSeconds));
+
     const value = newIndex !== undefined ? newIndex : index + 1;
 
     const updateOrder = () => {
@@ -72,13 +74,14 @@ export default function GroupControl({
                         className="form-control"
                         type="number"
                         placeholder="Timelimit (minutes)"
-                        value={group.timelimitSeconds}
-                        onChange={(event) =>
+                        value={newTimelimit}
+                        onChange={(event) => {
+                            setNewTimelimit(String(event.currentTarget.value));
                             onChange({
                                 ...group,
                                 timelimitSeconds: Number(event.currentTarget.value),
-                            })
-                        }
+                            });
+                        }}
                     />
                 </div>
             </div>
