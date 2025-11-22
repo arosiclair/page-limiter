@@ -7,8 +7,16 @@
     "page": "options.html",
     "open_in_tab": true
   },
+  "icons": {
+    "16": "icon.png",
+    "32": "icon.png",
+    "48": "icon.png",
+    "128": "icon.png"
+  },
   "action": {
     "default_icon": {
+      "16": "icon.png",
+      "24": "icon.png",
       "32": "icon.png"
     },
     "default_popup": "popup.html"
