@@ -202,15 +202,15 @@ const Options = () => {
 
             <div>{status}</div>
             <button
-                className="button is-primary mr-1"
+                className="button is-primary mr-2"
                 onClick={() => saveSettings({ groups, allowedPatterns })}
             >
                 Save
             </button>
-            <button className="button is-danger mr-1" onClick={clearGroups}>
+            <button className="button is-danger mr-2" onClick={clearGroups}>
                 Clear
             </button>
-            <button className="button is-dark mr-1" onClick={exportData}>
+            <button className="button is-dark mr-2" onClick={exportData}>
                 Export
             </button>
             <button className="button is-dark" onClick={importData}>
