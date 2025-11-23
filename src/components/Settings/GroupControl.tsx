@@ -32,66 +32,72 @@ export default function GroupControl({
 
     return (
         <div className="mb-5">
-            <div className="d-flex">
-                <div className="me-2" style={{ width: 75 }}>
-                    <label htmlFor={`${group.id}-group-order-input`} className="form-label">
+            <div className="is-flex">
+                <div className="field mr-2" style={{ width: 75 }}>
+                    <label className="label" htmlFor={`${group.id}-group-order-input`}>
                         Order
                     </label>
-                    <input
-                        id={`${group.id}-group-order-input`}
-                        className="form-control"
-                        type="number"
-                        value={value}
-                        onChange={(event) => setNewIndex(event.currentTarget.value)}
-                        onBlur={() => updateOrder()}
-                        onKeyUp={(event) => event.key === 'Enter' && updateOrder()}
-                    />
+                    <div className="control">
+                        <input
+                            id={`${group.id}-group-order-input`}
+                            className="input"
+                            type="number"
+                            value={value}
+                            onChange={(event) => setNewIndex(event.currentTarget.value)}
+                            onBlur={() => updateOrder()}
+                            onKeyUp={(event) => event.key === 'Enter' && updateOrder()}
+                        />
+                    </div>
                 </div>
-                <div className="flex-grow-1 me-2">
-                    <label htmlFor={`${group.id}-group-name-input`} className="form-label">
+                <div className="field is-flex-grow-1 mr-2">
+                    <label className="label" htmlFor={`${group.id}-group-name-input`}>
                         Group name
                     </label>
-                    <input
-                        id={`${group.id}-group-name-input`}
-                        className="form-control"
-                        type="text"
-                        placeholder="Name"
-                        value={group.name}
-                        onChange={(event) =>
-                            onChange({
-                                ...group,
-                                name: event.currentTarget.value,
-                            })
-                        }
-                    />
+                    <div className="control">
+                        <input
+                            id={`${group.id}-group-name-input`}
+                            className="input"
+                            type="text"
+                            placeholder="Name"
+                            value={group.name}
+                            onChange={(event) =>
+                                onChange({
+                                    ...group,
+                                    name: event.currentTarget.value,
+                                })
+                            }
+                        />
+                    </div>
                 </div>
-                <div className="mb-2">
-                    <label htmlFor={`${group.id}-group-timelimit-input`} className="form-label">
+                <div className="field mb-2">
+                    <label className="label" htmlFor={`${group.id}-group-timelimit-input`}>
                         Timelimit (seconds)
                     </label>
-                    <input
-                        id={`${group.id}-group-timelimit-input`}
-                        className="form-control"
-                        type="number"
-                        value={newTimelimit}
-                        onChange={(event) => {
-                            setNewTimelimit(String(event.currentTarget.value));
-                            onChange({
-                                ...group,
-                                timelimitSeconds: Number(event.currentTarget.value),
-                            });
-                        }}
-                    />
+                    <div className="control">
+                        <input
+                            id={`${group.id}-group-timelimit-input`}
+                            className="input"
+                            type="number"
+                            value={newTimelimit}
+                            onChange={(event) => {
+                                setNewTimelimit(String(event.currentTarget.value));
+                                onChange({
+                                    ...group,
+                                    timelimitSeconds: Number(event.currentTarget.value),
+                                });
+                            }}
+                        />
+                    </div>
                 </div>
             </div>
 
             <div className="mb-2">
-                <label htmlFor={`${group.id}-group-patterns-input`} className="form-label">
+                <label htmlFor={`${group.id}-group-patterns-input`} className="label">
                     URL patterns
                 </label>
                 <textarea
                     id={`${group.id}-group-patterns-input`}
-                    className="form-control"
+                    className="textarea"
                     name="new-urls"
                     placeholder="page-to-limit.com"
                     value={group.patterns.join('\n')}
@@ -106,12 +112,12 @@ export default function GroupControl({
                 ></textarea>
             </div>
 
-            <div className="d-flex align-items-center">
-                <span className="flex-grow-1">
+            <div className="is-flex is-align-items-center">
+                <span className="is-flex-grow-1">
                     Time used: {getTimeUsed(group)} seconds • Time left: {getTimeLeft(group)}{' '}
                     seconds
                 </span>
-                <button className="btn btn-danger" onClick={() => onDelete(group.id)}>
+                <button className="button is-danger" onClick={() => onDelete(group.id)}>
                     Delete
                 </button>
             </div>

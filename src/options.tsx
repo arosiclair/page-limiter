@@ -193,8 +193,8 @@ const Options = () => {
 
     return (
         <main className="px-3 py-2">
-            <div className="d-flex justify-content-between align-items-center">
-                <h2>Page Limiter - Settings</h2>
+            <div className="is-flex is-justify-content-space-between is-align-items-center">
+                <h3 className="title is-3 m-0">Page Limiter - Settings</h3>
                 <SaveIndicator isLoading={isSaving} />
             </div>
 
@@ -202,32 +202,32 @@ const Options = () => {
 
             <div>{status}</div>
             <button
-                className="btn btn-primary me-1"
+                className="button is-primary mr-1"
                 onClick={() => saveSettings({ groups, allowedPatterns })}
             >
                 Save
             </button>
-            <button className="btn btn-danger me-1" onClick={clearGroups}>
+            <button className="button is-danger mr-1" onClick={clearGroups}>
                 Clear
             </button>
-            <button className="btn btn-secondary me-1" onClick={exportData}>
+            <button className="button is-dark mr-1" onClick={exportData}>
                 Export
             </button>
-            <button className="btn btn-secondary" onClick={importData}>
+            <button className="button is-dark" onClick={importData}>
                 Import
             </button>
             <hr />
 
-            <h3>Allow List</h3>
+            <h4 className="title is-4">Allow List</h4>
             <textarea
                 id="new-group-name-input"
-                className="form-control mb-4"
+                className="textarea mb-4"
                 placeholder="page-to-limit.com/subpage-to-allow"
                 value={allowedPatterns.join('\n')}
                 onChange={updateAllowedPatterns}
             />
 
-            <h3>Limited Groups</h3>
+            <h4 className="title is-4">Limited Groups</h4>
             <div>
                 {groups.map((group, index) => (
                     <GroupControl
@@ -240,8 +240,8 @@ const Options = () => {
                     />
                 ))}
             </div>
-            <div className="text-center">
-                <button className="btn btn-primary" onClick={addGroup}>
+            <div className="has-text-centered">
+                <button className="button is-primary" onClick={addGroup}>
                     Add group
                 </button>
             </div>
