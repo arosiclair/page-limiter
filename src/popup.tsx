@@ -32,51 +32,62 @@ const Popup = () => {
     let match;
     if (matchingAllowedPattern) {
         status = 'ALLOWED';
-        statusClass = 'badge text-bg-success';
+        statusClass = 'tag is-large is-success';
         match = matchingAllowedPattern;
         timeLeft = <InfinityIcon />;
     } else if (matchingGroupName) {
         status = 'LIMITED';
-        statusClass = 'badge text-bg-warning';
+        statusClass = 'tag is-large is-warning';
         match = matchingGroupName;
         let minutesLeft = String(Math.floor(matchingGroupTimeLeft / 60)).padStart(2, '0');
         let secondsLeft = String(matchingGroupTimeLeft % 60).padStart(2, '0');
         timeLeft = `${minutesLeft}:${secondsLeft}`;
     } else {
         status = 'NONE';
-        statusClass = 'badge text-bg-secondary';
+        statusClass = 'tag is-large is-dark';
         match = 'No match';
         timeLeft = <InfinityIcon />;
     }
 
     return (
         <main className="p-3" style={{ minWidth: '500px' }}>
-            <div className=" d-flex align-items-center justify-content-between">
-                <h6 className="m-0 fw-bold">PAGE LIMITER</h6>
-                <h6 className="m-0">
+            <div className="is-flex is-justify-content-space-between is-align-items-center">
+                <h1 className="title is-6 m-0">PAGE LIMITER</h1>
+                <div className="title is-6 m-0">
                     <a
-                        className="icon-link text-decoration-none"
+                        className="icon-link"
                         href="/options.html"
                         target="_blank"
                         rel="noopener noreferrer"
                     >
-                        <SettingsIcon />
-                        Settings
+                        <span className="icon-text">
+                            <span className="icon">
+                                <SettingsIcon />
+                            </span>
+                            <span>Settings</span>
+                        </span>
                     </a>
-                </h6>
+                </div>
             </div>
             <hr />
-            <div className="d-flex align-items-center justify-content-between">
+            <div className="is-flex is-justify-content-space-between">
                 <div>
-                    <h3>
+                    <h2 className="title is-4">
                         Status:
-                        <span className={`${statusClass} ms-2 fw-bold`}>{status}</span>
-                    </h3>
-                    <h5>{match}</h5>
+                        <span className={`${statusClass} ml-2 fw-bold`}>{status}</span>
+                    </h2>
+                    <h5 className="subtitle is-6">{match}</h5>
                 </div>
-                <div className={`${statusClass} py-2 px-3`}>
-                    <h5>Time left</h5>
-                    <h1 className="m-0 text-center fw-bold">{timeLeft}</h1>
+                <div
+                    className={`${statusClass} is-flex-direction-column py-2 px-3`}
+                    style={{ height: 'auto' }}
+                >
+                    <h5 className="title is-6 mb-2" style={{ color: 'inherit' }}>
+                        Time left
+                    </h5>
+                    <div className="title is-3 has-text-centered m-0" style={{ color: 'inherit' }}>
+                        {timeLeft}
+                    </div>
                 </div>
             </div>
         </main>
