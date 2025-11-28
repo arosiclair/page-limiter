@@ -1,35 +1,13 @@
-import { differenceInSeconds } from 'date-fns';
-
-export function getTimeLeft(group: Group | undefined) {
+export function getSecondsLeft(group: Group | undefined) {
     if (!group) {
         return 0;
     }
 
-    let todaysHistory = group.history[getCurrentDate()];
-    if (!todaysHistory) {
-        return group.timelimitSeconds;
-    }
-
-    return Math.max(group.timelimitSeconds - getTotalSeconds(todaysHistory), 0);
+    return Math.max(group.timelimitSeconds - getSecondsUsedToday(group), 0);
 }
 
-export function getTimeUsed(group: Group) {
-    return getTotalSeconds(group.history[getCurrentDate()] ?? []);
-}
-
-export function getTotalSeconds(history: HistoryEntry[]) {
-    let totalSeconds = 0;
-    for (const historyEntry of history) {
-        if (!historyEntry.end) {
-            continue;
-        }
-
-        totalSeconds += differenceInSeconds(historyEntry.end, historyEntry.start, {
-            roundingMethod: 'ceil',
-        });
-    }
-
-    return totalSeconds;
+export function getSecondsUsedToday(group: Group) {
+    return group.secondsUsed[getCurrentDate()] ?? 0;
 }
 
 export function getCurrentDate(): string {

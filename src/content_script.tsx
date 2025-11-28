@@ -1,5 +1,6 @@
 import { millisecondsInSecond } from 'date-fns/constants';
 import { PageVisitedEventResult } from './service-worker';
+import { differenceInSeconds } from 'date-fns';
 
 chrome.runtime.onMessage.addListener(function (msg, sender, sendResponse) {
     if (msg.color) {
@@ -12,37 +13,52 @@ chrome.runtime.onMessage.addListener(function (msg, sender, sendResponse) {
 });
 
 let timeout: NodeJS.Timeout;
+let startTime: Date | undefined;
 
-window.addEventListener('focus', sendPageVisitedMessage);
-window.addEventListener('blur', sendPageLeftMessage);
-window.addEventListener('beforeunload', sendPageLeftMessage);
+startTimer();
+window.addEventListener('focus', startTimer);
+window.addEventListener('blur', endTimer);
+window.addEventListener('beforeunload', endTimer);
 
-function sendPageVisitedMessage() {
-    chrome.runtime.sendMessage(
-        {
-            event: 'page-visited',
-            url: window.location.href,
-        },
-        ({ didMatch, secondsLeft }: PageVisitedEventResult) => {
-            if (!didMatch) {
-                return;
-            }
+function startTimer() {
+    if (startTime) {
+        return;
+    }
 
-            if (secondsLeft === 0) {
-                blockPage();
-                return;
-            }
+    startTime = new Date();
 
-            timeout = setTimeout(blockPage, secondsLeft * millisecondsInSecond);
+    const message: PageVisitedMessage = {
+        event: 'page-visited',
+        url: window.location.href,
+    };
+
+    chrome.runtime.sendMessage(message, ({ didMatch, secondsLeft }: PageVisitedEventResult) => {
+        if (!didMatch) {
+            return;
         }
-    );
+
+        if (secondsLeft === 0) {
+            blockPage();
+            return;
+        }
+
+        timeout = setTimeout(blockPage, secondsLeft * millisecondsInSecond);
+    });
 }
 
-function sendPageLeftMessage() {
-    chrome.runtime.sendMessage({
-        event: 'page-left',
+function endTimer() {
+    if (!startTime) {
+        return;
+    }
+
+    const message: AddTimeMessage = {
+        event: 'add-time',
         url: window.location.href,
-    });
+        secondsUsed: differenceInSeconds(new Date(), startTime),
+    };
+
+    chrome.runtime.sendMessage(message);
+    startTime = undefined;
     clearTimeout(timeout);
 }
 

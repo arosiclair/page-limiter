@@ -47,7 +47,7 @@ const Options = () => {
             name: `Group ${newGroups.length + 1}`,
             timelimitSeconds: 600,
             patterns: [],
-            history: {},
+            secondsUsed: {},
         });
         saveGroups(newGroups);
     };

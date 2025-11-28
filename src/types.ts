@@ -3,8 +3,8 @@ type Group = {
     name: string;
     timelimitSeconds: number;
     patterns: string[];
-    history: {
-        [date: string]: HistoryEntry[] | undefined;
+    secondsUsed: {
+        [date: string]: number | undefined;
     };
 };
 
@@ -25,6 +25,12 @@ type PageVisitedMessage = ExtensionMessage & {
 type PageLeftMessage = ExtensionMessage & {
     event: 'page-left';
     url: string;
+};
+
+type AddTimeMessage = ExtensionMessage & {
+    event: 'add-time';
+    url: string;
+    secondsUsed: number;
 };
 
 type ExportData = {

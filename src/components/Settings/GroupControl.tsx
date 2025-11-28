@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { getTimeLeft, getTimeUsed } from '../../groups';
+import { getSecondsLeft, getSecondsUsedToday } from '../../groups';
 
 type GroupControlProps = {
     index: number;
@@ -114,8 +114,8 @@ export default function GroupControl({
 
             <div className="is-flex is-align-items-center">
                 <span className="is-flex-grow-1">
-                    Time used: {getTimeUsed(group)} seconds • Time left: {getTimeLeft(group)}{' '}
-                    seconds
+                    Time used: {getSecondsUsedToday(group)} seconds • Time left:{' '}
+                    {getSecondsLeft(group)} seconds
                 </span>
                 <button className="button is-danger" onClick={() => onDelete(group.id)}>
                     Delete

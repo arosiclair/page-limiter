@@ -1,7 +1,7 @@
 import React, { CSSProperties, useEffect, useState } from 'react';
 import { createRoot } from 'react-dom/client';
 import { getSettings } from './settings';
-import { findMatchingPattern, findMatchingGroup, getTimeLeft } from './groups';
+import { findMatchingPattern, findMatchingGroup, getSecondsLeft } from './groups';
 
 const Popup = () => {
     const [currentURL, setCurrentURL] = useState<string>('');
@@ -22,7 +22,7 @@ const Popup = () => {
             const matchingGroup = findMatchingGroup(groups, currentURL);
             setMatchingAllowedPattern(allowedPattern ?? '');
             setMatchingGroupName(matchingGroup?.name ?? '');
-            setMatchingGroupTimeLeft(getTimeLeft(matchingGroup));
+            setMatchingGroupTimeLeft(getSecondsLeft(matchingGroup));
         })();
     }, [currentURL]);
 
