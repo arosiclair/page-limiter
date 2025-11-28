@@ -13,11 +13,9 @@ chrome.runtime.onMessage.addListener(function (msg, sender, sendResponse) {
 
 let timeout: NodeJS.Timeout;
 
-sendPageVisitedMessage();
-window.addEventListener('beforeunload', sendPageLeftMessage);
-
 window.addEventListener('focus', sendPageVisitedMessage);
 window.addEventListener('blur', sendPageLeftMessage);
+window.addEventListener('beforeunload', sendPageLeftMessage);
 
 function sendPageVisitedMessage() {
     chrome.runtime.sendMessage(
