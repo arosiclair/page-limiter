@@ -194,7 +194,7 @@ const Options = () => {
     return (
         <main className="px-3 py-2">
             <div className="is-flex is-justify-content-space-between is-align-items-center">
-                <h3 className="title is-3 m-0">Page Limiter - Settings</h3>
+                <h3 className="title is-3 m-0 pb-2">Page Limiter - Settings</h3>
                 <SaveIndicator isLoading={isSaving} />
             </div>
 
