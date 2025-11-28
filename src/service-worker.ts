@@ -1,4 +1,4 @@
-import { getSettings, setURLGroups } from './settings';
+import { getSettings, setGroups } from './settings';
 import { findMatchingPattern, findMatchingGroup, getCurrentDate, getSecondsLeft } from './groups';
 
 chrome.runtime.onMessage.addListener((message: ExtensionMessage, sender, sendResponse) => {
@@ -105,6 +105,6 @@ async function addTime(message: AddTimeMessage) {
     matchingGroup.secondsUsed[getCurrentDate()] =
         (matchingGroup.secondsUsed[getCurrentDate()] ?? 0) + message.secondsUsed;
 
-    await setURLGroups(groups);
+    await setGroups(groups);
     console.log('Time added', { matchingGroup });
 }
