@@ -1,7 +1,7 @@
 import React, { CSSProperties, useEffect, useState } from 'react';
 import { createRoot } from 'react-dom/client';
 import { getSettings } from './settings';
-import { findMatchingPattern, findMatchingGroup, getTimeLeft } from './url-groups';
+import { findMatchingPattern, findMatchingGroup, getTimeLeft } from './groups';
 
 const Popup = () => {
     const [currentURL, setCurrentURL] = useState<string>('');

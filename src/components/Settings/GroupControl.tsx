@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { getTimeLeft, getTimeUsed } from '../../url-groups';
+import { getTimeLeft, getTimeUsed } from '../../groups';
 
 type GroupControlProps = {
     index: number;

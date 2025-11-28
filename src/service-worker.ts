@@ -1,10 +1,5 @@
 import { getSettings, setURLGroups } from './settings';
-import {
-    findMatchingPattern,
-    findMatchingGroup,
-    getCurrentDate,
-    getTotalSeconds,
-} from './url-groups';
+import { findMatchingPattern, findMatchingGroup, getCurrentDate, getTotalSeconds } from './groups';
 
 chrome.runtime.onMessage.addListener((message: ExtensionMessage, sender, sendResponse) => {
     switch (message.event) {
