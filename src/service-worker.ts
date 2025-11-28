@@ -77,6 +77,8 @@ async function onPageVisited(message: PageVisitedMessage): Promise<PageVisitedEv
 }
 
 async function onPageLeft(message: PageLeftMessage) {
+    console.log('Page left', { message });
+
     const currentURL = message.url;
     const { groups } = await getSettings();
 
