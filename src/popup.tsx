@@ -108,6 +108,7 @@ function InfinityIcon() {
 
 let currentURL = '';
 let startTime: Date | null;
+let timeout: NodeJS.Timeout;
 
 chrome.tabs.query({ active: true, currentWindow: true }, async function (tabs) {
     currentURL = tabs[0].url ?? '';
@@ -135,7 +136,7 @@ function startTimer(url: string) {
             return;
         }
 
-        setTimeout(() => {
+        timeout = setTimeout(() => {
             endTimer();
             blockPage();
         }, response.secondsLeft * 1000);
@@ -156,17 +157,18 @@ function endTimer() {
 
     chrome.runtime.sendMessage(message);
     startTime = null;
+    clearTimeout(timeout);
 }
 
 function blockPage() {
     chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
         const activeTabId = tabs[0].id ?? 0;
         const url = tabs[0].url ?? '';
-    const message: BlockPageMessage = {
-        source: 'popup',
-        event: 'block-page',
+        const message: BlockPageMessage = {
+            source: 'popup',
+            event: 'block-page',
             url,
-    };
+        };
         chrome.tabs.sendMessage(activeTabId, message);
     });
 }
