@@ -3,6 +3,7 @@ import { createRoot } from 'react-dom/client';
 import { getSettings } from './settings';
 import { findMatchingPattern, findMatchingGroup, getSecondsLeft } from './groups';
 import { differenceInSeconds } from 'date-fns';
+import { PageVisitedEventResult } from './service-worker';
 
 const Popup = () => {
     const [matchingAllowedPattern, setMatchingAllowedPattern] = useState<string>('');
@@ -106,7 +107,7 @@ function InfinityIcon() {
 }
 
 let currentURL = '';
-let startTime: Date | undefined;
+let startTime: Date | null;
 
 chrome.tabs.query({ active: true, currentWindow: true }, async function (tabs) {
     currentURL = tabs[0].url ?? '';
@@ -128,7 +129,17 @@ function startTimer(url: string) {
         url: url,
     };
 
-    chrome.runtime.sendMessage(message);
+    chrome.runtime.sendMessage(message, (response: PageVisitedEventResult) => {
+        if (!response.didMatch) {
+            startTime = null;
+            return;
+        }
+
+        setTimeout(() => {
+            endTimer();
+            blockPage();
+        }, response.secondsLeft * 1000);
+    });
 }
 
 function endTimer() {
@@ -144,5 +155,14 @@ function endTimer() {
     };
 
     chrome.runtime.sendMessage(message);
-    startTime = undefined;
+    startTime = null;
+}
+
+function blockPage() {
+    const message: BlockPageMessage = {
+        source: 'popup',
+        event: 'block-page',
+        url: currentURL,
+    };
+    chrome.runtime.sendMessage(message);
 }
