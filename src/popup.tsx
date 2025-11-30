@@ -159,10 +159,14 @@ function endTimer() {
 }
 
 function blockPage() {
+    chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
+        const activeTabId = tabs[0].id ?? 0;
+        const url = tabs[0].url ?? '';
     const message: BlockPageMessage = {
         source: 'popup',
         event: 'block-page',
-        url: currentURL,
+            url,
     };
-    chrome.runtime.sendMessage(message);
+        chrome.tabs.sendMessage(activeTabId, message);
+    });
 }

@@ -71,14 +71,11 @@ function blockPage() {
 chrome.runtime.onMessage.addListener((message: ExtensionMessage, sender, sendResponse) => {
     console.log('Message received', message);
 
-    switch (message.event) {
-        case 'block-page':
-            if ((message as BlockPageMessage).url === window.location.href) {
-                blockPage();
-            }
-        default:
-            console.log('Mysterious message received', message);
+    if (message.event !== 'block-page') {
+        return;
     }
+
+    blockPage();
 });
 
 // Pretend like this is a module so that typescript stops complaining about naming collisions
