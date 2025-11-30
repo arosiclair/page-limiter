@@ -28,6 +28,7 @@ function startTimer() {
     startTime = new Date();
 
     const message: PageVisitedMessage = {
+        source: 'content-script',
         event: 'page-visited',
         url: window.location.href,
     };
@@ -52,6 +53,7 @@ function endTimer() {
     }
 
     const message: AddTimeMessage = {
+        source: 'content-script',
         event: 'add-time',
         url: window.location.href,
         secondsUsed: differenceInSeconds(new Date(), startTime),

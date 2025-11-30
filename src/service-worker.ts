@@ -2,6 +2,7 @@ import { getSettings, setGroups } from './settings';
 import { findMatchingPattern, findMatchingGroup, getCurrentDate, getSecondsLeft } from './groups';
 
 chrome.runtime.onMessage.addListener((message: ExtensionMessage, sender, sendResponse) => {
+    console.log('Message received', message);
     switch (message.event) {
         case 'page-visited':
             onPageVisited(message as PageVisitedMessage).then(sendResponse);
@@ -23,7 +24,6 @@ export type PageVisitedEventResult = {
 };
 
 async function onPageVisited(message: PageVisitedMessage): Promise<PageVisitedEventResult> {
-    console.log('Page visited', { message });
     const currentURL = message.url;
     const { groups, allowedPatterns } = await getSettings();
 
@@ -80,8 +80,6 @@ async function onPageVisited(message: PageVisitedMessage): Promise<PageVisitedEv
 // }
 
 async function addTime(message: AddTimeMessage) {
-    console.log('Adding time', { message });
-
     const currentURL = message.url;
     const { groups, allowedPatterns } = await getSettings();
 

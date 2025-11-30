@@ -14,6 +14,7 @@ type HistoryEntry = {
 };
 
 type ExtensionMessage = {
+    source: 'content-script' | 'popup';
     event: string;
 };
 
