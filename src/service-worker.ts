@@ -19,12 +19,12 @@ chrome.tabs.onActivated.addListener(async (activeInfo) => {
     const currentTabID = tab.id;
 
     if (currentURL === undefined) {
-        console.log('No URL for the current tab', { tab });
+        console.log('no URL for the current tab', { tab });
         return;
     }
 
     if (currentTabID === undefined) {
-        console.log('No ID for the current tab', { tab });
+        console.log('no ID for the current tab', { tab });
         return;
     }
 
@@ -42,7 +42,7 @@ chrome.tabs.onUpdated.addListener(async (tabID, changeInfo, tab) => {
     }
 
     if (currentTabID === undefined) {
-        console.log('No ID for the current tab', { tab });
+        console.log('no ID for the current tab', { tab });
         return;
     }
 
@@ -53,7 +53,7 @@ async function onPageChanged(currentURL: string, tabID: number) {
     const { groups, allowedPatterns } = await getSettings();
 
     if (!groups) {
-        console.log('No urlGroups set');
+        console.log('no urlGroups set');
         return;
     }
 
@@ -66,13 +66,13 @@ async function onPageChanged(currentURL: string, tabID: number) {
     // Check for matches
     const allowedPattern = findMatchingPattern(allowedPatterns ?? [], currentURL);
     if (allowedPattern) {
-        console.log('Current page is allowed. No time added', { allowedPattern, currentURL });
+        console.log('current page is allowed', { allowedPattern, currentURL });
         return;
     }
 
     const matchingGroup = findMatchingGroup(groups, currentURL);
     if (!matchingGroup) {
-        console.log("Current page doesn't match", { currentURL });
+        console.log("current page doesn't match", { currentURL });
         return;
     }
 
