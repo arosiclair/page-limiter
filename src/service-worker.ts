@@ -18,13 +18,13 @@ chrome.tabs.onActivated.addListener(async (activeInfo) => {
     const currentURL = tab.url;
     const currentTabID = tab.id;
 
-    if (!currentURL) {
+    if (currentURL === undefined) {
         console.log('No URL for the current tab', { tab });
         return;
     }
 
-    if (!currentTabID) {
-        console.log('No URL for the current tab', { tab });
+    if (currentTabID === undefined) {
+        console.log('No ID for the current tab', { tab });
         return;
     }
 
@@ -34,20 +34,19 @@ chrome.tabs.onActivated.addListener(async (activeInfo) => {
 chrome.tabs.onUpdated.addListener(async (tabID, changeInfo, tab) => {
     console.log('tab updated', { tab, changeInfo });
 
-    const currentURL = changeInfo.url;
+    const updatedURL = changeInfo.url;
     const currentTabID = tab.id;
 
-    if (!currentURL) {
-        console.log('No URL for the current tab', { tab });
+    if (updatedURL === undefined) {
         return;
     }
 
-    if (!currentTabID) {
-        console.log('No URL for the current tab', { tab });
+    if (currentTabID === undefined) {
+        console.log('No ID for the current tab', { tab });
         return;
     }
 
-    onPageChanged(currentURL, currentTabID);
+    onPageChanged(updatedURL, currentTabID);
 });
 
 async function onPageChanged(currentURL: string, tabID: number) {
