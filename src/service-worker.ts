@@ -49,6 +49,36 @@ chrome.tabs.onUpdated.addListener(async (tabID, changeInfo, tab) => {
     onPageChanged(updatedURL, currentTabID);
 });
 
+chrome.windows.onFocusChanged.addListener(async (windowId) => {
+    console.log('focus changed', { windowID: windowId });
+
+    if (windowId === chrome.windows.WINDOW_ID_NONE) {
+        console.log('focus lost');
+        onPageChanged('', 0);
+    } else {
+        // Chrome gained focus - find the active tab
+        const [tab] = await chrome.tabs.query({
+            active: true,
+            windowId: windowId,
+        });
+
+        const currentURL = tab.url;
+        const currentTabID = tab.id;
+
+        if (currentURL === undefined) {
+            console.log('no URL for the current tab', { tab });
+            return;
+        }
+
+        if (currentTabID === undefined) {
+            console.log('no ID for the current tab', { tab });
+            return;
+        }
+
+        onPageChanged(currentURL, currentTabID);
+    }
+});
+
 async function onPageChanged(currentURL: string, tabID: number) {
     const { groups, allowedPatterns } = await getSettings();
 
