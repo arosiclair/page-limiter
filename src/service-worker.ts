@@ -13,6 +13,44 @@ let currentTimeout: NodeJS.Timeout;
 
 chrome.tabs.onActivated.addListener(async (activeInfo) => {
     console.log('tab activated', { activeInfo });
+
+    const tab = await chrome.tabs.get(activeInfo.tabId);
+    const currentURL = tab.url;
+    const currentTabID = tab.id;
+
+    if (!currentURL) {
+        console.log('No URL for the current tab', { tab });
+        return;
+    }
+
+    if (!currentTabID) {
+        console.log('No URL for the current tab', { tab });
+        return;
+    }
+
+    onPageChanged(currentURL, currentTabID);
+});
+
+chrome.tabs.onUpdated.addListener(async (tabID, changeInfo, tab) => {
+    console.log('tab updated', { tab, changeInfo });
+
+    const currentURL = changeInfo.url;
+    const currentTabID = tab.id;
+
+    if (!currentURL) {
+        console.log('No URL for the current tab', { tab });
+        return;
+    }
+
+    if (!currentTabID) {
+        console.log('No URL for the current tab', { tab });
+        return;
+    }
+
+    onPageChanged(currentURL, currentTabID);
+});
+
+async function onPageChanged(currentURL: string, tabID: number) {
     const { groups, allowedPatterns } = await getSettings();
 
     if (!groups) {
@@ -25,11 +63,8 @@ chrome.tabs.onActivated.addListener(async (activeInfo) => {
     const secondsUsed = differenceInSeconds(new Date(), currentPageStartTime);
     addTime(groups, prevMatchingGroup, secondsUsed);
 
-    const tab = await chrome.tabs.get(activeInfo.tabId);
-    const currentURL = tab.url;
-
     if (!currentURL) {
-        console.log('No URL for the current tab', { tab });
+        console.log('No URL for the current page');
         return;
     }
 
@@ -47,16 +82,16 @@ chrome.tabs.onActivated.addListener(async (activeInfo) => {
 
     const secondsLeft = getSecondsLeft(matchingGroup);
     if (secondsLeft === 0) {
-        blockPage(activeInfo.tabId);
+        blockPage(tabID);
         return;
     }
 
     currentMatchedGroupID = matchingGroup.id;
     currentPageStartTime = new Date();
     currentTimeout = setTimeout(() => {
-        blockPage(activeInfo.tabId);
+        blockPage(tabID);
     }, secondsLeft * 1000);
-});
+}
 
 async function addTime(groups: Group[], matchingGroup: Group | undefined, seconds: number) {
     if (!matchingGroup) {
