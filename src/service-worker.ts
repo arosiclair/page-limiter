@@ -7,10 +7,6 @@ export type PageVisitedEventResult = {
     secondsLeft: number;
 };
 
-let currentMatchedGroupID: string;
-let currentPageStartTime: Date;
-let currentTimeout: NodeJS.Timeout;
-
 chrome.tabs.onActivated.addListener(async (activeInfo) => {
     console.log('tab activated', { activeInfo });
 
@@ -53,7 +49,6 @@ chrome.windows.onFocusChanged.addListener(async (windowId) => {
     console.log('focus changed', { windowID: windowId });
 
     if (windowId === chrome.windows.WINDOW_ID_NONE) {
-        console.log('focus lost');
         onPageChanged('', 0);
     } else {
         // Chrome gained focus - find the active tab
@@ -79,6 +74,10 @@ chrome.windows.onFocusChanged.addListener(async (windowId) => {
     }
 });
 
+let currentMatchedGroupID: string;
+let currentPageStartTime: Date | undefined;
+let currentTimeout: NodeJS.Timeout | undefined;
+
 async function onPageChanged(currentURL: string, tabID: number) {
     const { groups, allowedPatterns } = await getSettings();
 
@@ -90,8 +89,11 @@ async function onPageChanged(currentURL: string, tabID: number) {
     // Finish tracking the current session
     clearTimeout(currentTimeout);
     const prevMatchingGroup = groups?.find((group) => group.id === currentMatchedGroupID);
-    const secondsUsed = differenceInSeconds(new Date(), currentPageStartTime);
+    const secondsUsed = differenceInSeconds(new Date(), currentPageStartTime ?? new Date());
     addTime(groups, prevMatchingGroup, secondsUsed);
+    currentMatchedGroupID = '';
+    currentPageStartTime = undefined;
+    currentTimeout = undefined;
 
     // Check for matches
     const allowedPattern = findMatchingPattern(allowedPatterns ?? [], currentURL);
@@ -129,7 +131,7 @@ async function addTime(groups: Group[], matchingGroup: Group | undefined, second
         (matchingGroup.secondsUsed[getCurrentDate()] ?? 0) + seconds;
 
     await setGroups(groups);
-    console.log('time added', { group: matchingGroup });
+    console.log('time added', { seconds, group: matchingGroup });
 }
 
 function blockPage(tabId: number) {
