@@ -99,7 +99,7 @@ async function addTime(groups: Group[], matchingGroup: Group | undefined, second
         (matchingGroup.secondsUsed[getCurrentDate()] ?? 0) + seconds;
 
     await setGroups(groups);
-    console.log('Time added', { group: matchingGroup });
+    console.log('time added', { group: matchingGroup });
 }
 
 function blockPage(tabId: number) {
