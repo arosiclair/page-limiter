@@ -58,16 +58,13 @@ async function onPageChanged(currentURL: string, tabID: number) {
         return;
     }
 
+    // Finish tracking the current session
     clearTimeout(currentTimeout);
     const prevMatchingGroup = groups?.find((group) => group.id === currentMatchedGroupID);
     const secondsUsed = differenceInSeconds(new Date(), currentPageStartTime);
     addTime(groups, prevMatchingGroup, secondsUsed);
 
-    if (!currentURL) {
-        console.log('No URL for the current page');
-        return;
-    }
-
+    // Check for matches
     const allowedPattern = findMatchingPattern(allowedPatterns ?? [], currentURL);
     if (allowedPattern) {
         console.log('Current page is allowed. No time added', { allowedPattern, currentURL });
@@ -86,6 +83,7 @@ async function onPageChanged(currentURL: string, tabID: number) {
         return;
     }
 
+    // Start tracking this session
     currentMatchedGroupID = matchingGroup.id;
     currentPageStartTime = new Date();
     currentTimeout = setTimeout(() => {
