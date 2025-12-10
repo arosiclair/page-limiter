@@ -4,6 +4,7 @@ import { getSettings } from './settings';
 import { findMatchingPattern, findMatchingGroup, getSecondsLeft } from './groups';
 import { differenceInSeconds } from 'date-fns';
 import { PageVisitedEventResult } from './service-worker';
+import AsyncLock from 'async-lock';
 
 const Popup = () => {
     const [matchingAllowedPattern, setMatchingAllowedPattern] = useState<string>('');
@@ -109,6 +110,7 @@ function InfinityIcon() {
 let currentURL = '';
 let startTime: Date | null;
 let timeout: NodeJS.Timeout;
+const lock = new AsyncLock();
 
 chrome.tabs.query({ active: true, currentWindow: true }, async function (tabs) {
     currentURL = tabs[0].url ?? '';
@@ -130,16 +132,19 @@ function startTimer(url: string) {
         url: url,
     };
 
-    chrome.runtime.sendMessage(message, (response: PageVisitedEventResult) => {
-        if (!response.didMatch) {
-            startTime = null;
-            return;
-        }
+    lock.acquire('timer', (done) => {
+        chrome.runtime.sendMessage(message, (response: PageVisitedEventResult) => {
+            if (!response.didMatch) {
+                startTime = null;
+                return;
+            }
 
-        timeout = setTimeout(() => {
-            endTimer();
-            blockPage();
-        }, response.secondsLeft * 1000);
+            timeout = setTimeout(() => {
+                endTimer();
+                blockPage();
+            }, response.secondsLeft * 1000);
+            done();
+        });
     });
 }
 
@@ -157,7 +162,10 @@ function endTimer() {
 
     chrome.runtime.sendMessage(message);
     startTime = null;
-    clearTimeout(timeout);
+
+    lock.acquire('timer', (done) => {
+        clearTimeout(timeout);
+    });
 }
 
 function blockPage() {
