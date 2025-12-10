@@ -1,5 +1,8 @@
 import { getSettings, setGroups } from './settings';
 import { findMatchingPattern, findMatchingGroup, getCurrentDate, getSecondsLeft } from './groups';
+import AsyncLock from 'async-lock';
+
+const lock = new AsyncLock();
 
 chrome.runtime.onMessage.addListener((message: ExtensionMessage, sender, sendResponse) => {
     console.log('message received', message);
@@ -44,28 +47,32 @@ async function onPageVisited(message: PageVisitedMessage): Promise<PageVisitedEv
 
 async function addTime(message: AddTimeMessage) {
     const currentURL = message.url;
-    const { groups, allowedPatterns } = await getSettings();
 
-    if (!groups) {
-        console.log('no groups set', { currentURL });
-        return;
-    }
+    lock.acquire('addTime', async (done) => {
+        const { groups, allowedPatterns } = await getSettings();
 
-    const allowedPattern = findMatchingPattern(allowedPatterns ?? [], currentURL);
-    if (allowedPattern) {
-        console.log('current page is allowed', { allowedPattern, currentURL });
-        return;
-    }
+        if (!groups) {
+            console.log('no groups set', { currentURL });
+            return;
+        }
 
-    const matchingGroup = findMatchingGroup(groups, currentURL);
-    if (!matchingGroup) {
-        console.log("current page doesn't match", { currentURL });
-        return;
-    }
+        const allowedPattern = findMatchingPattern(allowedPatterns ?? [], currentURL);
+        if (allowedPattern) {
+            console.log('current page is allowed', { allowedPattern, currentURL });
+            return;
+        }
 
-    matchingGroup.secondsUsed[getCurrentDate()] =
-        (matchingGroup.secondsUsed[getCurrentDate()] ?? 0) + message.secondsUsed;
+        const matchingGroup = findMatchingGroup(groups, currentURL);
+        if (!matchingGroup) {
+            console.log("current page doesn't match", { currentURL });
+            return;
+        }
 
-    await setGroups(groups);
-    console.log('time added', { matchingGroup });
+        matchingGroup.secondsUsed[getCurrentDate()] =
+            (matchingGroup.secondsUsed[getCurrentDate()] ?? 0) + message.secondsUsed;
+
+        await setGroups(groups);
+        console.log('time added', { matchingGroup });
+        done();
+    });
 }
