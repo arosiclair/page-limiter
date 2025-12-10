@@ -45,40 +45,6 @@ async function onPageVisited(message: PageVisitedMessage): Promise<PageVisitedEv
     };
 }
 
-// async function onPageLeft(message: PageLeftMessage) {
-//     console.log('Page left', { message });
-
-//     const currentURL = message.url;
-//     const { groups } = await getSettings();
-
-//     if (!groups) {
-//         console.log('No urlGroups set', { currentURL });
-//         return;
-//     }
-
-//     const matchingGroup = findMatchingGroup(groups, currentURL);
-//     if (!matchingGroup) {
-//         console.log("Current page doesn't match", { currentURL });
-//         return;
-//     }
-
-//     const todaysHistory = matchingGroup.history[getCurrentDate()];
-//     if (!todaysHistory) {
-//         console.error('Page matched but no history for today', { currentURL, matchingGroup });
-//         return;
-//     }
-
-//     const lastHistoryEntry = todaysHistory[todaysHistory.length - 1];
-//     if (lastHistoryEntry.end) {
-//         console.log('Last history entry is already finished', { matchingGroup });
-//         return;
-//     }
-
-//     lastHistoryEntry.end = new Date().toISOString();
-//     await setURLGroups(groups);
-//     console.log('history entry finished', { matchingGroup });
-// }
-
 async function addTime(message: AddTimeMessage) {
     const currentURL = message.url;
     const { groups, allowedPatterns } = await getSettings();
