@@ -1,7 +1,9 @@
 import { millisecondsInSecond } from 'date-fns/constants';
 import { PageVisitedEventResult } from './service-worker';
 import { differenceInSeconds } from 'date-fns';
+import AsyncLock from 'async-lock';
 
+const lock = new AsyncLock();
 let timeout: NodeJS.Timeout;
 let startTime: Date | undefined;
 
@@ -23,17 +25,22 @@ function startTimer() {
         url: window.location.href,
     };
 
-    chrome.runtime.sendMessage(message, ({ didMatch, secondsLeft }: PageVisitedEventResult) => {
-        if (!didMatch) {
-            return;
-        }
+    // This lock is needed since we're setting the timeout asynchronously. If endTimer is called quickly after
+    // startTimer, we need to wait for the timeout to be set before clearing it.
+    lock.acquire('timer', (done) => {
+        chrome.runtime.sendMessage(message, ({ didMatch, secondsLeft }: PageVisitedEventResult) => {
+            if (!didMatch) {
+                return;
+            }
 
-        if (secondsLeft === 0) {
-            blockPage();
-            return;
-        }
+            if (secondsLeft === 0) {
+                blockPage();
+                return;
+            }
 
-        timeout = setTimeout(blockPage, secondsLeft * millisecondsInSecond);
+            timeout = setTimeout(blockPage, secondsLeft * millisecondsInSecond);
+            done();
+        });
     });
 }
 
@@ -51,7 +58,11 @@ function endTimer() {
 
     chrome.runtime.sendMessage(message);
     startTime = undefined;
-    clearTimeout(timeout);
+
+    lock.acquire('timer', (done) => {
+        clearTimeout(timeout);
+        done();
+    });
 }
 
 function blockPage() {
