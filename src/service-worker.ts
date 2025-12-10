@@ -7,14 +7,11 @@ chrome.runtime.onMessage.addListener((message: ExtensionMessage, sender, sendRes
         case 'page-visited':
             onPageVisited(message as PageVisitedMessage).then(sendResponse);
             return true;
-        case 'page-left':
-            // onPageLeft(message as PageLeftMessage);
-            break;
         case 'add-time':
             addTime(message as AddTimeMessage);
             break;
         default:
-            console.log('mysterious message received', message);
+            return;
     }
 });
 
