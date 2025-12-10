@@ -17,9 +17,25 @@ const Popup = () => {
             const { allowedPatterns, groups } = await getSettings();
             const allowedPattern = findMatchingPattern(allowedPatterns, currentURL);
             const matchingGroup = findMatchingGroup(groups, currentURL);
+            let secondsLeft = getSecondsLeft(matchingGroup);
+
             setMatchingAllowedPattern(allowedPattern ?? '');
             setMatchingGroupName(matchingGroup?.name ?? '');
-            setMatchingGroupTimeLeft(getSecondsLeft(matchingGroup));
+            setMatchingGroupTimeLeft(secondsLeft);
+
+            if (!secondsLeft) {
+                return;
+            }
+
+            let interval: NodeJS.Timeout;
+            interval = setInterval(() => {
+                secondsLeft--;
+                setMatchingGroupTimeLeft(secondsLeft);
+
+                if (secondsLeft === 0) {
+                    clearInterval(interval);
+                }
+            }, 1000);
         });
     }, []);
 
