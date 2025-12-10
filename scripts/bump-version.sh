@@ -68,3 +68,12 @@ if [ -f "public/manifest.json" ]; then
     jq --arg version "$new_version" '.version = $version' public/manifest.json > public/manifest.json.tmp && mv public/manifest.json.tmp public/manifest.json
     echo "Updated public/manifest.json to version $new_version"
 fi
+
+# Create git tag
+git_tag="v$new_version"
+if git rev-parse "$git_tag" >/dev/null 2>&1; then
+    echo "Warning: Git tag $git_tag already exists"
+else
+    git tag "$git_tag"
+    echo "Created git tag $git_tag"
+fi
