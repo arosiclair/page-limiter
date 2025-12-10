@@ -2,7 +2,7 @@ import { getSettings, setGroups } from './settings';
 import { findMatchingPattern, findMatchingGroup, getCurrentDate, getSecondsLeft } from './groups';
 
 chrome.runtime.onMessage.addListener((message: ExtensionMessage, sender, sendResponse) => {
-    console.log('Message received', message);
+    console.log('message received', message);
     switch (message.event) {
         case 'page-visited':
             onPageVisited(message as PageVisitedMessage).then(sendResponse);
@@ -14,7 +14,7 @@ chrome.runtime.onMessage.addListener((message: ExtensionMessage, sender, sendRes
             addTime(message as AddTimeMessage);
             break;
         default:
-            console.log('Mysterious message received', message);
+            console.log('mysterious message received', message);
     }
 });
 
@@ -29,12 +29,12 @@ async function onPageVisited(message: PageVisitedMessage): Promise<PageVisitedEv
 
     const allowedPattern = findMatchingPattern(allowedPatterns ?? [], currentURL);
     if (allowedPattern) {
-        console.log('Current page is allowed', { allowedPattern, currentURL });
+        console.log('current page is allowed', { allowedPattern, currentURL });
         return { didMatch: false, secondsLeft: 0 };
     }
 
     if (!groups) {
-        console.log('No urlGroups set', { currentURL });
+        console.log('no groups set', { currentURL });
         return { didMatch: false, secondsLeft: 0 };
     }
 
@@ -50,19 +50,19 @@ async function addTime(message: AddTimeMessage) {
     const { groups, allowedPatterns } = await getSettings();
 
     if (!groups) {
-        console.log('No urlGroups set', { currentURL });
+        console.log('no groups set', { currentURL });
         return;
     }
 
     const allowedPattern = findMatchingPattern(allowedPatterns ?? [], currentURL);
     if (allowedPattern) {
-        console.log('Current page is allowed. No time added', { allowedPattern, currentURL });
+        console.log('current page is allowed', { allowedPattern, currentURL });
         return;
     }
 
     const matchingGroup = findMatchingGroup(groups, currentURL);
     if (!matchingGroup) {
-        console.log("Current page doesn't match", { currentURL });
+        console.log("current page doesn't match", { currentURL });
         return;
     }
 
@@ -70,5 +70,5 @@ async function addTime(message: AddTimeMessage) {
         (matchingGroup.secondsUsed[getCurrentDate()] ?? 0) + message.secondsUsed;
 
     await setGroups(groups);
-    console.log('Time added', { matchingGroup });
+    console.log('time added', { matchingGroup });
 }

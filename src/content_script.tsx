@@ -69,8 +69,8 @@ function blockPage() {
     window.location.replace('https://0.0.0.0/');
 }
 
-chrome.runtime.onMessage.addListener((message: ExtensionMessage, sender, sendResponse) => {
-    console.log('Message received', message);
+chrome.runtime.onMessage.addListener((message: ExtensionMessage) => {
+    console.log('message received', message);
 
     if (message.event !== 'block-page') {
         return;
