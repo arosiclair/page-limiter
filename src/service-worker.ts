@@ -48,6 +48,8 @@ async function onPageVisited(message: PageVisitedMessage): Promise<PageVisitedEv
 async function addTime(message: AddTimeMessage) {
     const currentURL = message.url;
 
+    // If the content_script and popup call addTime in quick succession, we need to process them synchronously to count
+    // the time correctly.
     lock.acquire('addTime', async (done) => {
         const { groups, allowedPatterns } = await getSettings();
 
