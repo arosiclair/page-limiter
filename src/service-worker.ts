@@ -55,18 +55,21 @@ async function addTime(message: AddTimeMessage) {
 
         if (!groups) {
             console.log('no groups set', { currentURL });
+            done();
             return;
         }
 
         const allowedPattern = findMatchingPattern(allowedPatterns ?? [], currentURL);
         if (allowedPattern) {
             console.log('current page is allowed', { allowedPattern, currentURL });
+            done();
             return;
         }
 
         const matchingGroup = findMatchingGroup(groups, currentURL);
         if (!matchingGroup) {
             console.log("current page doesn't match", { currentURL });
+            done();
             return;
         }
 

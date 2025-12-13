@@ -30,11 +30,13 @@ function startTimer() {
     lock.acquire('timer', (done) => {
         chrome.runtime.sendMessage(message, ({ didMatch, secondsLeft }: PageVisitedEventResult) => {
             if (!didMatch) {
+                done();
                 return;
             }
 
             if (secondsLeft === 0) {
                 blockPage();
+                done();
                 return;
             }
 
