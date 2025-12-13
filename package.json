@@ -2,6 +2,10 @@
   "name": "chrome-extension-typescript-starter",
   "version": "0.1.5",
   "description": "chrome-extension-typescript-starter",
+  "engines": {
+    "node": "^24.11.0",
+    "npm": "^11.6.1"
+  },
   "main": "index.js",
   "scripts": {
     "watch": "webpack --config webpack/webpack.dev.js --watch",
