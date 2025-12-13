@@ -152,6 +152,7 @@ function startTimer(url: string) {
         chrome.runtime.sendMessage(message, (response: PageVisitedEventResult) => {
             if (!response.didMatch) {
                 startTime = null;
+                done();
                 return;
             }
 
@@ -181,6 +182,7 @@ function endTimer() {
 
     lock.acquire('timer', (done) => {
         clearTimeout(timeout);
+        done();
     });
 }
 
