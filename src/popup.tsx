@@ -128,7 +128,7 @@ let startTime: Date | null;
 let timeout: NodeJS.Timeout;
 const lock = new AsyncLock();
 
-chrome.tabs.query({ active: true, currentWindow: true }, async function (tabs) {
+chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {
     currentURL = tabs[0].url ?? '';
     startTimer(currentURL);
 });
