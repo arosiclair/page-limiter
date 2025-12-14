@@ -23,13 +23,11 @@ export function findMatchingGroup(groups: Group[] | undefined, currentUrl: strin
     }
 
     for (const group of groups) {
-        for (const pattern of group.patterns) {
-            if (!RegExp(pattern).test(currentUrl)) {
-                continue;
-            }
-
-            return group;
+        if (!findMatchingPattern(group.patterns, currentUrl)) {
+            continue;
         }
+
+        return group;
     }
 }
 
@@ -38,5 +36,5 @@ export function findMatchingPattern(patterns: string[] | undefined, testString: 
         return undefined;
     }
 
-    return patterns.find((pattern) => RegExp(pattern).test(testString));
+    return patterns.find((pattern) => RegExp(pattern.toLowerCase()).test(testString.toLowerCase()));
 }
