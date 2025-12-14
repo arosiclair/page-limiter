@@ -1,30 +1,11 @@
-import React, { useEffect, useState } from 'react';
-import storageLookupData from '../../../storage-lookup-data';
-import { debounce } from '../../../utils';
+import React from 'react';
+import { getSettings, saveSettings } from '../../../settings';
 
 export default function ImportExportPage() {
-    const [groups, setGroups] = useState<Group[]>([]);
-    const [allowedPatterns, setAllowedPatterns] = useState<string[]>([]);
-
-    // Load settings from storage on mount
-    useEffect(() => {
-        chrome.storage.sync.get(storageLookupData, (items) => {
-            const data = items as Partial<ExportData>;
-
-            if (data.groups?.length) {
-                setGroups(data.groups);
-            }
-
-            if (data.allowedPatterns) {
-                setAllowedPatterns(data.allowedPatterns);
-            }
-        });
-    }, []);
-
-    const exportData = () => {
+    const exportData = async () => {
+        const data = await getSettings();
         const timestamp = new Date().toISOString();
         const filename = `page-limiter-export-${timestamp}.json`;
-        const data = { urlGroups: groups };
 
         // Create a Blob from the JSON string
         const blob = new Blob([JSON.stringify(data)], { type: 'application/json' });
@@ -69,30 +50,11 @@ export default function ImportExportPage() {
                 input.click();
             });
 
-            setGroups(data.groups);
-            setAllowedPatterns(data.allowedPatterns);
             saveSettings(data);
         } catch (error) {
-            console.error('Import failed:', error);
+            console.error('Import failed', error);
+            alert(`Import failed`);
         }
-    };
-
-    const saveSettings = debounce((data: ExportData) => {
-        // Saves options to chrome.storage.sync.
-        chrome.storage.sync.set(cleanData(data));
-    }, 1000);
-
-    const cleanData = (data: ExportData): ExportData => {
-        return {
-            // Filter out empty URLs
-            groups: data.groups.map((urlGroup) => ({
-                ...urlGroup,
-                patterns: urlGroup.patterns.filter(Boolean),
-            })),
-
-            // Filter out empty URLs
-            allowedPatterns: data.allowedPatterns.filter(Boolean),
-        };
     };
 
     return (

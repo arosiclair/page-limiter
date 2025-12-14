@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import GroupControl from '../GroupControl';
 import { debounce } from '../../../utils';
 import storageLookupData from '../../../storage-lookup-data';
+import { saveSettings } from '../../../settings';
 
 export default function LimitsPage() {
     const [groups, setGroups] = useState<Group[]>([]);
@@ -24,10 +25,7 @@ export default function LimitsPage() {
         });
     }, []);
 
-    const saveSettings = debounce((data: ExportData) => {
-        // Saves options to chrome.storage.sync.
-        chrome.storage.sync.set(cleanData(data));
-    }, 1000);
+    const saveSettingsDebounced = debounce(saveSettings, 1000);
 
     const addGroup = () => {
         const newGroups = [...groups];
@@ -89,20 +87,7 @@ export default function LimitsPage() {
 
     const saveGroups = (newGroups: Group[]) => {
         setGroups(newGroups);
-        saveSettings({ groups: newGroups, allowedPatterns });
-    };
-
-    const cleanData = (data: ExportData): ExportData => {
-        return {
-            // Filter out empty URLs
-            groups: data.groups.map((urlGroup) => ({
-                ...urlGroup,
-                patterns: urlGroup.patterns.filter(Boolean),
-            })),
-
-            // Filter out empty URLs
-            allowedPatterns: data.allowedPatterns.filter(Boolean),
-        };
+        saveSettingsDebounced({ groups: newGroups, allowedPatterns });
     };
 
     const clearGroups = () => {
@@ -114,14 +99,14 @@ export default function LimitsPage() {
             .split('\n')
             .map((pattern) => pattern.trim());
         setAllowedPatterns(newAllowedPatterns);
-        saveSettings({ groups, allowedPatterns: newAllowedPatterns });
+        saveSettingsDebounced({ groups, allowedPatterns: newAllowedPatterns });
     };
 
     return (
         <div>
             <button
                 className="button is-primary mr-2"
-                onClick={() => saveSettings({ groups, allowedPatterns })}
+                onClick={() => saveSettingsDebounced({ groups, allowedPatterns })}
             >
                 Save
             </button>
