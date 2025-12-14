@@ -1,9 +1,7 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { createRoot } from 'react-dom/client';
-import { debounce } from './utils';
-import storageLookupData from './storage-lookup-data';
 import SaveIndicator from './components/Settings/SaveIndicator';
-import { BrowserRouter, HashRouter, Route, Routes } from 'react-router';
+import { HashRouter, NavLink, Route, Routes } from 'react-router';
 import LimitsPage from './components/Settings/pages/LimitsPage';
 import ImportExportPage from './components/Settings/pages/ImportExportPage';
 
@@ -20,10 +18,20 @@ const Options = () => {
                     </div>
                     <ul className="menu-list">
                         <li>
-                            <a href="#">Pages</a>
+                            <NavLink
+                                to="/"
+                                className={({ isActive }) => (isActive ? 'is-active' : '')}
+                            >
+                                Limits
+                            </NavLink>
                         </li>
                         <li>
-                            <a href="#import-export">Import & Export</a>
+                            <NavLink
+                                to="import-export"
+                                className={({ isActive }) => (isActive ? 'is-active' : '')}
+                            >
+                                Import & Export
+                            </NavLink>
                         </li>
                     </ul>
                 </aside>
