@@ -57,10 +57,10 @@ jq --arg version "$new_version" '.version = $version' package.json > package.jso
 
 echo "Updated package.json to version $new_version"
 
-# Update package-lock.json if it exists
+# Run npm install to update package-lock.json
 if [ -f "package-lock.json" ]; then
-    jq --arg version "$new_version" '.version = $version' package-lock.json > package-lock.json.tmp && mv package-lock.json.tmp package-lock.json
-    echo "Updated package-lock.json to version $new_version"
+    npm install
+    echo "Updated package-lock.json via npm install"
 fi
 
 # Update public/manifest.json if it exists
@@ -68,6 +68,11 @@ if [ -f "public/manifest.json" ]; then
     jq --arg version "$new_version" '.version = $version' public/manifest.json > public/manifest.json.tmp && mv public/manifest.json.tmp public/manifest.json
     echo "Updated public/manifest.json to version $new_version"
 fi
+
+# Commit the changes
+git add package.json package-lock.json public/manifest.json 2>/dev/null
+git commit -m "bump version to $new_version"
+echo "Committed changes with message: bump version to $new_version"
 
 # Create git tag
 git_tag="v$new_version"
