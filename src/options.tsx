@@ -6,7 +6,6 @@ import storageLookupData from './storage-lookup-data';
 import SaveIndicator from './components/Settings/SaveIndicator';
 
 const Options = () => {
-    const [status, setStatus] = useState<string>('');
     const [isSaving, setIsSaving] = useState(false);
     const [groups, setGroups] = useState<Group[]>([]);
     const [allowedPatterns, setAllowedPatterns] = useState<string[]>([]);
@@ -117,14 +116,7 @@ const Options = () => {
     };
 
     const clearGroups = () => {
-        chrome.storage.sync.set({ urlGroups: [] }, () => {
-            // Update status to let user know options were saved.
-            setStatus('Options cleared.');
-            const id = setTimeout(() => {
-                setStatus('');
-            }, 1000);
-            return () => clearTimeout(id);
-        });
+        chrome.storage.sync.set({ urlGroups: [] });
     };
 
     const exportData = () => {
@@ -192,60 +184,68 @@ const Options = () => {
     };
 
     return (
-        <main className="px-3 py-2">
-            <div className="is-flex is-justify-content-space-between is-align-items-center">
-                <h3 className="title is-3 m-0 pb-2">Page Limiter - Settings</h3>
-                <SaveIndicator isLoading={isSaving} />
-            </div>
-
-            <hr />
-
-            <div>{status}</div>
-            <button
-                className="button is-primary mr-2"
-                onClick={() => saveSettings({ groups, allowedPatterns })}
-            >
-                Save
-            </button>
-            <button className="button is-danger mr-2" onClick={clearGroups}>
-                Clear
-            </button>
-            <button className="button is-dark mr-2" onClick={exportData}>
-                Export
-            </button>
-            <button className="button is-dark" onClick={importData}>
-                Import
-            </button>
-            <hr />
-
-            <h4 className="title is-4">Allow List</h4>
-            <textarea
-                id="new-group-name-input"
-                className="textarea mb-4"
-                placeholder="page-to-limit.com/subpage-to-allow"
-                value={allowedPatterns.join('\n')}
-                onChange={updateAllowedPatterns}
-            />
-
-            <h4 className="title is-4">Limited Groups</h4>
-            <div>
-                {groups.map((group, index) => (
-                    <GroupControl
-                        key={group.id}
-                        index={index}
-                        group={group}
-                        onChange={updateGroup}
-                        onIndexChange={updateGroupIndex}
-                        onDelete={deleteGroup}
-                    />
-                ))}
-            </div>
-            <div className="has-text-centered">
-                <button className="button is-primary" onClick={addGroup}>
-                    Add group
+        <div className="is-flex">
+            <aside className="menu p-3" style={{ width: 250 }}>
+                <div className="is-flex is-justify-content-space-between is-align-items-center">
+                    <h5 className="title is-5 m-0 pb-1">Page Limiter</h5>
+                    <SaveIndicator isLoading={isSaving} />
+                </div>
+                <ul className="menu-list">
+                    <li>
+                        <a href="#">Pages</a>
+                    </li>
+                    <li>
+                        <a href="#">Import & Export</a>
+                    </li>
+                </ul>
+            </aside>
+            <main className="px-3 py-2">
+                <button
+                    className="button is-primary mr-2"
+                    onClick={() => saveSettings({ groups, allowedPatterns })}
+                >
+                    Save
                 </button>
-            </div>
-        </main>
+                <button className="button is-danger mr-2" onClick={clearGroups}>
+                    Clear
+                </button>
+                <button className="button is-dark mr-2" onClick={exportData}>
+                    Export
+                </button>
+                <button className="button is-dark" onClick={importData}>
+                    Import
+                </button>
+                <hr />
+
+                <h4 className="title is-4">Allow List</h4>
+                <textarea
+                    id="new-group-name-input"
+                    className="textarea mb-4"
+                    placeholder="page-to-limit.com/subpage-to-allow"
+                    value={allowedPatterns.join('\n')}
+                    onChange={updateAllowedPatterns}
+                />
+
+                <h4 className="title is-4">Limited Groups</h4>
+                <div>
+                    {groups.map((group, index) => (
+                        <GroupControl
+                            key={group.id}
+                            index={index}
+                            group={group}
+                            onChange={updateGroup}
+                            onIndexChange={updateGroupIndex}
+                            onDelete={deleteGroup}
+                        />
+                    ))}
+                </div>
+                <div className="has-text-centered">
+                    <button className="button is-primary" onClick={addGroup}>
+                        Add group
+                    </button>
+                </div>
+            </main>
+        </div>
     );
 };
 

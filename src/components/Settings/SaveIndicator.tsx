@@ -7,14 +7,14 @@ type SaveIndicatorProps = {
 export default function SaveIndicator({ isLoading }: SaveIndicatorProps) {
     if (isLoading) {
         return (
-            <span className="material-symbols-outlined" style={{ fontSize: 36 }}>
+            <span className="material-symbols-outlined" style={{ fontSize: 32 }}>
                 cloud_upload
             </span>
         );
     }
 
     return (
-        <span className="material-symbols-outlined" style={{ fontSize: 36, color: 'green' }}>
+        <span className="material-symbols-outlined" style={{ fontSize: 32, color: 'green' }}>
             cloud_done
         </span>
     );
