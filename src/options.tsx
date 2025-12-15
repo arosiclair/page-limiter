@@ -49,6 +49,7 @@ type NavItemProps = {
     to: string;
     children: ReactNode;
 };
+
 function NavItem({ to, children }: NavItemProps) {
     return (
         <li className="my-3">
