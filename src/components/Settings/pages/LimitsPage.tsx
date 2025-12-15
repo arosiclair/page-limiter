@@ -89,11 +89,6 @@ export default function LimitsPage() {
         setGroups(newGroups);
         saveSettingsDebounced({ groups: newGroups, allowedPatterns });
     };
-
-    const clearGroups = () => {
-        chrome.storage.sync.set({ urlGroups: [] });
-    };
-
     const updateAllowedPatterns: React.ChangeEventHandler<HTMLTextAreaElement> = (event) => {
         const newAllowedPatterns = event.currentTarget.value
             .split('\n')
@@ -104,17 +99,6 @@ export default function LimitsPage() {
 
     return (
         <div>
-            <button
-                className="button is-primary mr-2"
-                onClick={() => saveSettingsDebounced({ groups, allowedPatterns })}
-            >
-                Save
-            </button>
-            <button className="button is-danger mr-2" onClick={clearGroups}>
-                Clear
-            </button>
-            <hr />
-
             <h4 className="title is-4">Allow List</h4>
             <textarea
                 id="new-group-name-input"
