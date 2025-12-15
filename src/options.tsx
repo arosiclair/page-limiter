@@ -21,7 +21,7 @@ const Options = () => {
                         <NavItem to="import-export">Import & Export</NavItem>
                     </ul>
                 </aside>
-                <main className="px-3 py-2">
+                <main className="p-3">
                     <Routes>
                         <Route index element={<LimitsPage />} />
                         <Route path="import-export" element={<ImportExportPage />} />
