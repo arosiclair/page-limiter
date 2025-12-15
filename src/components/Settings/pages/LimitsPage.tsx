@@ -25,8 +25,6 @@ export default function LimitsPage() {
         });
     }, []);
 
-    const saveSettingsDebounced = debounce(saveSettings, 1000);
-
     const addGroup = () => {
         const newGroups = [...groups];
         newGroups.push({
@@ -96,6 +94,8 @@ export default function LimitsPage() {
         setAllowedPatterns(newAllowedPatterns);
         saveSettingsDebounced({ groups, allowedPatterns: newAllowedPatterns });
     };
+
+    const saveSettingsDebounced = debounce(saveSettings, 1000);
 
     return (
         <div>
