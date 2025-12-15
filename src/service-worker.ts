@@ -73,8 +73,10 @@ async function addTime(message: AddTimeMessage) {
             return;
         }
 
-        matchingGroup.secondsUsed[getCurrentDate()] =
-            (matchingGroup.secondsUsed[getCurrentDate()] ?? 0) + message.secondsUsed;
+        matchingGroup.secondsUsed = {
+            [getCurrentDate()]:
+                (matchingGroup.secondsUsed[getCurrentDate()] ?? 0) + message.secondsUsed,
+        };
 
         await setGroups(groups);
         console.log('time added', { matchingGroup });
