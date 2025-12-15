@@ -1,4 +1,4 @@
-import React, { ReactNode, useState } from 'react';
+import React, { ReactNode, useEffect, useState } from 'react';
 import { createRoot } from 'react-dom/client';
 import SaveIndicator from './components/Settings/SaveIndicator';
 import { HashRouter, NavLink, Route, Routes } from 'react-router';
@@ -6,7 +6,20 @@ import LimitsPage from './components/Settings/pages/LimitsPage';
 import ImportExportPage from './components/Settings/pages/ImportExportPage';
 
 const Options = () => {
-    const [isSaving] = useState(false);
+    const [isSaving, setIsSaving] = useState(false);
+
+    useEffect(() => {
+        const onStorageUpdated = () => {
+            setIsSaving(true);
+            setTimeout(() => {
+                setIsSaving(false);
+            }, 500);
+        };
+
+        chrome.storage.onChanged.addListener(onStorageUpdated);
+
+        return () => chrome.storage.onChanged.removeListener(onStorageUpdated);
+    }, []);
 
     return (
         <HashRouter>
