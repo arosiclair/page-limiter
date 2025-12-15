@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { ReactNode, useState } from 'react';
 import { createRoot } from 'react-dom/client';
 import SaveIndicator from './components/Settings/SaveIndicator';
 import { HashRouter, NavLink, Route, Routes } from 'react-router';
@@ -17,22 +17,8 @@ const Options = () => {
                         <SaveIndicator isLoading={isSaving} />
                     </div>
                     <ul className="menu-list">
-                        <li>
-                            <NavLink
-                                to="/"
-                                className={({ isActive }) => (isActive ? 'is-active' : '')}
-                            >
-                                Limits
-                            </NavLink>
-                        </li>
-                        <li>
-                            <NavLink
-                                to="import-export"
-                                className={({ isActive }) => (isActive ? 'is-active' : '')}
-                            >
-                                Import & Export
-                            </NavLink>
-                        </li>
+                        <NavItem to="/">Limits</NavItem>
+                        <NavItem to="import-export">Import & Export</NavItem>
                     </ul>
                 </aside>
                 <main className="px-3 py-2">
@@ -45,6 +31,20 @@ const Options = () => {
         </HashRouter>
     );
 };
+
+type NavItemProps = {
+    to: string;
+    children: ReactNode;
+};
+function NavItem({ to, children }: NavItemProps) {
+    return (
+        <li className="my-3">
+            <NavLink to={to} className={({ isActive }) => (isActive ? 'is-active' : '')}>
+                {children}
+            </NavLink>
+        </li>
+    );
+}
 
 const root = createRoot(document.getElementById('root')!);
 
