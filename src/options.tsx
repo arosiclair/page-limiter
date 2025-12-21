@@ -4,6 +4,7 @@ import SaveIndicator from './components/Settings/SaveIndicator';
 import { HashRouter, NavLink, Route, Routes } from 'react-router';
 import LimitsPage from './components/Settings/pages/LimitsPage';
 import ImportExportPage from './components/Settings/pages/ImportExportPage';
+import StrictModePage from './components/Settings/pages/StrictModePage';
 
 const Options = () => {
     const [isSaving, setIsSaving] = useState(false);
@@ -32,12 +33,14 @@ const Options = () => {
                     <ul className="menu-list">
                         <NavItem to="/">Limits</NavItem>
                         <NavItem to="import-export">Import & Export</NavItem>
+                        <NavItem to="strict-mode">Strict Mode</NavItem>
                     </ul>
                 </aside>
                 <main className="p-3">
                     <Routes>
                         <Route index element={<LimitsPage />} />
                         <Route path="import-export" element={<ImportExportPage />} />
+                        <Route path="strict-mode" element={<StrictModePage />} />
                     </Routes>
                 </main>
             </div>
