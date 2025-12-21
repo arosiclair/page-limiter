@@ -6,37 +6,43 @@ import { differenceInSeconds } from 'date-fns';
 import { PageVisitedEventResult } from './service-worker';
 import AsyncLock from 'async-lock';
 
+// It takes some time for the content script to add time after losing focus to the popup. So wait we wait a few ms
+// So that we can fetch the updated time data.
+const FETCH_TIMER_DELAY = 250;
+
 const Popup = () => {
     const [matchingAllowedPattern, setMatchingAllowedPattern] = useState<string>('');
     const [matchingGroupName, setMatchingGroupName] = useState<string>('');
     const [matchingGroupTimeLeft, setMatchingGroupTimeLeft] = useState<number>(0);
 
     useEffect(() => {
-        chrome.tabs.query({ active: true, currentWindow: true }, async function (tabs) {
-            const currentURL = tabs[0].url ?? '';
-            const { allowedPatterns, groups } = await getSettings();
-            const allowedPattern = findMatchingPattern(allowedPatterns, currentURL);
-            const matchingGroup = findMatchingGroup(groups, currentURL);
-            let secondsLeft = getSecondsLeft(matchingGroup);
+        setTimeout(() => {
+            chrome.tabs.query({ active: true, currentWindow: true }, async function (tabs) {
+                const currentURL = tabs[0].url ?? '';
+                const { allowedPatterns, groups } = await getSettings();
+                const allowedPattern = findMatchingPattern(allowedPatterns, currentURL);
+                const matchingGroup = findMatchingGroup(groups, currentURL);
+                let secondsLeft = getSecondsLeft(matchingGroup);
 
-            setMatchingAllowedPattern(allowedPattern ?? '');
-            setMatchingGroupName(matchingGroup?.name ?? '');
-            setMatchingGroupTimeLeft(secondsLeft);
-
-            if (!secondsLeft) {
-                return;
-            }
-
-            let interval: NodeJS.Timeout;
-            interval = setInterval(() => {
-                secondsLeft--;
+                setMatchingAllowedPattern(allowedPattern ?? '');
+                setMatchingGroupName(matchingGroup?.name ?? '');
                 setMatchingGroupTimeLeft(secondsLeft);
 
-                if (secondsLeft === 0) {
-                    clearInterval(interval);
+                if (!secondsLeft) {
+                    return;
                 }
-            }, 1000);
-        });
+
+                let interval: NodeJS.Timeout;
+                interval = setInterval(() => {
+                    secondsLeft--;
+                    setMatchingGroupTimeLeft(secondsLeft);
+
+                    if (secondsLeft === 0) {
+                        clearInterval(interval);
+                    }
+                }, 1000);
+            });
+        }, FETCH_TIMER_DELAY);
     }, []);
 
     let status = '';
@@ -130,7 +136,9 @@ const lock = new AsyncLock();
 
 chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {
     currentURL = tabs[0].url ?? '';
-    startTimer(currentURL);
+    setTimeout(() => {
+        startTimer(currentURL);
+    }, FETCH_TIMER_DELAY);
 });
 window.addEventListener('blur', endTimer);
 window.addEventListener('beforeunload', endTimer);
