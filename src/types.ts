@@ -42,4 +42,5 @@ type BlockPageMessage = ExtensionMessage & {
 type ExportData = {
     groups: Group[];
     allowedPatterns: string[];
+    isStrictModeEnabled: boolean;
 };

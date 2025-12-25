@@ -38,3 +38,11 @@ export function setGroups(groups: Group[]) {
         });
     });
 }
+
+export function setIsStrictModeEnabled(enabled: boolean) {
+    return new Promise<void>((resolve) => {
+        chrome.storage.sync.set({ isStrictModeEnabled: enabled }, () => {
+            resolve();
+        });
+    });
+}
