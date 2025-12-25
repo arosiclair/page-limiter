@@ -1,28 +1,34 @@
 import React, { useEffect, useState } from 'react';
 import GroupControl from '../GroupControl';
 import { debounce } from '../../../utils';
-import storageLookupData from '../../../storage-lookup-data';
-import { saveSettings } from '../../../settings';
+import { getSettings, saveSettings } from '../../../settings';
+import { getSecondsLeft } from '../../../groups';
 
 export default function LimitsPage() {
     const [groups, setGroups] = useState<Group[]>([]);
     const [allowedPatterns, setAllowedPatterns] = useState<string[]>([]);
+    const [isStrictModeEnabled, setIsStrictModeEnabled] = useState(false);
+    const shouldRestrictChanges =
+        isStrictModeEnabled &&
+        groups.some((group) => group.timelimitSeconds != 0 && getSecondsLeft(group) === 0);
 
     // Load settings from storage on mount
     useEffect(() => {
-        chrome.storage.sync.get(storageLookupData, (items) => {
-            const data = items as Partial<ExportData>;
+        (async function () {
+            const settings = await getSettings();
 
-            if (data.groups?.length) {
-                setGroups(data.groups);
+            if (settings.groups?.length) {
+                setGroups(settings.groups);
             } else {
                 addGroup();
             }
 
-            if (data.allowedPatterns) {
-                setAllowedPatterns(data.allowedPatterns);
+            if (settings.allowedPatterns) {
+                setAllowedPatterns(settings.allowedPatterns);
             }
-        });
+
+            setIsStrictModeEnabled(settings.isStrictModeEnabled ?? false);
+        })();
     }, []);
 
     const addGroup = () => {
@@ -106,6 +112,7 @@ export default function LimitsPage() {
                 placeholder="page-to-limit.com/subpage-to-allow"
                 value={allowedPatterns.join('\n')}
                 onChange={updateAllowedPatterns}
+                disabled={shouldRestrictChanges}
             />
 
             <h4 className="title is-4">Limited Groups</h4>
