@@ -6,6 +6,7 @@ type GroupControlProps = {
     index: number;
     minIndex?: number;
     group: Group;
+    disabled?: boolean;
     onChange: (updatedGroup: Group) => void;
     onIndexChange: (id: string, newIndex: number) => void;
     onDelete: (id: string) => void;
@@ -15,22 +16,13 @@ export default function GroupControl({
     index,
     minIndex = -1,
     group,
+    disabled = false,
     onChange,
     onIndexChange,
     onDelete,
 }: GroupControlProps) {
     const [newIndex, setNewIndex] = useState<string | undefined>(undefined);
     const [newTimelimit, setNewTimelimit] = useState(String(group.timelimitSeconds));
-    const [isStrictModeEnabled, setIsStrictModeEnabled] = useState(false);
-    const shouldRestrictChanges =
-        isStrictModeEnabled && getSecondsLeft(group) === 0 && group.timelimitSeconds !== 0;
-
-    useEffect(() => {
-        (async function () {
-            const settings = await getSettings();
-            setIsStrictModeEnabled(settings.isStrictModeEnabled ?? false);
-        })();
-    }, []);
 
     const orderValue = newIndex !== undefined ? newIndex : index + 1;
 
@@ -59,7 +51,7 @@ export default function GroupControl({
                             onChange={(event) => setNewIndex(event.currentTarget.value)}
                             onBlur={() => updateOrder()}
                             onKeyUp={(event) => event.key === 'Enter' && updateOrder()}
-                            disabled={shouldRestrictChanges}
+                            disabled={disabled}
                             min={minIndex + 1}
                         />
                     </div>
@@ -81,7 +73,7 @@ export default function GroupControl({
                                     name: event.currentTarget.value,
                                 })
                             }
-                            disabled={shouldRestrictChanges}
+                            disabled={disabled}
                         />
                     </div>
                 </div>
@@ -102,7 +94,7 @@ export default function GroupControl({
                                     timelimitSeconds: Number(event.currentTarget.value),
                                 });
                             }}
-                            disabled={shouldRestrictChanges}
+                            disabled={disabled}
                         />
                     </div>
                 </div>
@@ -126,7 +118,7 @@ export default function GroupControl({
                                 .map((pattern) => pattern.trim()),
                         })
                     }
-                    disabled={shouldRestrictChanges}
+                    disabled={disabled}
                 ></textarea>
             </div>
 
@@ -138,7 +130,7 @@ export default function GroupControl({
                 <button
                     className="button is-danger"
                     onClick={() => onDelete(group.id)}
-                    disabled={shouldRestrictChanges}
+                    disabled={disabled}
                 >
                     Delete
                 </button>
