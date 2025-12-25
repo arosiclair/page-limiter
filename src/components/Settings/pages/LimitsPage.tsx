@@ -131,11 +131,7 @@ export default function LimitsPage() {
                         onChange={updateGroup}
                         onIndexChange={updateGroupIndex}
                         onDelete={deleteGroup}
-                        disabled={
-                            isStrictModeEnabled &&
-                            group.timelimitSeconds !== 0 &&
-                            getSecondsLeft(group) === 0
-                        }
+                        disabled={shouldRestrictChanges && index <= minExpiredGroupIndex}
                     />
                 ))}
             </div>
