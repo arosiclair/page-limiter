@@ -4,6 +4,7 @@ import { getSettings } from '../../settings';
 
 type GroupControlProps = {
     index: number;
+    minIndex?: number;
     group: Group;
     onChange: (updatedGroup: Group) => void;
     onIndexChange: (id: string, newIndex: number) => void;
@@ -12,6 +13,7 @@ type GroupControlProps = {
 
 export default function GroupControl({
     index,
+    minIndex = -1,
     group,
     onChange,
     onIndexChange,
@@ -30,7 +32,7 @@ export default function GroupControl({
         })();
     }, []);
 
-    const value = newIndex !== undefined ? newIndex : index + 1;
+    const orderValue = newIndex !== undefined ? newIndex : index + 1;
 
     const updateOrder = () => {
         if (newIndex === undefined) {
@@ -53,11 +55,12 @@ export default function GroupControl({
                             id={`${group.id}-group-order-input`}
                             className="input"
                             type="number"
-                            value={value}
+                            value={orderValue}
                             onChange={(event) => setNewIndex(event.currentTarget.value)}
                             onBlur={() => updateOrder()}
                             onKeyUp={(event) => event.key === 'Enter' && updateOrder()}
                             disabled={shouldRestrictChanges}
+                            min={minIndex + 1}
                         />
                     </div>
                 </div>

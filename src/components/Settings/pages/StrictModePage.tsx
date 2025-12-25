@@ -31,6 +31,7 @@ export default function StrictModePage() {
             <ul className="pl-5" style={{ listStyle: 'initial' }}>
                 <li>Restricts changes to a limited group after it's time is up</li>
                 <li>Restricts changes to the allow list after any group's time is up</li>
+                <li>Restricts changes to the order of groups around an expired group</li>
             </ul>
         </div>
     );
