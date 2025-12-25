@@ -8,21 +8,27 @@ export function getSettings() {
     });
 }
 
-export function saveSettings(data: ExportData) {
+export function saveSettings(data: Partial<ExportData>) {
     chrome.storage.sync.set(cleanData(data));
 }
 
-function cleanData(data: ExportData): ExportData {
-    return {
+function cleanData(data: Partial<ExportData>): Partial<ExportData> {
+    const result: Partial<ExportData> = {};
+
+    if (data.groups) {
         // Filter out empty URLs
-        groups: data.groups.map((group) => ({
+        result.groups = data.groups.map((group) => ({
             ...group,
             patterns: group.patterns.filter(Boolean),
-        })),
+        }));
+    }
 
+    if (data.allowedPatterns) {
         // Filter out empty URLs
-        allowedPatterns: data.allowedPatterns.filter(Boolean),
-    };
+        result.allowedPatterns = data.allowedPatterns.filter(Boolean);
+    }
+
+    return result;
 }
 
 export function setGroups(groups: Group[]) {
