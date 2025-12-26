@@ -4,16 +4,24 @@ const storageLookupData: ExportData = {
     isStrictModeEnabled: false,
 };
 
-export function getSettings() {
+export async function getSettings() {
+    const isSyncingEnabled = await getIsSyncingEnabled();
+    const store = isSyncingEnabled ? 'sync' : 'local';
+
     return new Promise<Partial<ExportData>>((resolve) => {
-        chrome.storage.sync.get(storageLookupData, (items) => {
+        chrome.storage[store].get(storageLookupData, (items) => {
             resolve(items as ExportData);
         });
     });
 }
 
-export function saveSettings(data: Partial<ExportData>) {
-    chrome.storage.sync.set(cleanData(data));
+export async function saveSettings(data: Partial<ExportData>) {
+    const isSyncingEnabled = await getIsSyncingEnabled();
+    const store = isSyncingEnabled ? 'sync' : 'local';
+
+    return new Promise<void>((resolve) => {
+        chrome.storage[store].set(cleanData(data), () => resolve());
+    });
 }
 
 function cleanData(data: Partial<ExportData>): Partial<ExportData> {
