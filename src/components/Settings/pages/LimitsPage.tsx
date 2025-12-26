@@ -8,10 +8,10 @@ export default function LimitsPage() {
     const [groups, setGroups] = useState<Group[]>([]);
     const [allowedPatterns, setAllowedPatterns] = useState<string[]>([]);
     const [isStrictModeEnabled, setIsStrictModeEnabled] = useState(false);
-    const minExpiredGroupIndex = groups.findIndex(
+    const lastExpiredGroupIndex = groups.findLastIndex(
         (group) => group.timelimitSeconds !== 0 && getSecondsLeft(group) === 0
     );
-    const shouldRestrictChanges = isStrictModeEnabled && minExpiredGroupIndex !== -1;
+    const shouldRestrictChanges = isStrictModeEnabled && lastExpiredGroupIndex !== -1;
 
     // Load settings from storage on mount
     useEffect(() => {
@@ -123,15 +123,15 @@ export default function LimitsPage() {
                         key={group.id}
                         index={index}
                         minIndex={
-                            shouldRestrictChanges && index > minExpiredGroupIndex
-                                ? minExpiredGroupIndex + 1
+                            shouldRestrictChanges && index > lastExpiredGroupIndex
+                                ? lastExpiredGroupIndex + 1
                                 : 0
                         }
                         group={group}
                         onChange={updateGroup}
                         onIndexChange={updateGroupIndex}
                         onDelete={deleteGroup}
-                        disabled={shouldRestrictChanges && index <= minExpiredGroupIndex}
+                        disabled={shouldRestrictChanges && index <= lastExpiredGroupIndex}
                     />
                 ))}
             </div>
