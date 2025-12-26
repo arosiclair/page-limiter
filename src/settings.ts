@@ -17,11 +17,9 @@ export function saveSettings(data: Partial<ExportData>) {
 }
 
 function cleanData(data: Partial<ExportData>): Partial<ExportData> {
-    const result: Partial<ExportData> = {};
-
     if (data.groups) {
         // Filter out empty URLs
-        result.groups = data.groups.map((group) => ({
+        data.groups = data.groups.map((group) => ({
             ...group,
             patterns: group.patterns.filter(Boolean),
         }));
@@ -29,10 +27,10 @@ function cleanData(data: Partial<ExportData>): Partial<ExportData> {
 
     if (data.allowedPatterns) {
         // Filter out empty URLs
-        result.allowedPatterns = data.allowedPatterns.filter(Boolean);
+        data.allowedPatterns = data.allowedPatterns.filter(Boolean);
     }
 
-    return result;
+    return data;
 }
 
 export function setIsSyncingEnabled(enabled: boolean) {
