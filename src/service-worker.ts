@@ -1,4 +1,4 @@
-import { getSettings, setGroups } from './settings';
+import { getSettings, saveSettings } from './settings';
 import { findMatchingPattern, findMatchingGroup, getCurrentDate, getSecondsLeft } from './groups';
 import AsyncLock from 'async-lock';
 
@@ -78,7 +78,7 @@ async function addTime(message: AddTimeMessage) {
                 (matchingGroup.secondsUsed[getCurrentDate()] ?? 0) + message.secondsUsed,
         };
 
-        await setGroups(groups);
+        await saveSettings({ groups });
         console.log('time added', { matchingGroup });
         done();
     });

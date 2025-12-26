@@ -35,22 +35,6 @@ function cleanData(data: Partial<ExportData>): Partial<ExportData> {
     return result;
 }
 
-export function setGroups(groups: Group[]) {
-    return new Promise<void>((resolve) => {
-        chrome.storage.sync.set({ groups }, () => {
-            resolve();
-        });
-    });
-}
-
-export function setIsStrictModeEnabled(enabled: boolean) {
-    return new Promise<void>((resolve) => {
-        chrome.storage.sync.set({ isStrictModeEnabled: enabled }, () => {
-            resolve();
-        });
-    });
-}
-
 export function setIsSyncingEnabled(enabled: boolean) {
     return new Promise<void>((resolve) => {
         chrome.storage.local.set({ isSyncingEnabled: enabled }, () => {

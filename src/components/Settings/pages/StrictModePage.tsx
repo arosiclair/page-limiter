@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { getSettings, setIsStrictModeEnabled as saveIsStrictModeEnabled } from '../../../settings';
+import { getSettings, saveSettings } from '../../../settings';
 
 export default function StrictModePage() {
     const [isStrictModeEnabled, setIsStrictModeEnabled] = useState(false);
@@ -23,7 +23,7 @@ export default function StrictModePage() {
                         checked={isStrictModeEnabled}
                         onChange={(event) => {
                             setIsStrictModeEnabled(event.target.checked);
-                            saveIsStrictModeEnabled(event.target.checked);
+                            saveSettings({ isStrictModeEnabled: event.target.checked });
                         }}
                     ></input>
                 </label>
