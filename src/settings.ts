@@ -51,7 +51,7 @@ export function setIsSyncingEnabled(enabled: boolean) {
 
 export function getIsSyncingEnabled() {
     return new Promise<boolean>((resolve) => {
-        chrome.storage.local.get({ isSyncingEnabled: false }, (items) => {
+        chrome.storage.local.get({ isSyncingEnabled: true }, (items) => {
             resolve(items.isSyncingEnabled);
         });
     });
