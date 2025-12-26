@@ -1,7 +1,17 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
+import {
+    getIsSyncingEnabled,
+    setIsSyncingEnabled as saveIsSyncingEnabled,
+} from '../../../settings';
 
 export default function SyncingPage() {
     const [isSyncingEnabled, setIsSyncingEnabled] = useState(true);
+
+    useEffect(() => {
+        (async function () {
+            setIsSyncingEnabled(await getIsSyncingEnabled());
+        })();
+    }, []);
 
     return (
         <div>
@@ -15,6 +25,7 @@ export default function SyncingPage() {
                         checked={isSyncingEnabled}
                         onChange={(event) => {
                             setIsSyncingEnabled(event.target.checked);
+                            saveIsSyncingEnabled(event.target.checked);
                         }}
                     ></input>
                 </label>

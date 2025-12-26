@@ -50,3 +50,19 @@ export function setIsStrictModeEnabled(enabled: boolean) {
         });
     });
 }
+
+export function setIsSyncingEnabled(enabled: boolean) {
+    return new Promise<void>((resolve) => {
+        chrome.storage.local.set({ isSyncingEnabled: enabled }, () => {
+            resolve();
+        });
+    });
+}
+
+export function getIsSyncingEnabled() {
+    return new Promise<boolean>((resolve) => {
+        chrome.storage.local.get({ isSyncingEnabled: false }, (items) => {
+            resolve(items.isSyncingEnabled);
+        });
+    });
+}
