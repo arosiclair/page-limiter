@@ -1,4 +1,8 @@
-import storageLookupData from './storage-lookup-data';
+const storageLookupData: ExportData = {
+    groups: [],
+    allowedPatterns: [],
+    isStrictModeEnabled: false,
+};
 
 export function getSettings() {
     return new Promise<Partial<ExportData>>((resolve) => {
