@@ -180,7 +180,7 @@ function stopTimer() {
             source: 'popup',
             event: 'add-time',
             url: currentURL,
-            secondsUsed: differenceInSeconds(new Date(), timer.stop()),
+            secondsUsed: timer.stop(),
         };
 
         chrome.runtime.sendMessage(message);
