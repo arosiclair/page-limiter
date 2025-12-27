@@ -17,6 +17,10 @@ function startTimer() {
         return;
     }
 
+    if (!document.hasFocus()) {
+        return;
+    }
+
     startTime = new Date();
 
     const message: PageVisitedMessage = {
