@@ -5,6 +5,7 @@ import { findMatchingPattern, findMatchingGroup, getSecondsLeft } from './groups
 import { differenceInSeconds } from 'date-fns';
 import { PageVisitedEventResult } from './service-worker';
 import AsyncLock from 'async-lock';
+import Timer from './modules/timer';
 
 // It takes some time for the content script to add time after losing focus to the popup. So wait we wait a few ms
 // So that we can fetch the updated time data.
@@ -130,9 +131,9 @@ function InfinityIcon() {
 }
 
 let currentURL = '';
-let startTime: Date | null;
-let timeout: NodeJS.Timeout;
 const lock = new AsyncLock();
+const timer = new Timer();
+timer.onTimeout = blockPage;
 
 chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {
     currentURL = tabs[0].url ?? '';
@@ -140,56 +141,49 @@ chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {
         startTimer(currentURL);
     }, FETCH_TIMER_DELAY);
 });
-window.addEventListener('blur', endTimer);
-window.addEventListener('beforeunload', endTimer);
+window.addEventListener('blur', stopTimer);
+window.addEventListener('beforeunload', stopTimer);
 
 function startTimer(url: string) {
-    if (startTime) {
-        return;
-    }
-
-    startTime = new Date();
-
-    const message: PageVisitedMessage = {
-        source: 'popup',
-        event: 'page-visited',
-        url: url,
-    };
-
     lock.acquire('timer', (done) => {
+        if (timer.isRunning()) {
+            done();
+            return;
+        }
+
+        const message: PageVisitedMessage = {
+            source: 'popup',
+            event: 'page-visited',
+            url: url,
+        };
+
         chrome.runtime.sendMessage(message, (response: PageVisitedEventResult) => {
             if (!response.didMatch) {
-                startTime = null;
                 done();
                 return;
             }
 
-            timeout = setTimeout(() => {
-                endTimer();
-                blockPage();
-            }, response.secondsLeft * 1000);
+            timer.start(response.secondsLeft);
             done();
         });
     });
 }
 
-function endTimer() {
-    if (!startTime) {
-        return;
-    }
-
-    const message: AddTimeMessage = {
-        source: 'popup',
-        event: 'add-time',
-        url: currentURL,
-        secondsUsed: differenceInSeconds(new Date(), startTime),
-    };
-
-    chrome.runtime.sendMessage(message);
-    startTime = null;
-
+function stopTimer() {
     lock.acquire('timer', (done) => {
-        clearTimeout(timeout);
+        if (!timer.isRunning()) {
+            done();
+            return;
+        }
+
+        const message: AddTimeMessage = {
+            source: 'popup',
+            event: 'add-time',
+            url: currentURL,
+            secondsUsed: differenceInSeconds(new Date(), timer.stop()),
+        };
+
+        chrome.runtime.sendMessage(message);
         done();
     });
 }

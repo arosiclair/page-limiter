@@ -1,40 +1,36 @@
-import { millisecondsInSecond } from 'date-fns/constants';
 import { PageVisitedEventResult } from './service-worker';
-import { differenceInSeconds } from 'date-fns';
 import AsyncLock from 'async-lock';
+import Timer from './modules/timer';
 
 const lock = new AsyncLock();
-let timeout: NodeJS.Timeout;
-let startTime: Date | undefined;
+const timer = new Timer();
+timer.onTimeout = blockPage;
 
 startTimer();
 window.addEventListener('focus', startTimer);
-window.addEventListener('blur', endTimer);
-window.addEventListener('beforeunload', endTimer);
+window.addEventListener('blur', stopTimer);
+window.addEventListener('beforeunload', stopTimer);
 
 function startTimer() {
-    if (startTime) {
-        return;
-    }
-
     if (!document.hasFocus()) {
         return;
     }
 
-    startTime = new Date();
-
-    const message: PageVisitedMessage = {
-        source: 'content-script',
-        event: 'page-visited',
-        url: window.location.href,
-    };
-
-    // This lock is needed since we're setting the timeout asynchronously. If endTimer is called quickly after
+    // This lock is needed since we're starting the timer asynchronously. If endTimer is called quickly after
     // startTimer, we need to wait for the timeout to be set before clearing it.
     lock.acquire('timer', (done) => {
+        if (timer.isRunning()) {
+            return;
+        }
+
+        const message: PageVisitedMessage = {
+            source: 'content-script',
+            event: 'page-visited',
+            url: window.location.href,
+        };
+
         chrome.runtime.sendMessage(message, ({ didMatch, secondsLeft }: PageVisitedEventResult) => {
             if (!didMatch) {
-                startTime = undefined;
                 done();
                 return;
             }
@@ -45,35 +41,31 @@ function startTimer() {
                 return;
             }
 
-            timeout = setTimeout(blockPage, secondsLeft * millisecondsInSecond);
+            timer.start(secondsLeft);
             done();
         });
     });
 }
 
-function endTimer() {
-    if (!startTime) {
-        return;
-    }
-
-    const message: AddTimeMessage = {
-        source: 'content-script',
-        event: 'add-time',
-        url: window.location.href,
-        secondsUsed: differenceInSeconds(new Date(), startTime),
-    };
-
-    chrome.runtime.sendMessage(message);
-    startTime = undefined;
-
+function stopTimer() {
     lock.acquire('timer', (done) => {
-        clearTimeout(timeout);
+        if (!timer.isRunning()) {
+            return;
+        }
+
+        const message: AddTimeMessage = {
+            source: 'content-script',
+            event: 'add-time',
+            url: window.location.href,
+            secondsUsed: timer.stop(),
+        };
+        chrome.runtime.sendMessage(message);
         done();
     });
 }
 
 function blockPage() {
-    endTimer();
+    stopTimer();
     window.location.replace('https://0.0.0.0/');
 }
 
