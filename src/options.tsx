@@ -8,28 +8,13 @@ import StrictModePage from './components/Settings/pages/StrictModePage';
 import SyncingPage from './components/Settings/pages/SyncingPage';
 
 const Options = () => {
-    const [isSaving, setIsSaving] = useState(false);
-
-    useEffect(() => {
-        const onStorageUpdated = () => {
-            setIsSaving(true);
-            setTimeout(() => {
-                setIsSaving(false);
-            }, 500);
-        };
-
-        chrome.storage.onChanged.addListener(onStorageUpdated);
-
-        return () => chrome.storage.onChanged.removeListener(onStorageUpdated);
-    }, []);
-
     return (
         <HashRouter>
             <div className="is-flex">
                 <aside className="menu p-3" style={{ width: 250 }}>
                     <div className="is-flex is-justify-content-space-between is-align-items-center">
                         <h5 className="title is-5 m-0 pb-1">Page Limiter</h5>
-                        <SaveIndicator isLoading={isSaving} />
+                        <SaveIndicator />
                     </div>
                     <ul className="menu-list">
                         <NavItem to="/">Limits</NavItem>
