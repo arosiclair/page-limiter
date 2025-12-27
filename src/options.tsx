@@ -13,7 +13,7 @@ const Options = () => {
             <div className="is-flex">
                 <aside className="menu p-3" style={{ width: 250 }}>
                     <div className="is-flex is-justify-content-space-between is-align-items-center">
-                        <h5 className="title is-5 m-0 pb-1">Page Limiter</h5>
+                        <h5 className="title is-5 m-0 pb-1">PAGE LIMITER</h5>
                         <SaveIndicator />
                     </div>
                     <ul className="menu-list">
