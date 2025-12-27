@@ -98,13 +98,16 @@ const Popup = () => {
                     <h5 className="subtitle is-6">{match}</h5>
                 </div>
                 <div
-                    className={`${statusClass} is-flex-direction-column py-2 px-3`}
-                    style={{ height: 'auto' }}
+                    className={`${statusClass} is-flex-direction-column p-3`}
+                    style={{ height: 'auto', minWidth: 120 }}
                 >
                     <h5 className="title is-6 mb-2" style={{ color: 'inherit' }}>
                         Time left
                     </h5>
-                    <div className="title is-3 has-text-centered m-0" style={{ color: 'inherit' }}>
+                    <div
+                        className="title is-3 has-text-centered m-0"
+                        style={{ color: 'inherit', lineHeight: '100%' }}
+                    >
                         {timeLeft}
                     </div>
                 </div>
