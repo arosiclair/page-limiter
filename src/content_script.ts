@@ -68,6 +68,7 @@ function endTimer() {
 }
 
 function blockPage() {
+    endTimer();
     window.location.replace('https://0.0.0.0/');
 }
 
