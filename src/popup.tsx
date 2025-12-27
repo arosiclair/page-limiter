@@ -138,9 +138,7 @@ const timer = new Timer();
 
 chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {
     currentURL = tabs[0].url ?? '';
-    setTimeout(() => {
-        startTimer(currentURL);
-    }, FETCH_TIMER_DELAY);
+    startTimer(currentURL);
 });
 window.addEventListener('blur', stopTimer);
 window.addEventListener('beforeunload', stopTimer);
@@ -152,21 +150,23 @@ function startTimer(url: string) {
             return;
         }
 
-        const message: PageVisitedMessage = {
-            source: 'popup',
-            event: 'page-visited',
-            url: url,
-        };
+        setTimeout(() => {
+            const message: PageVisitedMessage = {
+                source: 'popup',
+                event: 'page-visited',
+                url: url,
+            };
 
-        chrome.runtime.sendMessage(message, (response: PageVisitedEventResult) => {
-            if (!response.didMatch) {
+            chrome.runtime.sendMessage(message, (response: PageVisitedEventResult) => {
+                if (!response.didMatch) {
+                    done();
+                    return;
+                }
+
+                timer.start(response.secondsLeft);
                 done();
-                return;
-            }
-
-            timer.start(response.secondsLeft);
-            done();
-        });
+            });
+        }, FETCH_TIMER_DELAY);
     });
 }
 

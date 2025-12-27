@@ -2,6 +2,8 @@ import { PageVisitedEventResult } from './service-worker';
 import AsyncLock from 'async-lock';
 import Timer from './modules/timer';
 
+const FETCH_TIMER_DELAY = 250;
+
 const lock = new AsyncLock();
 const timer = new Timer();
 
@@ -23,27 +25,32 @@ function startTimer() {
             return;
         }
 
-        const message: PageVisitedMessage = {
-            source: 'content-script',
-            event: 'page-visited',
-            url: window.location.href,
-        };
+        setTimeout(() => {
+            const message: PageVisitedMessage = {
+                source: 'content-script',
+                event: 'page-visited',
+                url: window.location.href,
+            };
 
-        chrome.runtime.sendMessage(message, ({ didMatch, secondsLeft }: PageVisitedEventResult) => {
-            if (!didMatch) {
-                done();
-                return;
-            }
+            chrome.runtime.sendMessage(
+                message,
+                ({ didMatch, secondsLeft }: PageVisitedEventResult) => {
+                    if (!didMatch) {
+                        done();
+                        return;
+                    }
 
-            if (secondsLeft === 0) {
-                blockPage();
-                done();
-                return;
-            }
+                    if (secondsLeft === 0) {
+                        blockPage();
+                        done();
+                        return;
+                    }
 
-            timer.start(secondsLeft);
-            done();
-        });
+                    timer.start(secondsLeft);
+                    done();
+                }
+            );
+        }, FETCH_TIMER_DELAY);
     });
 }
 
