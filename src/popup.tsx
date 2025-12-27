@@ -2,7 +2,6 @@ import React, { useEffect, useState } from 'react';
 import { createRoot } from 'react-dom/client';
 import { getSettings } from './settings';
 import { findMatchingPattern, findMatchingGroup, getSecondsLeft } from './groups';
-import { differenceInSeconds } from 'date-fns';
 import { PageVisitedEventResult } from './service-worker';
 import AsyncLock from 'async-lock';
 import Timer from './modules/timer';
@@ -133,7 +132,6 @@ function InfinityIcon() {
 let currentURL = '';
 const lock = new AsyncLock();
 const timer = new Timer();
-timer.onTimeout = blockPage;
 
 chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {
     currentURL = tabs[0].url ?? '';
@@ -176,19 +174,15 @@ function stopTimer() {
             return;
         }
 
-        const message: AddTimeMessage = {
-            source: 'popup',
-            event: 'add-time',
-            url: currentURL,
-            secondsUsed: timer.stop(),
-        };
-
-        chrome.runtime.sendMessage(message);
+        addTime(timer.stop());
         done();
     });
 }
 
-function blockPage() {
+timer.onTimeout = (secondsElapsed: number) => {
+    addTime(secondsElapsed);
+
+    // Send a block-page message to the active tab
     chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
         const activeTabId = tabs[0].id ?? 0;
         const url = tabs[0].url ?? '';
@@ -199,4 +193,15 @@ function blockPage() {
         };
         chrome.tabs.sendMessage(activeTabId, message);
     });
+};
+
+function addTime(secondsUsed: number) {
+    const message: AddTimeMessage = {
+        source: 'popup',
+        event: 'add-time',
+        url: currentURL,
+        secondsUsed,
+    };
+
+    chrome.runtime.sendMessage(message);
 }

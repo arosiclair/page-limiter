@@ -4,7 +4,6 @@ import Timer from './modules/timer';
 
 const lock = new AsyncLock();
 const timer = new Timer();
-timer.onTimeout = blockPage;
 
 startTimer();
 window.addEventListener('focus', startTimer);
@@ -20,6 +19,7 @@ function startTimer() {
     // startTimer, we need to wait for the timeout to be set before clearing it.
     lock.acquire('timer', (done) => {
         if (timer.isRunning()) {
+            done();
             return;
         }
 
@@ -50,18 +50,28 @@ function startTimer() {
 function stopTimer() {
     lock.acquire('timer', (done) => {
         if (!timer.isRunning()) {
+            done();
             return;
         }
 
-        const message: AddTimeMessage = {
-            source: 'content-script',
-            event: 'add-time',
-            url: window.location.href,
-            secondsUsed: timer.stop(),
-        };
-        chrome.runtime.sendMessage(message);
+        addTime(timer.stop());
         done();
     });
+}
+
+timer.onTimeout = (secondsElapsed) => {
+    addTime(secondsElapsed);
+    blockPage();
+};
+
+function addTime(secondsUsed: number) {
+    const message: AddTimeMessage = {
+        source: 'content-script',
+        event: 'add-time',
+        url: window.location.href,
+        secondsUsed,
+    };
+    chrome.runtime.sendMessage(message);
 }
 
 function blockPage() {
