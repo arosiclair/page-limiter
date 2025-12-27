@@ -1,9 +1,6 @@
 import { PageVisitedEventResult } from './service-worker';
 import AsyncLock from 'async-lock';
-import Timer from './modules/timer';
-
-const FETCH_TIMER_DELAY = 250;
-
+import Timer, { START_TIMER_DELAY_MS } from './modules/timer';
 const lock = new AsyncLock();
 const timer = new Timer();
 
@@ -50,7 +47,7 @@ function startTimer() {
                     done();
                 }
             );
-        }, FETCH_TIMER_DELAY);
+        }, START_TIMER_DELAY_MS);
     });
 }
 

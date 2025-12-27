@@ -4,11 +4,7 @@ import { getSettings } from './settings';
 import { findMatchingPattern, findMatchingGroup, getSecondsLeft } from './groups';
 import { PageVisitedEventResult } from './service-worker';
 import AsyncLock from 'async-lock';
-import Timer from './modules/timer';
-
-// It takes some time for the content script to add time after losing focus to the popup. So wait we wait a few ms
-// So that we can fetch the updated time data.
-const FETCH_TIMER_DELAY = 250;
+import Timer, { START_TIMER_DELAY_MS } from './modules/timer';
 
 const Popup = () => {
     const [matchingAllowedPattern, setMatchingAllowedPattern] = useState<string>('');
@@ -42,7 +38,7 @@ const Popup = () => {
                     }
                 }, 1000);
             });
-        }, FETCH_TIMER_DELAY);
+        }, START_TIMER_DELAY_MS);
     }, []);
 
     let status = '';
@@ -166,7 +162,7 @@ function startTimer(url: string) {
                 timer.start(response.secondsLeft);
                 done();
             });
-        }, FETCH_TIMER_DELAY);
+        }, START_TIMER_DELAY_MS);
     });
 }
 
