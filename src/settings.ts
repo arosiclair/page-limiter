@@ -41,12 +41,16 @@ function cleanData(data: Partial<ExportData>): Partial<ExportData> {
     return data;
 }
 
-export function setIsSyncingEnabled(enabled: boolean) {
-    return new Promise<void>((resolve) => {
+export async function setIsSyncingEnabled(enabled: boolean, shouldCarryoverSettings: boolean) {
+    const carryoverSettings = shouldCarryoverSettings ? await getSettings() : {};
+
+    await new Promise<void>((resolve) => {
         chrome.storage.local.set({ isSyncingEnabled: enabled }, () => {
             resolve();
         });
     });
+
+    saveSettings(carryoverSettings);
 }
 
 export function getIsSyncingEnabled() {
