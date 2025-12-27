@@ -34,6 +34,7 @@ function startTimer() {
     lock.acquire('timer', (done) => {
         chrome.runtime.sendMessage(message, ({ didMatch, secondsLeft }: PageVisitedEventResult) => {
             if (!didMatch) {
+                startTime = undefined;
                 done();
                 return;
             }
