@@ -72,17 +72,15 @@ export default function LimitsPage() {
 
         const isIncreasing = newIndex > oldIndex;
 
-        const newUrlGroups = [
-            ...groups.slice(0, newIndex).filter((urlGroup) => urlGroup.id !== id),
-        ];
+        const newGroups = [...groups.slice(0, newIndex).filter((group) => group.id !== id)];
         if (isIncreasing) {
-            newUrlGroups.push(groups[newIndex], groups[oldIndex]);
+            newGroups.push(groups[newIndex], groups[oldIndex]);
         } else {
-            newUrlGroups.push(groups[oldIndex], groups[newIndex]);
+            newGroups.push(groups[oldIndex], groups[newIndex]);
         }
-        newUrlGroups.push(...groups.slice(newIndex + 1).filter((urlGroup) => urlGroup.id !== id));
+        newGroups.push(...groups.slice(newIndex + 1).filter((urlGroup) => urlGroup.id !== id));
 
-        saveGroups(newUrlGroups);
+        saveGroups(newGroups);
     };
 
     const deleteGroup = (id: string) => {
