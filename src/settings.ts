@@ -56,7 +56,7 @@ export async function setIsSyncingEnabled(enabled: boolean, shouldCarryoverSetti
 export function getIsSyncingEnabled() {
     return new Promise<boolean>((resolve) => {
         chrome.storage.local.get({ isSyncingEnabled: true }, (items) => {
-            resolve(items.isSyncingEnabled);
+            resolve((items.isSyncingEnabled ?? true) as boolean);
         });
     });
 }
