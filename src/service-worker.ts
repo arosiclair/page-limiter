@@ -85,14 +85,24 @@ async function addTime(message: AddTimeMessage) {
         await saveSettings({ groups });
         console.log('time added', { matchingGroup });
 
-        const timeAddedMessage: TimeAddedMessage = {
-            source: 'service-worker',
-            event: 'time-added',
-            groupId: matchingGroup.id,
-            secondsUsed: message.secondsUsed,
-        };
-        chrome.runtime.sendMessage(timeAddedMessage);
+        sendTimeAddedMessage(matchingGroup.id, message.secondsUsed);
 
         done();
     });
+}
+
+async function sendTimeAddedMessage(groupId: string, secondsUsed: number) {
+    const timeAddedMessage: TimeAddedMessage = {
+        source: 'service-worker',
+        event: 'time-added',
+        groupId,
+        secondsUsed,
+    };
+
+    try {
+        await chrome.runtime.sendMessage(timeAddedMessage);
+    } catch (error) {
+        // This will throw a "Could not establish connection. Receiving end does not exist." error when the LimitsPage
+        // isn't open which is fine.
+    }
 }
