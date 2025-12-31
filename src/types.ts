@@ -44,9 +44,3 @@ type BlockPageMessage = ExtensionMessage & {
     event: 'block-page';
     url: string;
 };
-
-type ExportData = {
-    groups: Group[];
-    allowedPatterns: string[];
-    isStrictModeEnabled: boolean;
-};

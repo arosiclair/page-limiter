@@ -6,3 +6,11 @@ export function debounce<T extends Function>(func: T, ms: number) {
     };
     return <T>(<any>callable);
 }
+
+export function project(source: Record<string, unknown>, keys: string[]) {
+    const result: Record<string, unknown> = {};
+    for (const key of keys) {
+        result[key] = source[key];
+    }
+    return result;
+}

@@ -1,5 +1,5 @@
 import React from 'react';
-import { getSettings, saveSettings } from '../../../settings';
+import { getSettings, saveSettings, Settings } from '../../../settings';
 
 export default function ImportExportPage() {
     const exportData = async () => {
@@ -25,7 +25,7 @@ export default function ImportExportPage() {
 
     const importData = async () => {
         try {
-            const data = await new Promise<ExportData>((resolve, reject) => {
+            const data = await new Promise<Partial<Settings>>((resolve, reject) => {
                 const input = document.createElement('input');
                 input.type = 'file';
                 input.accept = 'application/json,.json';

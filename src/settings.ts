@@ -1,30 +1,68 @@
-const storageLookupData: ExportData = {
+import { project } from './utils';
+
+type LocalSettings = {
+    isSyncingEnabled: boolean;
+};
+
+type SyncSettings = {
+    groups: Group[];
+    allowedPatterns: string[];
+    isStrictModeEnabled: boolean;
+};
+
+export type Settings = LocalSettings & SyncSettings;
+
+const localSettingsWithDefaults: LocalSettings = {
+    isSyncingEnabled: true,
+};
+
+const syncSettingsWithDefaults: SyncSettings = {
     groups: [],
     allowedPatterns: [],
     isStrictModeEnabled: false,
 };
 
-export async function getSettings() {
+export async function getSettings(): Promise<Settings> {
+    const syncSettings = await getSyncSettings();
+    const localSettings = await getLocalSettings();
+
+    return {
+        ...localSettings,
+        ...syncSettings,
+    };
+}
+
+async function getSyncSettings(): Promise<SyncSettings> {
     const isSyncingEnabled = await getIsSyncingEnabled();
     const store = isSyncingEnabled ? 'sync' : 'local';
 
-    return new Promise<Partial<ExportData>>((resolve) => {
-        chrome.storage[store].get(storageLookupData, (items) => {
-            resolve(items as ExportData);
-        });
-    });
+    return await chrome.storage[store].get(syncSettingsWithDefaults);
 }
 
-export async function saveSettings(data: Partial<ExportData>) {
+async function getLocalSettings(): Promise<LocalSettings> {
+    return await chrome.storage.local.get(localSettingsWithDefaults);
+}
+
+export async function saveSettings(data: Partial<Settings>) {
     const isSyncingEnabled = await getIsSyncingEnabled();
     const store = isSyncingEnabled ? 'sync' : 'local';
 
-    return new Promise<void>((resolve) => {
-        chrome.storage[store].set(cleanData(data), () => resolve());
-    });
+    const syncSettings = project(
+        data,
+        Object.keys(syncSettingsWithDefaults)
+    ) as Partial<SyncSettings>;
+    const localSettings = project(
+        data,
+        Object.keys(localSettingsWithDefaults)
+    ) as Partial<LocalSettings>;
+
+    return Promise.all([
+        chrome.storage[store].set(cleanData(syncSettings)),
+        chrome.storage.local.set(cleanData(localSettings)),
+    ]);
 }
 
-function cleanData(data: Partial<ExportData>): Partial<ExportData> {
+function cleanData(data: Partial<Settings>): Partial<Settings> {
     if (data.groups) {
         // Filter out empty URLs
         data.groups = data.groups.map((group) => ({
@@ -42,21 +80,12 @@ function cleanData(data: Partial<ExportData>): Partial<ExportData> {
 }
 
 export async function setIsSyncingEnabled(enabled: boolean, shouldCarryoverSettings: boolean) {
-    const carryoverSettings = shouldCarryoverSettings ? await getSettings() : {};
-
-    await new Promise<void>((resolve) => {
-        chrome.storage.local.set({ isSyncingEnabled: enabled }, () => {
-            resolve();
-        });
-    });
-
+    const carryoverSettings = shouldCarryoverSettings ? await getSyncSettings() : {};
+    await chrome.storage.local.set({ isSyncingEnabled: enabled });
     saveSettings(carryoverSettings);
 }
 
-export function getIsSyncingEnabled() {
-    return new Promise<boolean>((resolve) => {
-        chrome.storage.local.get({ isSyncingEnabled: true }, (items) => {
-            resolve((items.isSyncingEnabled ?? true) as boolean);
-        });
-    });
+export async function getIsSyncingEnabled() {
+    const localSettings = await getLocalSettings();
+    return localSettings.isSyncingEnabled;
 }
