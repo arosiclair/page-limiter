@@ -13,23 +13,36 @@ export default function LimitsPage() {
     );
     const shouldRestrictChanges = isStrictModeEnabled && lastExpiredGroupIndex !== -1;
 
+    const refreshSettings = async () => {
+        const settings = await getSettings();
+
+        if (settings.groups?.length) {
+            setGroups(settings.groups);
+        } else {
+            addGroup();
+        }
+
+        if (settings.allowedPatterns) {
+            setAllowedPatterns(settings.allowedPatterns);
+        }
+
+        setIsStrictModeEnabled(settings.isStrictModeEnabled ?? false);
+    };
+
     // Load settings from storage on mount
     useEffect(() => {
-        (async function () {
-            const settings = await getSettings();
+        refreshSettings();
+    }, []);
 
-            if (settings.groups?.length) {
-                setGroups(settings.groups);
-            } else {
-                addGroup();
+    useEffect(() => {
+        const onMessageReceived = (message: ExtensionMessage) => {
+            if (message.event === 'time-added') {
+                refreshSettings();
             }
+        };
 
-            if (settings.allowedPatterns) {
-                setAllowedPatterns(settings.allowedPatterns);
-            }
-
-            setIsStrictModeEnabled(settings.isStrictModeEnabled ?? false);
-        })();
+        chrome.runtime.onMessage.addListener(onMessageReceived);
+        return () => chrome.runtime.onMessage.removeListener(onMessageReceived);
     }, []);
 
     const addGroup = () => {

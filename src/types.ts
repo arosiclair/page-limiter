@@ -14,7 +14,7 @@ type HistoryEntry = {
 };
 
 type ExtensionMessage = {
-    source: 'content-script' | 'popup';
+    source: 'content-script' | 'popup' | 'service-worker';
     event: string;
 };
 
@@ -31,6 +31,12 @@ type PageLeftMessage = ExtensionMessage & {
 type AddTimeMessage = ExtensionMessage & {
     event: 'add-time';
     url: string;
+    secondsUsed: number;
+};
+
+type TimeAddedMessage = ExtensionMessage & {
+    event: 'time-added';
+    groupId: string;
     secondsUsed: number;
 };
 

@@ -84,6 +84,15 @@ async function addTime(message: AddTimeMessage) {
 
         await saveSettings({ groups });
         console.log('time added', { matchingGroup });
+
+        const timeAddedMessage: TimeAddedMessage = {
+            source: 'service-worker',
+            event: 'time-added',
+            groupId: matchingGroup.id,
+            secondsUsed: message.secondsUsed,
+        };
+        chrome.runtime.sendMessage(timeAddedMessage);
+
         done();
     });
 }
