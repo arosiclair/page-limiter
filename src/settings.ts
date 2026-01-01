@@ -33,7 +33,7 @@ export async function getSettings(): Promise<Settings> {
 }
 
 async function getSyncSettings(): Promise<SyncSettings> {
-    const isSyncingEnabled = await getIsSyncingEnabled();
+    const { isSyncingEnabled } = await getLocalSettings();
     const store = isSyncingEnabled ? 'sync' : 'local';
 
     return await chrome.storage[store].get(syncSettingsWithDefaults);
@@ -44,7 +44,7 @@ async function getLocalSettings(): Promise<LocalSettings> {
 }
 
 export async function saveSettings(data: Partial<Settings>) {
-    const isSyncingEnabled = await getIsSyncingEnabled();
+    const { isSyncingEnabled } = await getLocalSettings();
     const store = isSyncingEnabled ? 'sync' : 'local';
 
     const syncSettings = project(
@@ -83,9 +83,4 @@ export async function setIsSyncingEnabled(enabled: boolean, shouldCarryoverSetti
     const carryoverSettings = shouldCarryoverSettings ? await getSyncSettings() : {};
     await chrome.storage.local.set({ isSyncingEnabled: enabled });
     saveSettings(carryoverSettings);
-}
-
-export async function getIsSyncingEnabled() {
-    const localSettings = await getLocalSettings();
-    return localSettings.isSyncingEnabled;
 }

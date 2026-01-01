@@ -1,8 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import {
-    getIsSyncingEnabled,
-    setIsSyncingEnabled as saveIsSyncingEnabled,
-} from '../../../settings';
+import { getSettings, setIsSyncingEnabled as saveIsSyncingEnabled } from '../../../settings';
 
 export default function SyncingPage() {
     const [isSyncingEnabled, setIsSyncingEnabled] = useState(true);
@@ -10,7 +7,8 @@ export default function SyncingPage() {
 
     useEffect(() => {
         (async function () {
-            setIsSyncingEnabled(await getIsSyncingEnabled());
+            const settings = await getSettings();
+            setIsSyncingEnabled(settings.isSyncingEnabled);
         })();
     }, []);
 
