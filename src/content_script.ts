@@ -25,32 +25,35 @@ function startTimer() {
             return;
         }
 
-        setTimeout(() => {
+        setTimeout(async () => {
             const message: PageVisitedMessage = {
                 source: 'content-script',
                 event: 'page-visited',
                 url: window.location.href,
             };
 
-            chrome.runtime.sendMessage(
-                message,
-                ({ didMatch, secondsLeft }: PageVisitedEventResult) => {
-                    if (!didMatch) {
-                        done();
-                        return;
-                    }
+            let result;
+            try {
+                result = (await chrome.runtime.sendMessage(message)) as PageVisitedEventResult;
+            } catch (error) {
+                console.error('failed to send page-visited message', error);
+                return;
+            }
 
-                    if (secondsLeft === 0) {
-                        blockPage();
-                        done();
-                        return;
-                    }
+            if (!result.didMatch) {
+                done();
+                return;
+            }
 
-                    timer.start(secondsLeft);
-                    console.log('[PageLimiter] timer started');
-                    done();
-                }
-            );
+            if (result.secondsLeft === 0) {
+                blockPage();
+                done();
+                return;
+            }
+
+            timer.start(result.secondsLeft);
+            console.log('[PageLimiter] timer started');
+            done();
         }, START_TIMER_DELAY_MS);
     });
 }
