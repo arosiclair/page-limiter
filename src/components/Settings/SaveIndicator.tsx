@@ -1,15 +1,15 @@
 import React, { useEffect, useState } from 'react';
-import { getIsSyncingEnabled } from '../../settings';
+import { getSettings } from '../../settings';
 
 export default function SaveIndicator() {
     const [isLoading, setIsLoading] = useState(false);
     const [isSyncEnabled, setIsSyncEnabled] = useState(false);
 
     useEffect(() => {
-        refreshIsSyncEnabled();
+        refresh();
 
         const onStorageUpdated = () => {
-            refreshIsSyncEnabled();
+            refresh();
             setIsLoading(true);
             setTimeout(() => {
                 setIsLoading(false);
@@ -21,8 +21,9 @@ export default function SaveIndicator() {
         return () => chrome.storage.onChanged.removeListener(onStorageUpdated);
     }, []);
 
-    const refreshIsSyncEnabled = async () => {
-        setIsSyncEnabled(await getIsSyncingEnabled());
+    const refresh = async () => {
+        const settings = await getSettings();
+        setIsSyncEnabled(settings.isSyncingEnabled);
     };
 
     if (isLoading) {
