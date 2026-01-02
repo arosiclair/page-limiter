@@ -12,6 +12,7 @@ window.addEventListener('beforeunload', stopTimer);
 
 function startTimer() {
     if (!document.hasFocus()) {
+        console.log("[PageLimiter] not starting timer because tab isn't focused");
         return;
     }
 
@@ -19,6 +20,7 @@ function startTimer() {
     // startTimer, we need to wait for the timeout to be set before clearing it.
     lock.acquire('timer', (done) => {
         if (timer.isRunning()) {
+            console.log("[PageLimiter] not starting timer because it's already running");
             done();
             return;
         }
@@ -45,6 +47,7 @@ function startTimer() {
                     }
 
                     timer.start(secondsLeft);
+                    console.log('[PageLimiter] timer started');
                     done();
                 }
             );
@@ -55,16 +58,19 @@ function startTimer() {
 function stopTimer() {
     lock.acquire('timer', (done) => {
         if (!timer.isRunning()) {
+            console.log("[PageLimiter] not stopping timer because it sn't running");
             done();
             return;
         }
 
         addTime(timer.stop());
+        console.log('[PageLimiter] timer stopped');
         done();
     });
 }
 
 timer.onTimeout = (secondsElapsed) => {
+    console.log('[PageLimiter] timer expired');
     addTime(secondsElapsed);
     blockPage();
 };
