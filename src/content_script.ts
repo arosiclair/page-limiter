@@ -1,6 +1,7 @@
 import { PageVisitedEventResult } from './service-worker';
 import AsyncLock from 'async-lock';
 import Timer, { START_TIMER_DELAY_MS } from './modules/timer';
+
 const lock = new AsyncLock();
 const timer = new Timer();
 
@@ -92,6 +93,3 @@ chrome.runtime.onMessage.addListener((message: ExtensionMessage) => {
 
     blockPage();
 });
-
-// Pretend like this is a module so that typescript stops complaining about naming collisions
-export default undefined;
