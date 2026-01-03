@@ -22,6 +22,8 @@ const syncSettingsWithDefaults: SyncSettings = {
     isStrictModeEnabled: false,
 };
 
+export const settingsToExport: Array<keyof Settings> = ['groups', 'allowedPatterns'];
+
 export async function getSettings(): Promise<Settings> {
     const syncSettings = await getSyncSettings();
     const localSettings = await getLocalSettings();

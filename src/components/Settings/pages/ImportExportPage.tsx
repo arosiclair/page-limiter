@@ -1,5 +1,6 @@
 import React from 'react';
-import { getSettings, saveSettings, Settings } from '../../../settings';
+import { getSettings, saveSettings, Settings, settingsToExport } from '../../../settings';
+import { project } from '../../../utils';
 
 export default function ImportExportPage() {
     const importData = async () => {
@@ -29,7 +30,8 @@ export default function ImportExportPage() {
                 input.click();
             });
 
-            saveSettings(data);
+            const cleanData = project(data, settingsToExport);
+            saveSettings(cleanData);
         } catch (error) {
             console.error('Import failed', error);
             alert(`Import failed`);
@@ -37,9 +39,12 @@ export default function ImportExportPage() {
     };
 
     const exportData = async () => {
-        const data = await getSettings();
+        const settings = await getSettings();
         const timestamp = new Date().toISOString();
         const filename = `page-limiter-export-${timestamp}.json`;
+
+        // Remove extra settings data
+        const data = project(settings, settingsToExport);
 
         // Create a Blob from the JSON string
         const blob = new Blob([JSON.stringify(data)], { type: 'application/json' });
