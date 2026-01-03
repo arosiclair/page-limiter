@@ -2,27 +2,6 @@ import React from 'react';
 import { getSettings, saveSettings, Settings } from '../../../settings';
 
 export default function ImportExportPage() {
-    const exportData = async () => {
-        const data = await getSettings();
-        const timestamp = new Date().toISOString();
-        const filename = `page-limiter-export-${timestamp}.json`;
-
-        // Create a Blob from the JSON string
-        const blob = new Blob([JSON.stringify(data)], { type: 'application/json' });
-
-        // Create a temporary URL for the Blob
-        const url = URL.createObjectURL(blob);
-
-        // Create a temporary anchor element and trigger download
-        const link = document.createElement('a');
-        link.href = url;
-        link.download = filename;
-        link.click();
-
-        // Clean up the URL object
-        URL.revokeObjectURL(url);
-    };
-
     const importData = async () => {
         try {
             const data = await new Promise<Partial<Settings>>((resolve, reject) => {
@@ -57,13 +36,34 @@ export default function ImportExportPage() {
         }
     };
 
+    const exportData = async () => {
+        const data = await getSettings();
+        const timestamp = new Date().toISOString();
+        const filename = `page-limiter-export-${timestamp}.json`;
+
+        // Create a Blob from the JSON string
+        const blob = new Blob([JSON.stringify(data)], { type: 'application/json' });
+
+        // Create a temporary URL for the Blob
+        const url = URL.createObjectURL(blob);
+
+        // Create a temporary anchor element and trigger download
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = filename;
+        link.click();
+
+        // Clean up the URL object
+        URL.revokeObjectURL(url);
+    };
+
     return (
         <div>
-            <button className="button is-dark mr-2" onClick={exportData}>
-                Export
-            </button>
             <button className="button is-dark" onClick={importData}>
                 Import
+            </button>
+            <button className="button is-dark mr-2" onClick={exportData}>
+                Export
             </button>
         </div>
     );
