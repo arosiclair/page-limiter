@@ -59,10 +59,10 @@ export default function ImportExportPage() {
 
     return (
         <div>
-            <button className="button is-dark" onClick={importData}>
+            <button className="button is-dark mr-2" onClick={importData}>
                 Import
             </button>
-            <button className="button is-dark mr-2" onClick={exportData}>
+            <button className="button is-dark" onClick={exportData}>
                 Export
             </button>
         </div>
