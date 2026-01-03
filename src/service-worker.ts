@@ -25,24 +25,32 @@ export type PageVisitedEventResult = {
 
 async function onPageVisited(message: PageVisitedMessage): Promise<PageVisitedEventResult> {
     const currentURL = message.url;
-    const { groups, allowedPatterns } = await getSettings();
 
-    const allowedPattern = findMatchingPattern(allowedPatterns ?? [], currentURL);
-    if (allowedPattern) {
-        console.log('current page is allowed', { allowedPattern, currentURL });
-        return { didMatch: false, secondsLeft: 0 };
-    }
+    return new Promise((resolve) => {
+        lock.acquire('settings', async (done) => {
+            const { groups, allowedPatterns } = await getSettings();
 
-    if (!groups) {
-        console.log('no groups set', { currentURL });
-        return { didMatch: false, secondsLeft: 0 };
-    }
+            const allowedPattern = findMatchingPattern(allowedPatterns ?? [], currentURL);
+            if (allowedPattern) {
+                console.log('current page is allowed', { allowedPattern, currentURL });
+                done();
+                resolve({ didMatch: false, secondsLeft: 0 });
+            }
 
-    const matchingGroup = findMatchingGroup(groups, currentURL);
-    return {
-        didMatch: !!matchingGroup,
-        secondsLeft: getSecondsLeft(matchingGroup),
-    };
+            if (!groups) {
+                console.log('no groups set', { currentURL });
+                done();
+                resolve({ didMatch: false, secondsLeft: 0 });
+            }
+
+            const matchingGroup = findMatchingGroup(groups, currentURL);
+            done();
+            resolve({
+                didMatch: !!matchingGroup,
+                secondsLeft: getSecondsLeft(matchingGroup),
+            });
+        });
+    });
 }
 
 async function addTime(message: AddTimeMessage) {
@@ -54,7 +62,7 @@ async function addTime(message: AddTimeMessage) {
 
     // If the content_script and popup call addTime in quick succession, we need to process them synchronously to count
     // the time correctly.
-    lock.acquire('addTime', async (done) => {
+    lock.acquire('settings', async (done) => {
         const { groups, allowedPatterns } = await getSettings();
 
         if (!groups) {

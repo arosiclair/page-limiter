@@ -3,7 +3,7 @@ import { millisecondsInSecond } from 'date-fns/constants';
 
 // When switching between the content script and the popup, sometimes one will fetch the time left before the other has
 // time to update it. I'm using this delay to fix the race condition.
-export const START_TIMER_DELAY_MS = 250;
+export const START_TIMER_DELAY_MS = 50;
 
 export default class Timer {
     timeout: NodeJS.Timeout | undefined;
