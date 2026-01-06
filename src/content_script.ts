@@ -61,7 +61,7 @@ function startTimer() {
 function stopTimer() {
     lock.acquire('timer', (done) => {
         if (!timer.isRunning()) {
-            console.log("[PageLimiter] not stopping timer because it sn't running");
+            console.log("[PageLimiter] not stopping timer because it isn't running");
             done();
             return;
         }
