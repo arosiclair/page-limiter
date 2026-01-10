@@ -4,20 +4,18 @@ import { getSecondsLeft } from '../../../groups';
 
 export default function StrictModePage() {
     const [isStrictModeEnabled, setIsStrictModeEnabled] = useState(false);
-    const [hasExpiredGroups, setHasExpiredGroups] = useState(false);
-    const shouldRestrictChanges = isStrictModeEnabled && hasExpiredGroups;
+    const [shouldRestrictChanges, setShouldRestrictChanges] = useState(false);
 
     useEffect(() => {
         (async function () {
             const settings = await getSettings();
-            setIsStrictModeEnabled(settings.isStrictModeEnabled);
-            setHasExpiredGroups(
-                settings.groups.some(
-                    (group) =>
-                        group.timelimitSeconds !== 0 &&
-                        getSecondsLeft(group, settings.dailyResetTime) === 0
-                )
+            const hasExpiredGroups = settings.groups.some(
+                (group) =>
+                    group.timelimitSeconds !== 0 &&
+                    getSecondsLeft(group, settings.dailyResetTime) === 0
             );
+            setIsStrictModeEnabled(settings.isStrictModeEnabled);
+            setShouldRestrictChanges(settings.isStrictModeEnabled && hasExpiredGroups);
         })();
     }, []);
 
