@@ -53,6 +53,7 @@ function startTimer() {
                 result = (await chrome.runtime.sendMessage(message)) as PageVisitedEventResult;
             } catch (error) {
                 console.error('failed to send page-visited message', error);
+                done();
                 return;
             }
 
