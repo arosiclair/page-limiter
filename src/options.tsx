@@ -6,6 +6,7 @@ import LimitsPage from './components/Settings/pages/LimitsPage';
 import ImportExportPage from './components/Settings/pages/ImportExportPage';
 import StrictModePage from './components/Settings/pages/StrictModePage';
 import SyncingPage from './components/Settings/pages/SyncingPage';
+import DailyResetTimePage from './components/Settings/pages/DailyResetTimePage';
 
 const Options = () => {
     return (
@@ -20,6 +21,7 @@ const Options = () => {
                         <NavItem to="/">Limits</NavItem>
                         <NavItem to="import-export">Import & Export</NavItem>
                         <NavItem to="strict-mode">Strict Mode</NavItem>
+                        <NavItem to="daily-reset-time">Daily Reset Time</NavItem>
                         <NavItem to="syncing">Syncing</NavItem>
                     </ul>
                 </aside>
@@ -28,6 +30,7 @@ const Options = () => {
                         <Route index element={<LimitsPage />} />
                         <Route path="import-export" element={<ImportExportPage />} />
                         <Route path="strict-mode" element={<StrictModePage />} />
+                        <Route path="daily-reset-time" element={<DailyResetTimePage />} />
                         <Route path="syncing" element={<SyncingPage />} />
                     </Routes>
                 </main>
