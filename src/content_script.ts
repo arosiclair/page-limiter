@@ -10,6 +10,22 @@ window.addEventListener('focus', startTimer);
 window.addEventListener('blur', stopTimer);
 window.addEventListener('beforeunload', stopTimer);
 
+timer.onTimeout = async (secondsElapsed) => {
+    console.log('[PageLimiter] timer expired');
+    await addTime(secondsElapsed);
+    blockPage();
+};
+
+chrome.runtime.onMessage.addListener((message: ExtensionMessage) => {
+    console.log('message received', message);
+
+    if (message.event !== 'block-page') {
+        return;
+    }
+
+    blockPage();
+});
+
 function startTimer() {
     if (!document.hasFocus()) {
         console.log("[PageLimiter] not starting timer because tab isn't focused");
@@ -78,12 +94,6 @@ function stopTimer() {
     });
 }
 
-timer.onTimeout = async (secondsElapsed) => {
-    console.log('[PageLimiter] timer expired');
-    await addTime(secondsElapsed);
-    blockPage();
-};
-
 function addTime(secondsUsed: number) {
     const message: AddTimeMessage = {
         source: 'content-script',
@@ -98,16 +108,6 @@ async function blockPage() {
     await stopTimer();
     window.location.replace('https://0.0.0.0/');
 }
-
-chrome.runtime.onMessage.addListener((message: ExtensionMessage) => {
-    console.log('message received', message);
-
-    if (message.event !== 'block-page') {
-        return;
-    }
-
-    blockPage();
-});
 
 function isAudioPlaying() {
     // Select all audio and video elements on the page
