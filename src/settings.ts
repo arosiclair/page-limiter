@@ -24,7 +24,11 @@ const syncSettingsWithDefaults: SyncSettings = {
     dailyResetTime: '00:00',
 };
 
-export const settingsToExport: Array<keyof Settings> = ['groups', 'allowedPatterns'];
+export const settingsToExport: Array<keyof Settings> = [
+    'groups',
+    'allowedPatterns',
+    'dailyResetTime',
+];
 
 export async function getSettings(): Promise<Settings> {
     const syncSettings = await getSyncSettings();
