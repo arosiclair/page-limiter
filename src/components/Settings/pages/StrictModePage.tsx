@@ -48,6 +48,7 @@ export default function StrictModePage() {
                 <li>Restricts changes to any group above an expired group</li>
                 <li>Restricts changes to an expired group</li>
                 <li>Restricts changes to the order of groups below an expired group</li>
+                <li>Restricts changes to the daily reset time while any group is expired</li>
                 <li>Cannot be disabled while any group is expired</li>
             </ul>
         </div>
