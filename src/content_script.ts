@@ -59,22 +59,22 @@ function startTimer() {
 }
 
 function stopTimer() {
-    lock.acquire('timer', (done) => {
+    return lock.acquire('timer', async (done) => {
         if (!timer.isRunning()) {
             console.log("[PageLimiter] not stopping timer because it isn't running");
             done();
             return;
         }
 
-        addTime(timer.stop());
+        await addTime(timer.stop());
         console.log('[PageLimiter] timer stopped');
         done();
     });
 }
 
-timer.onTimeout = (secondsElapsed) => {
+timer.onTimeout = async (secondsElapsed) => {
     console.log('[PageLimiter] timer expired');
-    addTime(secondsElapsed);
+    await addTime(secondsElapsed);
     blockPage();
 };
 
@@ -85,11 +85,11 @@ function addTime(secondsUsed: number) {
         url: window.location.href,
         secondsUsed,
     };
-    chrome.runtime.sendMessage(message);
+    return chrome.runtime.sendMessage(message);
 }
 
-function blockPage() {
-    stopTimer();
+async function blockPage() {
+    await stopTimer();
     window.location.replace('https://0.0.0.0/');
 }
 
