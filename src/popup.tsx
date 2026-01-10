@@ -15,10 +15,10 @@ const Popup = () => {
         setTimeout(() => {
             chrome.tabs.query({ active: true, currentWindow: true }, async function (tabs) {
                 const currentURL = tabs[0].url ?? '';
-                const { allowedPatterns, groups } = await getSettings();
+                const { allowedPatterns, groups, dailyResetTime } = await getSettings();
                 const allowedPattern = findMatchingPattern(allowedPatterns, currentURL);
                 const matchingGroup = findMatchingGroup(groups, currentURL);
-                let secondsLeft = getSecondsLeft(matchingGroup);
+                let secondsLeft = getSecondsLeft(matchingGroup, dailyResetTime);
 
                 setMatchingAllowedPattern(allowedPattern ?? '');
                 setMatchingGroupName(matchingGroup?.name ?? '');

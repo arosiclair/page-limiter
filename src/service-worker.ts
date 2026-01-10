@@ -28,7 +28,7 @@ async function onPageVisited(message: PageVisitedMessage): Promise<PageVisitedEv
 
     return new Promise((resolve) => {
         lock.acquire('settings', async (done) => {
-            const { groups, allowedPatterns } = await getSettings();
+            const { groups, allowedPatterns, dailyResetTime } = await getSettings();
 
             const allowedPattern = findMatchingPattern(allowedPatterns ?? [], currentURL);
             if (allowedPattern) {
@@ -47,7 +47,7 @@ async function onPageVisited(message: PageVisitedMessage): Promise<PageVisitedEv
             done();
             resolve({
                 didMatch: !!matchingGroup,
-                secondsLeft: getSecondsLeft(matchingGroup),
+                secondsLeft: getSecondsLeft(matchingGroup, dailyResetTime),
             });
         });
     });
@@ -63,7 +63,7 @@ async function addTime(message: AddTimeMessage) {
     // If the content_script and popup call addTime in quick succession, we need to process them synchronously to count
     // the time correctly.
     lock.acquire('settings', async (done) => {
-        const { groups, allowedPatterns } = await getSettings();
+        const { groups, allowedPatterns, dailyResetTime } = await getSettings();
 
         if (!groups) {
             console.log('no groups set', { currentURL });
@@ -86,8 +86,9 @@ async function addTime(message: AddTimeMessage) {
         }
 
         matchingGroup.secondsUsed = {
-            [getCurrentDate()]:
-                (matchingGroup.secondsUsed[getCurrentDate()] ?? 0) + message.secondsUsed,
+            [getCurrentDate(dailyResetTime)]:
+                (matchingGroup.secondsUsed[getCurrentDate(dailyResetTime)] ?? 0) +
+                message.secondsUsed,
         };
 
         await saveSettings({ groups });

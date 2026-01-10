@@ -8,8 +8,10 @@ export default function LimitsPage() {
     const [groups, setGroups] = useState<Group[]>([]);
     const [allowedPatterns, setAllowedPatterns] = useState<string[]>([]);
     const [isStrictModeEnabled, setIsStrictModeEnabled] = useState(false);
+    const [dailyResetTime, setDailyResetTime] = useState('00:00');
+
     const lastExpiredGroupIndex = groups.findLastIndex(
-        (group) => group.timelimitSeconds !== 0 && getSecondsLeft(group) === 0
+        (group) => group.timelimitSeconds !== 0 && getSecondsLeft(group, dailyResetTime) === 0
     );
     const shouldRestrictChanges = isStrictModeEnabled && lastExpiredGroupIndex !== -1;
 
@@ -22,11 +24,9 @@ export default function LimitsPage() {
             addGroup();
         }
 
-        if (settings.allowedPatterns) {
-            setAllowedPatterns(settings.allowedPatterns);
-        }
-
+        setAllowedPatterns(settings.allowedPatterns);
         setIsStrictModeEnabled(settings.isStrictModeEnabled ?? false);
+        setDailyResetTime(settings.dailyResetTime);
     };
 
     // Load settings from storage on mount
@@ -139,10 +139,11 @@ export default function LimitsPage() {
                                 : 0
                         }
                         group={group}
+                        disabled={shouldRestrictChanges && index <= lastExpiredGroupIndex}
+                        dailyResetTime={dailyResetTime}
                         onChange={updateGroup}
                         onIndexChange={updateGroupIndex}
                         onDelete={deleteGroup}
-                        disabled={shouldRestrictChanges && index <= lastExpiredGroupIndex}
                     />
                 ))}
             </div>

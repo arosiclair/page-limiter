@@ -7,6 +7,7 @@ type GroupControlProps = {
     minIndex?: number;
     group: Group;
     disabled?: boolean;
+    dailyResetTime: string;
     onChange: (updatedGroup: Group) => void;
     onIndexChange: (id: string, newIndex: number) => void;
     onDelete: (id: string) => void;
@@ -17,6 +18,7 @@ export default function GroupControl({
     minIndex = -1,
     group,
     disabled = false,
+    dailyResetTime,
     onChange,
     onIndexChange,
     onDelete,
@@ -124,8 +126,8 @@ export default function GroupControl({
 
             <div className="is-flex is-align-items-center">
                 <span className="is-flex-grow-1">
-                    Time used: {getSecondsUsedToday(group)} seconds • Time left:{' '}
-                    {getSecondsLeft(group)} seconds
+                    Time used: {getSecondsUsedToday(group, dailyResetTime)} seconds • Time left:{' '}
+                    {getSecondsLeft(group, dailyResetTime)} seconds
                 </span>
                 <button
                     className="button is-danger"

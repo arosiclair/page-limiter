@@ -10,10 +10,12 @@ export default function StrictModePage() {
     useEffect(() => {
         (async function () {
             const settings = await getSettings();
-            setIsStrictModeEnabled(settings.isStrictModeEnabled ?? false);
+            setIsStrictModeEnabled(settings.isStrictModeEnabled);
             setHasExpiredGroups(
                 settings.groups.some(
-                    (group) => group.timelimitSeconds !== 0 && getSecondsLeft(group) === 0
+                    (group) =>
+                        group.timelimitSeconds !== 0 &&
+                        getSecondsLeft(group, settings.dailyResetTime) === 0
                 )
             );
         })();
