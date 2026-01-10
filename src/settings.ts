@@ -8,6 +8,7 @@ type SyncSettings = {
     groups: Group[];
     allowedPatterns: string[];
     isStrictModeEnabled: boolean;
+    dailyResetTime: string;
 };
 
 export type Settings = LocalSettings & SyncSettings;
@@ -20,6 +21,7 @@ const syncSettingsWithDefaults: SyncSettings = {
     groups: [],
     allowedPatterns: [],
     isStrictModeEnabled: false,
+    dailyResetTime: '00:00',
 };
 
 export const settingsToExport: Array<keyof Settings> = ['groups', 'allowedPatterns'];
@@ -38,11 +40,11 @@ async function getSyncSettings(): Promise<SyncSettings> {
     const { isSyncingEnabled } = await getLocalSettings();
     const store = isSyncingEnabled ? 'sync' : 'local';
 
-    return await chrome.storage[store].get(syncSettingsWithDefaults);
+    return chrome.storage[store].get(syncSettingsWithDefaults);
 }
 
-async function getLocalSettings(): Promise<LocalSettings> {
-    return await chrome.storage.local.get(localSettingsWithDefaults);
+function getLocalSettings(): Promise<LocalSettings> {
+    return chrome.storage.local.get(localSettingsWithDefaults);
 }
 
 export async function saveSettings(data: Partial<Settings>) {
