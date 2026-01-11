@@ -64,12 +64,15 @@ export default function ImportExportPage() {
 
     return (
         <div>
-            <button className="button is-dark mr-2" onClick={importData}>
-                Import
-            </button>
-            <button className="button is-dark" onClick={exportData}>
-                Export
-            </button>
+            <div className="mb-2">
+                <button className="button is-dark mr-2" onClick={importData}>
+                    Import
+                </button>
+                <button className="button is-dark" onClick={exportData}>
+                    Export
+                </button>
+            </div>
+            <p>Import and export your settings to a file (JSON)</p>
         </div>
     );
 }
