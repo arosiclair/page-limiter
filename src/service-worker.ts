@@ -7,6 +7,9 @@ const lock = new AsyncLock();
 chrome.runtime.onMessage.addListener((message: ExtensionMessage, sender, sendResponse) => {
     console.log('message received', message);
     switch (message.event) {
+        case 'page-loading':
+            onPageLoading(message as PageLoadingMessage).then(sendResponse);
+            return true;
         case 'page-visited':
             onPageVisited(message as PageVisitedMessage).then(sendResponse);
             return true;
@@ -18,6 +21,18 @@ chrome.runtime.onMessage.addListener((message: ExtensionMessage, sender, sendRes
     }
 });
 
+export type PageLoadingEventResult = {
+    didMatch: boolean;
+    secondsLeft: number;
+};
+
+/**
+ * Returns a fast match result that does not acquire the settings lock
+ */
+function onPageLoading(message: PageLoadingMessage): Promise<PageLoadingEventResult> {
+    return getMatchResult(message.url);
+}
+
 export type PageVisitedEventResult = {
     didMatch: boolean;
     secondsLeft: number;
@@ -28,27 +43,9 @@ async function onPageVisited(message: PageVisitedMessage): Promise<PageVisitedEv
 
     return new Promise((resolve) => {
         lock.acquire('settings', async (done) => {
-            const { groups, allowedPatterns, dailyResetTime } = await getSettings();
-
-            const allowedPattern = findMatchingPattern(allowedPatterns ?? [], currentURL);
-            if (allowedPattern) {
-                console.log('current page is allowed', { allowedPattern, currentURL });
-                done();
-                resolve({ didMatch: false, secondsLeft: 0 });
-            }
-
-            if (!groups) {
-                console.log('no groups set', { currentURL });
-                done();
-                resolve({ didMatch: false, secondsLeft: 0 });
-            }
-
-            const matchingGroup = findMatchingGroup(groups, currentURL);
+            const result = await getMatchResult(currentURL);
             done();
-            resolve({
-                didMatch: !!matchingGroup,
-                secondsLeft: getSecondsLeft(matchingGroup, dailyResetTime),
-            });
+            resolve(result);
         });
     });
 }
@@ -98,6 +95,27 @@ async function addTime(message: AddTimeMessage) {
 
         done();
     });
+}
+
+async function getMatchResult(currentURL: string) {
+    const { groups, allowedPatterns, dailyResetTime } = await getSettings();
+
+    const allowedPattern = findMatchingPattern(allowedPatterns ?? [], currentURL);
+    if (allowedPattern) {
+        console.log('current page is allowed', { allowedPattern, currentURL });
+        return { didMatch: false, secondsLeft: 0 };
+    }
+
+    if (!groups) {
+        console.log('no groups set', { currentURL });
+        return { didMatch: false, secondsLeft: 0 };
+    }
+
+    const matchingGroup = findMatchingGroup(groups, currentURL);
+    return {
+        didMatch: !!matchingGroup,
+        secondsLeft: getSecondsLeft(matchingGroup, dailyResetTime),
+    };
 }
 
 async function sendTimeAddedMessage(groupId: string, secondsUsed: number) {

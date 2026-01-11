@@ -18,6 +18,11 @@ type ExtensionMessage = {
     event: string;
 };
 
+type PageLoadingMessage = ExtensionMessage & {
+    event: 'page-loading';
+    url: string;
+};
+
 type PageVisitedMessage = ExtensionMessage & {
     event: 'page-visited';
     url: string;
