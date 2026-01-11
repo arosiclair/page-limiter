@@ -7,8 +7,8 @@ const timer = new Timer();
 
 startTimer();
 window.addEventListener('focus', startTimer);
-window.addEventListener('blur', () => stopTimer(true));
-window.addEventListener('beforeunload', () => stopTimer());
+window.addEventListener('blur', stopTimer);
+window.addEventListener('beforeunload', stopTimer);
 
 timer.onTimeout = async (secondsElapsed) => {
     console.log('[PageLimiter] timer expired');
@@ -75,7 +75,7 @@ function startTimer() {
     });
 }
 
-function stopTimer(shouldConsiderAudio = false) {
+function stopTimer() {
     return lock.acquire('timer', async (done) => {
         if (!timer.isRunning()) {
             console.log("[PageLimiter] not stopping timer because it isn't running");
@@ -83,7 +83,7 @@ function stopTimer(shouldConsiderAudio = false) {
             return;
         }
 
-        if (shouldConsiderAudio && isAudioPlaying()) {
+        if (isAudioPlaying()) {
             console.log('[PageLimiter] not stopping timer because audio is playing');
             done();
             return;
