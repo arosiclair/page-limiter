@@ -5,6 +5,7 @@ import { findMatchingPattern, findMatchingGroup, getSecondsLeft } from './groups
 import { PageVisitedEventResult } from './service-worker';
 import AsyncLock from 'async-lock';
 import Timer, { START_TIMER_DELAY_MS } from './modules/timer';
+import { delay } from './utils';
 
 const Popup = () => {
     const [matchingAllowedPattern, setMatchingAllowedPattern] = useState<string>('');
@@ -140,29 +141,28 @@ window.addEventListener('blur', stopTimer);
 window.addEventListener('beforeunload', stopTimer);
 
 function startTimer(url: string) {
-    lock.acquire('timer', (done) => {
+    lock.acquire('timer', async (done) => {
         if (timer.isRunning()) {
             done();
             return;
         }
 
-        setTimeout(() => {
-            const message: PageVisitedMessage = {
-                source: 'popup',
-                event: 'page-visited',
-                url: url,
-            };
+        await delay(START_TIMER_DELAY_MS);
 
-            chrome.runtime.sendMessage(message, (response: PageVisitedEventResult) => {
-                if (!response.didMatch) {
-                    done();
-                    return;
-                }
+        const message: PageVisitedMessage = {
+            source: 'popup',
+            event: 'page-visited',
+            url: url,
+        };
+        const response = (await chrome.runtime.sendMessage(message)) as PageVisitedEventResult;
 
-                timer.start(response.secondsLeft);
-                done();
-            });
-        }, START_TIMER_DELAY_MS);
+        if (!response.didMatch) {
+            done();
+            return;
+        }
+
+        timer.start(response.secondsLeft);
+        done();
     });
 }
 

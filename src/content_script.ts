@@ -1,6 +1,7 @@
 import { PageVisitedEventResult } from './service-worker';
 import AsyncLock from 'async-lock';
 import Timer, { START_TIMER_DELAY_MS } from './modules/timer';
+import { delay } from './utils';
 
 const lock = new AsyncLock();
 const timer = new Timer();
@@ -34,44 +35,44 @@ function startTimer() {
 
     // This lock is needed since we're starting the timer asynchronously. If endTimer is called quickly after
     // startTimer, we need to wait for the timeout to be set before clearing it.
-    lock.acquire('timer', (done) => {
+    lock.acquire('timer', async (done) => {
         if (timer.isRunning()) {
             console.log("[PageLimiter] not starting timer because it's already running");
             done();
             return;
         }
 
-        setTimeout(async () => {
-            const message: PageVisitedMessage = {
-                source: 'content-script',
-                event: 'page-visited',
-                url: window.location.href,
-            };
+        await delay(START_TIMER_DELAY_MS);
 
-            let result;
-            try {
-                result = (await chrome.runtime.sendMessage(message)) as PageVisitedEventResult;
-            } catch (error) {
-                console.error('failed to send page-visited message', error);
-                done();
-                return;
-            }
+        const message: PageVisitedMessage = {
+            source: 'content-script',
+            event: 'page-visited',
+            url: window.location.href,
+        };
 
-            if (!result.didMatch) {
-                done();
-                return;
-            }
-
-            if (result.secondsLeft === 0) {
-                blockPage();
-                done();
-                return;
-            }
-
-            timer.start(result.secondsLeft);
-            console.log('[PageLimiter] timer started');
+        let result;
+        try {
+            result = (await chrome.runtime.sendMessage(message)) as PageVisitedEventResult;
+        } catch (error) {
+            console.error('failed to send page-visited message', error);
             done();
-        }, START_TIMER_DELAY_MS);
+            return;
+        }
+
+        if (!result.didMatch) {
+            done();
+            return;
+        }
+
+        if (result.secondsLeft === 0) {
+            blockPage();
+            done();
+            return;
+        }
+
+        timer.start(result.secondsLeft);
+        console.log('[PageLimiter] timer started');
+        done();
     });
 }
 
