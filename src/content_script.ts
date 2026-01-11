@@ -124,6 +124,5 @@ function addTime(secondsUsed: number) {
 }
 
 async function blockPage() {
-    await stopTimer();
     window.location.replace('https://0.0.0.0/');
 }
