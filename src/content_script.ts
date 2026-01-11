@@ -55,7 +55,7 @@ function startTimer() {
     // startTimer, we need to wait for the timeout to be set before clearing it.
     lock.acquire('timer', async (done) => {
         if (timer.isRunning()) {
-            console.log("[PageLimiter] not starting timer because it's already running");
+            console.log("[PageLimiter] not starting the timer because it's already running");
             done();
             return;
         }
@@ -63,7 +63,7 @@ function startTimer() {
         await delay(START_TIMER_DELAY_MS);
 
         if (!document.hasFocus()) {
-            console.log("[PageLimiter] not starting timer because tab isn't focused");
+            console.log("[PageLimiter] not starting the timer because tab isn't focused");
             done();
             return;
         }
@@ -84,7 +84,7 @@ function startTimer() {
         }
 
         if (!result.didMatch) {
-            console.log('[PageLimiter] not starting timer because there was no match');
+            console.log('[PageLimiter] not starting the timer because there was no match');
             done();
             return;
         }
@@ -104,7 +104,7 @@ function startTimer() {
 function stopTimer() {
     return lock.acquire('timer', async (done) => {
         if (!timer.isRunning()) {
-            console.log("[PageLimiter] not stopping timer because it isn't running");
+            console.log("[PageLimiter] not stopping the timer because it isn't running");
             done();
             return;
         }
