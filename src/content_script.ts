@@ -1,4 +1,4 @@
-import { PageVisitedEventResult } from './service-worker';
+import { PageLoadingEventResult, PageVisitedEventResult } from './service-worker';
 import AsyncLock from 'async-lock';
 import Timer, { START_TIMER_DELAY_MS } from './modules/timer';
 import { delay } from './utils';
@@ -6,7 +6,7 @@ import { delay } from './utils';
 const lock = new AsyncLock();
 const timer = new Timer();
 
-startTimer();
+init();
 window.addEventListener('focus', startTimer);
 window.addEventListener('blur', stopTimer);
 window.addEventListener('beforeunload', stopTimer);
@@ -26,6 +26,29 @@ chrome.runtime.onMessage.addListener((message: ExtensionMessage) => {
 
     blockPage();
 });
+
+async function init() {
+    // Quickly fetch match results with no delay or locks to see if we should block this page immediately
+    let result;
+    try {
+        const message: PageLoadingMessage = {
+            source: 'content-script',
+            event: 'page-loading',
+            url: window.location.href,
+        };
+        result = (await chrome.runtime.sendMessage(message)) as PageLoadingEventResult;
+    } catch (error) {
+        console.error('failed to send page-visited message', error);
+    }
+
+    if (result?.didMatch && result?.secondsLeft === 0) {
+        blockPage();
+        return;
+    }
+
+    // If there was no match or there seems to be time left, start the timer normally
+    startTimer();
+}
 
 function startTimer() {
     if (!document.hasFocus()) {
