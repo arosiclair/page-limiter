@@ -83,12 +83,6 @@ function stopTimer() {
             return;
         }
 
-        if (isAudioPlaying()) {
-            console.log('[PageLimiter] not stopping timer because audio is playing');
-            done();
-            return;
-        }
-
         await addTime(timer.stop());
         console.log('[PageLimiter] timer stopped');
         done();
@@ -108,29 +102,4 @@ function addTime(secondsUsed: number) {
 async function blockPage() {
     await stopTimer();
     window.location.replace('https://0.0.0.0/');
-}
-
-function isAudioPlaying() {
-    // Select all audio and video elements on the page
-    const mediaElements = document.querySelectorAll('audio, video') as NodeListOf<HTMLMediaElement>;
-
-    for (const media of mediaElements) {
-        // Check if the media is:
-        // 1. Not paused
-        // 2. Not finished (ended)
-        // 3. Ready to play (has data)
-        // 4. Not muted
-        // 5. Has a volume greater than 0
-        if (
-            !media.paused &&
-            !media.ended &&
-            media.readyState > 2 &&
-            !media.muted &&
-            media.volume > 0
-        ) {
-            return true;
-        }
-    }
-
-    return false;
 }
