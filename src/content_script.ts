@@ -51,11 +51,6 @@ async function init() {
 }
 
 function startTimer() {
-    if (!document.hasFocus()) {
-        console.log("[PageLimiter] not starting timer because tab isn't focused");
-        return;
-    }
-
     // This lock is needed since we're starting the timer asynchronously. If endTimer is called quickly after
     // startTimer, we need to wait for the timeout to be set before clearing it.
     lock.acquire('timer', async (done) => {
@@ -66,6 +61,12 @@ function startTimer() {
         }
 
         await delay(START_TIMER_DELAY_MS);
+
+        if (!document.hasFocus()) {
+            console.log("[PageLimiter] not starting timer because tab isn't focused");
+            done();
+            return;
+        }
 
         const message: PageVisitedMessage = {
             source: 'content-script',
