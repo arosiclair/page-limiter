@@ -108,9 +108,14 @@ function stopTimer() {
             return;
         }
 
-        await addTime(timer.stop());
-        console.log('[PageLimiter] timer stopped');
-        done();
+        try {
+            await addTime(timer.stop());
+            console.log('[PageLimiter] timer stopped');
+        } catch (error) {
+            console.error('[PageLimiter] failed to add time after stopping the timer', error);
+        } finally {
+            done();
+        }
     });
 }
 
