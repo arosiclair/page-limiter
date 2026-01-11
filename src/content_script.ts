@@ -84,6 +84,7 @@ function startTimer() {
         }
 
         if (!result.didMatch) {
+            console.log('[PageLimiter] not starting timer because there was no match');
             done();
             return;
         }
