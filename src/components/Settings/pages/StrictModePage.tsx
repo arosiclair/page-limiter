@@ -41,14 +41,16 @@ export default function StrictModePage() {
                     ></input>
                 </label>
             </div>
-            <ul className="pl-5" style={{ listStyle: 'initial' }}>
-                <li>Restricts changes to the allow list while any group is expired</li>
-                <li>Restricts changes to any group above an expired group</li>
-                <li>Restricts changes to an expired group</li>
-                <li>Restricts changes to the order of groups below an expired group</li>
-                <li>Restricts changes to the daily reset time while any group is expired</li>
-                <li>Cannot be disabled while any group is expired</li>
-            </ul>
+            <div className="content">
+                <ul>
+                    <li>Restricts changes to the allow list while any group is expired</li>
+                    <li>Restricts changes to any group above an expired group</li>
+                    <li>Restricts changes to an expired group</li>
+                    <li>Restricts changes to the order of groups below an expired group</li>
+                    <li>Restricts changes to the daily reset time while any group is expired</li>
+                    <li>Cannot be disabled while any group is expired</li>
+                </ul>
+            </div>
         </div>
     );
 }

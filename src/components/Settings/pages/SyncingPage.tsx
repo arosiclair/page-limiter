@@ -38,17 +38,20 @@ export default function SyncingPage() {
                     ></input>
                 </label>
             </div>
-            <p>
-                When enabled, settings are synced to all Chrome browsers you are logged into using{' '}
-                <a
-                    href="https://developer.chrome.com/docs/extensions/reference/api/storage#sync"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                >
-                    Chrome's sync storage
-                </a>
-                . Otherwise, settings are stored locally per device.
-            </p>
+            <div className="content">
+                <p>
+                    When enabled, settings are synced to all Chrome browsers you are logged into
+                    using{' '}
+                    <a
+                        href="https://developer.chrome.com/docs/extensions/reference/api/storage#sync"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                    >
+                        Chrome's sync storage
+                    </a>
+                    . Otherwise, settings are stored locally per device.
+                </p>
+            </div>
             <div className={`modal ${shouldShowConfirmModal ? 'is-active' : ''}`}>
                 <div className="modal-background"></div>
                 <div className="modal-content">
