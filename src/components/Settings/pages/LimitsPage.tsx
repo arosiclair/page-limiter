@@ -117,6 +117,27 @@ export default function LimitsPage() {
 
     return (
         <div>
+            <div className="content">
+                <p>You can add time limits to websites here.</p>
+                <ul>
+                    <li>
+                        You can add multiple websites to a group. Time spent on each website will
+                        count towards the same timelimit.
+                    </li>
+                    <li>
+                        You can add websites to the allow list to prevent time tracking on them (eg:
+                        you can prevent a specific part of a website from being tracked).
+                    </li>
+                    <li>
+                        The order of allowed websites and groups below is the order that pages will
+                        get matched against.
+                    </li>
+                    <li>
+                        You can also enter simple words/patterns (eg: "dog" will match any page with
+                        "dog" in the URL).
+                    </li>
+                </ul>
+            </div>
             <h4 className="title is-4">Allow List</h4>
             <textarea
                 id="new-group-name-input"
