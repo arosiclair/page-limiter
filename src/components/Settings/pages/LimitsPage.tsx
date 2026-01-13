@@ -133,8 +133,20 @@ export default function LimitsPage() {
                         get matched against.
                     </li>
                     <li>
-                        You can also enter simple words/patterns (eg: "dog" will match any page with
-                        "dog" in the URL).
+                        You can also enter simple words or phrases (eg: <code>dog</code> will match
+                        any page with "dog" in the URL).
+                    </li>
+                    <li>
+                        You can use{' '}
+                        <a
+                            href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Regular_expressions"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                        >
+                            regular expressions
+                        </a>{' '}
+                        by starting and ending your pattern with forward slashes (eg:{' '}
+                        <code>/pattern/</code>)
                     </li>
                 </ul>
             </div>

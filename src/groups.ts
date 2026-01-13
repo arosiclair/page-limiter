@@ -51,5 +51,22 @@ export function findMatchingPattern(patterns: string[] | undefined, testString: 
         return undefined;
     }
 
-    return patterns.find((pattern) => RegExp(pattern.toLowerCase()).test(testString.toLowerCase()));
+    return patterns.find((pattern) => {
+        let regexp;
+
+        if (pattern.startsWith('/') && pattern.endsWith('/')) {
+            regexp = RegExp(pattern.slice(1, pattern.length - 1), 'i');
+        } else {
+            regexp = RegExp(RegExp.escape(pattern), 'i');
+        }
+
+        return regexp.test(testString);
+    });
+}
+
+// Workaround while RegExp.escap is not included in types - https://github.com/microsoft/TypeScript/issues/61321
+declare global {
+    interface RegExpConstructor {
+        escape(str: string): string;
+    }
 }
