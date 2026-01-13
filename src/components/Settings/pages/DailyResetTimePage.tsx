@@ -33,6 +33,11 @@ export default function DailyResetTimePage() {
                     }
 
                     setDailyResetTime(event.target.value);
+
+                    if (event.target.value === '') {
+                        return;
+                    }
+
                     saveSettings({ dailyResetTime: event.target.value });
                 }}
                 disabled={shouldRestrictChanges}
