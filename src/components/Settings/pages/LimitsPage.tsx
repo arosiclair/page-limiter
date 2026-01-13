@@ -121,12 +121,12 @@ export default function LimitsPage() {
                 <p>You can add time limits to websites here.</p>
                 <ul>
                     <li>
-                        You can add multiple websites to a group. Time spent on each website will
-                        count towards the same timelimit.
+                        You can add multiple websites to a group. One website per line. Time spent
+                        on each website will count towards the same timelimit.
                     </li>
                     <li>
-                        You can add websites to the allow list to prevent time tracking on them (eg:
-                        you can prevent a specific part of a website from being tracked).
+                        You can add specific websites to the allow list to prevent them from
+                        matching (so you can limit a website but allow a specific part of it).
                     </li>
                     <li>
                         The order of allowed websites and groups below is the order that pages will
