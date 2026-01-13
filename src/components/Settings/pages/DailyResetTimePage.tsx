@@ -37,7 +37,9 @@ export default function DailyResetTimePage() {
                 }}
                 disabled={shouldRestrictChanges}
             />
-            <p>Daily Reset Time: {JSON.stringify(dailyResetTime)}</p>
+            <div className="content">
+                <p>This is the time of day that your timelimits will reset.</p>
+            </div>
         </div>
     );
 }

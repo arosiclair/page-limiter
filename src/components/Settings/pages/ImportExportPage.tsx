@@ -72,7 +72,9 @@ export default function ImportExportPage() {
                     Export
                 </button>
             </div>
-            <p>Import and export your settings to a file (JSON)</p>
+            <div className="content">
+                <p>Import and export your settings to a file (JSON)</p>
+            </div>
         </div>
     );
 }
