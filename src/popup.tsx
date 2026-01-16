@@ -96,7 +96,7 @@ const Popup = () => {
                 </div>
                 <div
                     className={`${statusClass} is-flex-direction-column p-3`}
-                    style={{ height: 'auto', minWidth: 120 }}
+                    style={{ height: 'auto', minWidth: 125 }}
                 >
                     <h5 className="title is-6 mb-2" style={{ color: 'inherit' }}>
                         Time left
