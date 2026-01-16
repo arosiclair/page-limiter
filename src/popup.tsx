@@ -66,7 +66,7 @@ const Popup = () => {
     }
 
     return (
-        <main className="p-3" style={{ minWidth: '500px' }}>
+        <main className="p-3" style={{ minWidth: 450 }}>
             <div className="is-flex is-justify-content-space-between is-align-items-center">
                 <h1 className="title is-6 m-0">PAGE LIMITER</h1>
                 <div className="title is-6 m-0">
