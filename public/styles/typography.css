@@ -1,0 +1,21 @@
+@font-face {
+    font-family: 'Geist';
+    src: url('/fonts/Geist.woff2') format('woff2-variations');
+    font-display: swap;
+    font-weight: 100 900;
+}
+
+@font-face {
+    font-family: 'Geist Mono';
+    src: url('/fonts/Geist-Mono.woff2') format('woff2-variations');
+    font-display: swap;
+    font-weight: 100 900;
+}
+
+body {
+    font-family: 'Geist', sans-serif;
+}
+
+textarea {
+    font-family: 'Geist Mono', monospace;
+}

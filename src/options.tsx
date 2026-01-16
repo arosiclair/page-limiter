@@ -17,7 +17,7 @@ const Options = () => {
                         <h5 className="title is-5 m-0 pb-1">PAGE LIMITER</h5>
                         <SaveIndicator />
                     </div>
-                    <ul className="menu-list">
+                    <ul className="menu-list" style={{ fontWeight: 500 }}>
                         <NavItem to="/">Limits</NavItem>
                         <NavItem to="import-export">Import & Export</NavItem>
                         <NavItem to="strict-mode">Strict Mode</NavItem>
