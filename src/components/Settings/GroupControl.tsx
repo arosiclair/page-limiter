@@ -1,6 +1,6 @@
-import React, { useEffect, useState } from 'react';
-import { getSecondsLeft, getSecondsUsedToday } from '../../groups';
-import { getSettings } from '../../settings';
+import React, { useState } from 'react';
+import { getSecondsLeft } from '../../groups';
+import { secondsInMinute } from 'date-fns/constants';
 
 type GroupControlProps = {
     index: number;
@@ -24,9 +24,14 @@ export default function GroupControl({
     onDelete,
 }: GroupControlProps) {
     const [newIndex, setNewIndex] = useState<string | undefined>(undefined);
-    const [newTimelimit, setNewTimelimit] = useState(String(group.timelimitSeconds));
+    const [newTimelimit, setNewTimelimit] = useState(
+        String(group.timelimitSeconds / secondsInMinute)
+    );
 
     const orderValue = newIndex !== undefined ? newIndex : index + 1;
+    const secondsLeft = getSecondsLeft(group, dailyResetTime);
+    const timeLeftMinutes = Math.floor(secondsLeft / secondsInMinute);
+    const timeLeftSeconds = secondsLeft % secondsInMinute;
 
     const updateOrder = () => {
         if (newIndex === undefined) {
@@ -81,7 +86,7 @@ export default function GroupControl({
                 </div>
                 <div className="field mb-2">
                     <label className="label" htmlFor={`${group.id}-group-timelimit-input`}>
-                        Timelimit (seconds)
+                        Timelimit (minutes)
                     </label>
                     <div className="control">
                         <input
@@ -94,7 +99,8 @@ export default function GroupControl({
                                 setNewTimelimit(String(event.currentTarget.value));
                                 onChange({
                                     ...group,
-                                    timelimitSeconds: Number(event.currentTarget.value),
+                                    timelimitSeconds:
+                                        Number(event.currentTarget.value) * secondsInMinute,
                                 });
                             }}
                             disabled={disabled}
@@ -127,8 +133,7 @@ export default function GroupControl({
 
             <div className="is-flex is-align-items-center">
                 <span className="is-flex-grow-1">
-                    Time used: {getSecondsUsedToday(group, dailyResetTime)} seconds • Time left:{' '}
-                    {getSecondsLeft(group, dailyResetTime)} seconds
+                    Time left: {timeLeftMinutes} minutes {timeLeftSeconds} seconds
                 </span>
                 <button
                     className="button is-danger"
