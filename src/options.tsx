@@ -7,6 +7,7 @@ import ImportExportPage from './components/Settings/pages/ImportExportPage';
 import StrictModePage from './components/Settings/pages/StrictModePage';
 import SyncingPage from './components/Settings/pages/SyncingPage';
 import DailyResetTimePage from './components/Settings/pages/DailyResetTimePage';
+import AboutPage from './components/Settings/pages/AboutPage';
 
 const Options = () => {
     return (
@@ -23,6 +24,7 @@ const Options = () => {
                         <NavItem to="strict-mode">Strict Mode</NavItem>
                         <NavItem to="daily-reset-time">Daily Reset Time</NavItem>
                         <NavItem to="syncing">Syncing</NavItem>
+                        <NavItem to="about">About</NavItem>
                     </ul>
                 </aside>
                 <main className="p-3">
@@ -32,6 +34,7 @@ const Options = () => {
                         <Route path="strict-mode" element={<StrictModePage />} />
                         <Route path="daily-reset-time" element={<DailyResetTimePage />} />
                         <Route path="syncing" element={<SyncingPage />} />
+                        <Route path="about" element={<AboutPage />} />
                     </Routes>
                 </main>
             </div>
