@@ -2,7 +2,7 @@
   "manifest_version": 3,
   "name": "Page Limiter BETA",
   "description": "THIS EXTENSION IS FOR BETA TESTING",
-  "version": "0.5.5",
+  "version": "0.6.0",
   "options_ui": {
     "page": "options.html",
     "open_in_tab": true
