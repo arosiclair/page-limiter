@@ -35,6 +35,9 @@ module.exports = {
         extensions: ['.ts', '.tsx', '.js'],
     },
     plugins: [
+        new webpack.DefinePlugin({
+            __VERSION__: JSON.stringify(require('../package.json').version),
+        }),
         new CopyPlugin({
             patterns: [{ from: '.', to: '../', context: 'public' }],
             options: {},
