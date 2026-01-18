@@ -89,6 +89,7 @@ export default function GroupControl({
                             className="input"
                             type="number"
                             value={newTimelimit}
+                            min={0}
                             onChange={(event) => {
                                 setNewTimelimit(String(event.currentTarget.value));
                                 onChange({
