@@ -1,70 +1,12 @@
-# Chrome Extension TypeScript Starter
+# Page Limiter
 
-![build](https://github.com/chibat/chrome-extension-typescript-starter/workflows/build/badge.svg)
+A simple Chrome extension for setting time limits on websites. No ads, no data sharing, and no analytics. The only server involved is [Chrome Sync](https://support.google.com/chrome/a/answer/13616205?hl=en) when syncing is enabled.
 
-Chrome Extension, TypeScript and Visual Studio Code
+## Development
 
-## Prerequisites
+This extension is mostly written in Typescript and React.
 
-* [node + npm](https://nodejs.org/) (Current Version)
-
-## Option
-
-* [Visual Studio Code](https://code.visualstudio.com/)
-
-## Includes the following
-
-* TypeScript
-* Webpack
-* React
-* Jest
-* Example Code
-    * Chrome Storage
-    * Options Version 2
-    * content script
-    * count up badge number
-    * background
-
-## Project Structure
-
-* src/typescript: TypeScript source files
-* src/assets: static files
-* dist: Chrome Extension directory
-* dist/js: Generated JavaScript files
-
-## Setup
-
-```
-npm install
-```
-
-## Import as Visual Studio Code project
-
-...
-
-## Build
-
-```
-npm run build
-```
-
-## Build in watch mode
-
-### terminal
-
-```
-npm run watch
-```
-
-### Visual Studio Code
-
-Run watch mode.
-
-type `Ctrl + Shift + B`
-
-## Load extension to chrome
-
-Load `dist` directory
-
-## Test
-`npx jest` or `npm run test`
+-   Run dev with `npm run watch`
+-   Run a production build with `npm run build`
+-   Run a production build and package it in a zip for distribution with `npm run package`
+-   Bump the current version with `./scripts/bump-version <patch|minor|major>`
