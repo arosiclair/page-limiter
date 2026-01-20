@@ -24,7 +24,7 @@ export default function DailyResetTimePage() {
         <div>
             <input
                 type="time"
-                className="input title is-4"
+                className="input title is-4 mb-3"
                 style={{ width: 'auto' }}
                 value={dailyResetTime}
                 onChange={(event) => {

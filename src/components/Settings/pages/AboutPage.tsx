@@ -9,8 +9,8 @@ export default function AboutPage() {
     return (
         <div>
             <div className="content">
-                <h3 className="title is-3">Version {__VERSION__}</h3>
-                <ul>
+                <h3 className="title is-3 mb-3">Version {__VERSION__}</h3>
+                <ul className="mt-0">
                     <li>
                         Created by{' '}
                         <a href="https://arosiclair.com" target="_blank" rel="noopener noreferrer">
