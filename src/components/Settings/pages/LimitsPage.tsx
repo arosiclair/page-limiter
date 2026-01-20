@@ -117,14 +117,27 @@ export default function LimitsPage() {
 
     return (
         <div>
+            <h4 className="title is-4 mb-3">Allow List</h4>
+            <div className="content">
+                <p>
+                    You can add specific patterns/URLs here to prevent them from being limited in a
+                    group below.
+                </p>
+            </div>
+            <textarea
+                id="new-group-name-input"
+                className="textarea mb-5"
+                placeholder="page-to-limit.com/subpage-to-allow"
+                value={allowedPatterns.join('\n')}
+                onChange={updateAllowedPatterns}
+                disabled={shouldRestrictChanges}
+            />
+
+            <h4 className="title is-4 mb-3">Limited Groups</h4>
             <div className="content">
                 <p>You can add time limits to websites here.</p>
                 <ul>
-                    <li>You can add multiple websites to a group. One website per line.</li>
-                    <li>
-                        You can add specific patterns/URLs to the allow list to prevent them from
-                        being limited.
-                    </li>
+                    <li>You can add multiple websites to a group, one website per line.</li>
                     <li>
                         You can also enter simple words or phrases (eg: <code>dog</code> will match
                         any page with "dog" in the URL).
@@ -139,21 +152,10 @@ export default function LimitsPage() {
                             regular expressions
                         </a>{' '}
                         by starting and ending your pattern with forward slashes (eg:{' '}
-                        <code>/pattern/</code>). Flags aren't supported.
+                        <code>/pattern/</code> - no flags).
                     </li>
                 </ul>
             </div>
-            <h4 className="title is-4">Allow List</h4>
-            <textarea
-                id="new-group-name-input"
-                className="textarea mb-4"
-                placeholder="page-to-limit.com/subpage-to-allow"
-                value={allowedPatterns.join('\n')}
-                onChange={updateAllowedPatterns}
-                disabled={shouldRestrictChanges}
-            />
-
-            <h4 className="title is-4">Limited Groups</h4>
             <div>
                 {groups.map((group, index) => (
                     <GroupControl
