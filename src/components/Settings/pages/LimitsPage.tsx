@@ -120,24 +120,17 @@ export default function LimitsPage() {
             <div className="content">
                 <p>You can add time limits to websites here.</p>
                 <ul>
+                    <li>You can add multiple websites to a group. One website per line.</li>
                     <li>
-                        You can add multiple websites to a group. One website per line. Time spent
-                        on each website will count towards the same timelimit.
-                    </li>
-                    <li>
-                        You can add specific websites to the allow list to prevent them from
-                        matching (so you can limit a website but allow a specific part of it).
-                    </li>
-                    <li>
-                        The order of allowed websites and groups below is the order that pages will
-                        get matched against.
+                        You can add specific patterns/URLs to the allow list to prevent them from
+                        being limited.
                     </li>
                     <li>
                         You can also enter simple words or phrases (eg: <code>dog</code> will match
                         any page with "dog" in the URL).
                     </li>
                     <li>
-                        You can use{' '}
+                        You can also use{' '}
                         <a
                             href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Regular_expressions"
                             target="_blank"
@@ -146,7 +139,7 @@ export default function LimitsPage() {
                             regular expressions
                         </a>{' '}
                         by starting and ending your pattern with forward slashes (eg:{' '}
-                        <code>/pattern/</code>)
+                        <code>/pattern/</code>). Flags aren't supported.
                     </li>
                 </ul>
             </div>
