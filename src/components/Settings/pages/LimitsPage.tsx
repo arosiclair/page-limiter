@@ -53,6 +53,7 @@ export default function LimitsPage() {
             timelimitSeconds: 600,
             patterns: [],
             secondsUsed: {},
+            arePatternsCollapsed: false,
         });
         saveGroups(newGroups);
     };

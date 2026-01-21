@@ -42,6 +42,13 @@ export default function GroupControl({
         setNewIndex(undefined);
     };
 
+    const togglePatternsCollapsed = () => {
+        onChange({
+            ...group,
+            arePatternsCollapsed: !group.arePatternsCollapsed,
+        });
+    };
+
     return (
         <div className="mb-5">
             <div className="is-flex">
@@ -110,8 +117,20 @@ export default function GroupControl({
             </div>
 
             <div className="mb-2">
-                <label htmlFor={`${group.id}-group-patterns-input`} className="label">
+                <label
+                    htmlFor={`${group.id}-group-patterns-input`}
+                    className="label"
+                    onClick={togglePatternsCollapsed}
+                    style={{ cursor: 'pointer' }}
+                >
                     URL patterns
+                    <span className="icon" style={{ verticalAlign: 'middle' }}>
+                        <span className="material-symbols-outlined">
+                            {group.arePatternsCollapsed
+                                ? 'keyboard_arrow_right'
+                                : 'keyboard_arrow_down'}
+                        </span>
+                    </span>
                 </label>
                 <textarea
                     id={`${group.id}-group-patterns-input`}
@@ -128,6 +147,9 @@ export default function GroupControl({
                         })
                     }
                     disabled={disabled}
+                    style={{
+                        display: group.arePatternsCollapsed ? 'none' : 'initial',
+                    }}
                 ></textarea>
             </div>
 

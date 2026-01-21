@@ -6,6 +6,7 @@ type Group = {
     secondsUsed: {
         [date: string]: number | undefined;
     };
+    arePatternsCollapsed: boolean;
 };
 
 type HistoryEntry = {
