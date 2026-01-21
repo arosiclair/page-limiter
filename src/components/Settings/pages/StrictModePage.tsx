@@ -42,6 +42,7 @@ export default function StrictModePage() {
                 </label>
             </div>
             <div className="content">
+                <p>Enable this to prevent "cheating"</p>
                 <ul>
                     <li>Restricts changes to the allow list while any group is expired</li>
                     <li>Restricts changes to any group above an expired group</li>
