@@ -47,6 +47,9 @@ export default function GroupControl({
             ...group,
             arePatternsCollapsed: !group.arePatternsCollapsed,
         });
+
+        // Focus the patterns textarea
+        return true;
     };
 
     return (
