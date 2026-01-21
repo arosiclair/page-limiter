@@ -1,4 +1,6 @@
-# Page Limiter
+# ![Page Limiter](docs/banner-1650.png)
+
+==========
 
 A simple Chrome extension for setting time limits on websites. No ads, no data sharing, and no analytics. The only server involved is [Chrome Sync](https://support.google.com/chrome/a/answer/13616205?hl=en) when syncing is enabled.
 
