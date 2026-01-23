@@ -124,7 +124,7 @@ export default function GroupControl({
                     htmlFor={`${group.id}-group-patterns-input`}
                     className="label"
                     onClick={togglePatternsCollapsed}
-                    style={{ cursor: 'pointer' }}
+                    style={{ cursor: 'pointer', display: 'inline-block' }}
                 >
                     URL patterns
                     <span className="icon" style={{ verticalAlign: 'middle' }}>
