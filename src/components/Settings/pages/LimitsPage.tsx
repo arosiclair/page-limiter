@@ -176,7 +176,7 @@ export default function LimitsPage() {
                     />
                 ))}
             </div>
-            <div className="has-text-centered">
+            <div className="has-text-centered mb-3">
                 <button className="button is-primary" onClick={addGroup}>
                     <span className="icon">
                         <span className="material-symbols-outlined">add</span>
