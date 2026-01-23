@@ -178,7 +178,10 @@ export default function LimitsPage() {
             </div>
             <div className="has-text-centered">
                 <button className="button is-primary" onClick={addGroup}>
-                    Add group
+                    <span className="icon">
+                        <span className="material-symbols-outlined">add</span>
+                    </span>
+                    <span>Add group</span>
                 </button>
             </div>
         </div>

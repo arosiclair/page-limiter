@@ -165,7 +165,9 @@ export default function GroupControl({
                     onClick={() => onDelete(group.id)}
                     disabled={disabled}
                 >
-                    Delete
+                    <span className="icon is-small">
+                        <span className="material-symbols-outlined">delete</span>
+                    </span>
                 </button>
             </div>
 
