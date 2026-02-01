@@ -69,8 +69,14 @@ if [ -f "public/manifest.json" ]; then
     echo "Updated public/manifest.json to version $new_version"
 fi
 
+# Update public-dev/manifest.json if it exists
+if [ -f "public-dev/manifest.json" ]; then
+    jq --arg version "$new_version" '.version = $version' public-dev/manifest.json > public-dev/manifest.json.tmp && mv public-dev/manifest.json.tmp public-dev/manifest.json
+    echo "Updated public-dev/manifest.json to version $new_version"
+fi
+
 # Commit the changes
-git add package.json package-lock.json public/manifest.json 2>/dev/null
+git add package.json package-lock.json public/manifest.json public-dev/manifest.json 2>/dev/null
 git commit -m "bump version to $new_version"
 echo "Committed changes with message: bump version to $new_version"
 
