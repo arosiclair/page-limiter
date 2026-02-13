@@ -2,7 +2,7 @@
   "manifest_version": 3,
   "name": "Page Limiter - Time Limits & Blocking",
   "description": "A browser extension for blocking and setting time limits on websites.",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "options_ui": {
     "page": "options.html",
     "open_in_tab": true
