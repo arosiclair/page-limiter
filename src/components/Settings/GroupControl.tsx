@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { ChangeEvent, useState } from 'react';
 import { getSecondsLeft } from '../../groups';
 import { secondsInMinute } from 'date-fns/constants';
 
@@ -34,6 +34,10 @@ export default function GroupControl({
     const timeLeftSeconds = secondsLeft % secondsInMinute;
 
     const updateOrder = () => {
+        if (disabled) {
+            return;
+        }
+
         if (newIndex === undefined) {
             return;
         }
@@ -42,7 +46,18 @@ export default function GroupControl({
         setNewIndex(undefined);
     };
 
+    const updateName = (event: ChangeEvent<HTMLInputElement>) => {
+        onChange({
+            ...group,
+            name: event.currentTarget.value,
+        });
+    };
+
     const updateTimelimit = () => {
+        if (disabled) {
+            return;
+        }
+
         onChange({
             ...group,
             timelimitSeconds: Number(newTimelimit) * secondsInMinute,
@@ -53,7 +68,22 @@ export default function GroupControl({
         }
     };
 
+    const updatePatterns = (event: ChangeEvent<HTMLTextAreaElement>) => {
+        if (disabled) {
+            return;
+        }
+
+        onChange({
+            ...group,
+            patterns: event.currentTarget.value.split('\n').map((pattern) => pattern.trim()),
+        });
+    };
+
     const togglePatternsCollapsed = () => {
+        if (disabled) {
+            return;
+        }
+
         onChange({
             ...group,
             arePatternsCollapsed: !group.arePatternsCollapsed,
@@ -76,7 +106,9 @@ export default function GroupControl({
                             className="input"
                             type="number"
                             value={orderValue}
-                            onChange={(event) => setNewIndex(event.currentTarget.value)}
+                            onChange={(event) =>
+                                !disabled && setNewIndex(event.currentTarget.value)
+                            }
                             onBlur={() => updateOrder()}
                             onKeyUp={(event) => event.key === 'Enter' && updateOrder()}
                             disabled={disabled}
@@ -95,12 +127,7 @@ export default function GroupControl({
                             type="text"
                             placeholder="Name"
                             value={group.name}
-                            onChange={(event) =>
-                                onChange({
-                                    ...group,
-                                    name: event.currentTarget.value,
-                                })
-                            }
+                            onChange={updateName}
                             disabled={disabled}
                         />
                     </div>
@@ -116,7 +143,9 @@ export default function GroupControl({
                             type="number"
                             value={newTimelimit}
                             min={0}
-                            onChange={(event) => setNewTimelimit(String(event.currentTarget.value))}
+                            onChange={(event) =>
+                                !disabled && setNewTimelimit(String(event.currentTarget.value))
+                            }
                             onBlur={updateTimelimit}
                             onKeyUp={(event) => event.key === 'Enter' && updateTimelimit()}
                             disabled={disabled}
@@ -147,14 +176,7 @@ export default function GroupControl({
                     name="new-urls"
                     placeholder="page-to-limit.com"
                     value={group.patterns.join('\n')}
-                    onChange={(event) =>
-                        onChange({
-                            ...group,
-                            patterns: event.currentTarget.value
-                                .split('\n')
-                                .map((pattern) => pattern.trim()),
-                        })
-                    }
+                    onChange={updatePatterns}
                     disabled={disabled}
                     style={{
                         display: group.arePatternsCollapsed ? 'none' : 'initial',
