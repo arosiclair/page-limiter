@@ -42,6 +42,17 @@ export default function GroupControl({
         setNewIndex(undefined);
     };
 
+    const updateTimelimit = () => {
+        onChange({
+            ...group,
+            timelimitSeconds: Number(newTimelimit) * secondsInMinute,
+        });
+
+        if (newTimelimit === '') {
+            setNewTimelimit('0');
+        }
+    };
+
     const togglePatternsCollapsed = () => {
         onChange({
             ...group,
@@ -105,14 +116,9 @@ export default function GroupControl({
                             type="number"
                             value={newTimelimit}
                             min={0}
-                            onChange={(event) => {
-                                setNewTimelimit(String(event.currentTarget.value));
-                                onChange({
-                                    ...group,
-                                    timelimitSeconds:
-                                        Number(event.currentTarget.value) * secondsInMinute,
-                                });
-                            }}
+                            onChange={(event) => setNewTimelimit(String(event.currentTarget.value))}
+                            onBlur={updateTimelimit}
+                            onKeyUp={(event) => event.key === 'Enter' && updateTimelimit()}
                             disabled={disabled}
                         />
                     </div>
