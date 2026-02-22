@@ -42,7 +42,14 @@ export default function GroupControl({
             return;
         }
 
-        onIndexChange(group.id, Number(newIndex) - 1);
+        let clampedIndex = Number(newIndex);
+
+        if (clampedIndex < minIndex + 1) {
+            clampedIndex = minIndex + 1;
+            setNewIndex(String(clampedIndex));
+        }
+
+        onIndexChange(group.id, clampedIndex - 1);
         setNewIndex(undefined);
     };
 
