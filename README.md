@@ -2,6 +2,8 @@
 
 A simple Chrome extension for setting time limits on websites. No ads, no data sharing, and no analytics. The only server involved is [Chrome Sync](https://support.google.com/chrome/a/answer/13616205?hl=en) when syncing is enabled.
 
+[![Available on the Chrome Web Store](docs/chrome-web-store.png)](https://chromewebstore.google.com/detail/page-limiter-time-limits/bgonhococdgdpelkalcdmijhlofiggal)
+
 ## Development
 
 This extension is mostly written in Typescript and React.
