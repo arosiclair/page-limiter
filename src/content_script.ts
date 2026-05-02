@@ -11,6 +11,12 @@ window.addEventListener('focus', startTimer);
 window.addEventListener('blur', stopTimer);
 window.addEventListener('beforeunload', stopTimer);
 
+// Listener for route changes in SPAs
+window.navigation.addEventListener('navigate', () => {
+    stopTimer();
+    startTimer();
+});
+
 timer.onTimeout = async (secondsElapsed) => {
     console.log('[PageLimiter] timer expired');
     await addTime(secondsElapsed);
