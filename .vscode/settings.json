@@ -3,12 +3,11 @@
     "files.eol": "\n",
     "json.schemas": [
         {
-            "fileMatch": [
-                "/manifest.json"
-            ],
+            "fileMatch": ["/manifest.json"],
             "url": "http://json.schemastore.org/chrome-manifest"
         }
     ],
     "editor.formatOnSave": true,
-    "editor.defaultFormatter": "esbenp.prettier-vscode"
+    "editor.defaultFormatter": "esbenp.prettier-vscode",
+    "js/ts.tsdk.path": "./node_modules/typescript/lib"
 }
