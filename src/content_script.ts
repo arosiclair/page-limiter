@@ -7,14 +7,14 @@ const lock = new AsyncLock();
 const timer = new Timer();
 
 init();
-window.addEventListener('focus', startTimer);
-window.addEventListener('blur', stopTimer);
-window.addEventListener('beforeunload', stopTimer);
+window.addEventListener('focus', () => startTimer('focus'));
+window.addEventListener('blur', () => stopTimer('blur'));
+window.addEventListener('beforeunload', () => stopTimer('beforeunload'));
 
 // Listener for route changes in SPAs
 window.navigation.addEventListener('navigate', () => {
-    stopTimer();
-    startTimer();
+    stopTimer('navigate');
+    startTimer('navigate');
 });
 
 timer.onTimeout = async (secondsElapsed) => {
@@ -53,15 +53,17 @@ async function init() {
     }
 
     // If there was no match or there seems to be time left, start the timer normally
-    startTimer();
+    startTimer('init');
 }
 
-function startTimer() {
+function startTimer(source: string) {
     // This lock is needed since we're starting the timer asynchronously. If endTimer is called quickly after
     // startTimer, we need to wait for the timeout to be set before clearing it.
     lock.acquire('timer', async (done) => {
         if (timer.isRunning()) {
-            console.log("[PageLimiter] not starting the timer because it's already running");
+            console.log("[PageLimiter] not starting the timer because it's already running", {
+                source,
+            });
             done();
             return;
         }
@@ -69,7 +71,9 @@ function startTimer() {
         await delay(START_TIMER_DELAY_MS);
 
         if (!document.hasFocus()) {
-            console.log("[PageLimiter] not starting the timer because tab isn't focused");
+            console.log("[PageLimiter] not starting the timer because tab isn't focused", {
+                source,
+            });
             done();
             return;
         }
@@ -90,7 +94,9 @@ function startTimer() {
         }
 
         if (!result.didMatch) {
-            console.log('[PageLimiter] not starting the timer because there was no match');
+            console.log('[PageLimiter] not starting the timer because there was no match', {
+                source,
+            });
             done();
             return;
         }
@@ -102,22 +108,24 @@ function startTimer() {
         }
 
         timer.start(result.secondsLeft);
-        console.log('[PageLimiter] timer started');
+        console.log('[PageLimiter] timer started', { source });
         done();
     });
 }
 
-function stopTimer() {
+function stopTimer(source: string) {
     return lock.acquire('timer', async (done) => {
         if (!timer.isRunning()) {
-            console.log("[PageLimiter] not stopping the timer because it isn't running");
+            console.log("[PageLimiter] not stopping the timer because it isn't running", {
+                source,
+            });
             done();
             return;
         }
 
         try {
             await addTime(timer.stop());
-            console.log('[PageLimiter] timer stopped');
+            console.log('[PageLimiter] timer stopped', { source });
         } catch (error) {
             console.error('[PageLimiter] failed to add time after stopping the timer', error);
         } finally {
